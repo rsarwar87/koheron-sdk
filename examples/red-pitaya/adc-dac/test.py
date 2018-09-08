@@ -17,8 +17,8 @@ class AdcDac(object):
         return self.client.recv_tuple('ii')
 
 if __name__=="__main__":
-    host = os.getenv('HOST','192.168.1.100')
-    client = connect(host, name='adc_dac')
+    host = os.getenv('HOST','192.168.1.7')
+    client = connect(host, name='adc-dac')
     driver = AdcDac(client)
 
     # driver.set_dac_0(0)
