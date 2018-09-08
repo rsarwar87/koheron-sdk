@@ -49,9 +49,9 @@ OBJ := $(SERVER_OBJ) $(INTERFACE_DRIVERS_OBJ) $(DRIVERS_OBJ) $(CONTEXT_OBJS)
 DEP := $(subst .o,.d,$(OBJ))
 -include $(DEP)
 
-CCXX := /usr/bin/arm-linux-gnueabihf-g++-5 -flto
+CCXX := /usr/bin/arm-linux-gnueabihf-g++ -flto
 
-SERVER_CCXXFLAGS := -Wall -Werror -Wextra
+SERVER_CCXXFLAGS := -Wall -Werror -Wextra -static-libstdc++
 SERVER_CCXXFLAGS += -Wpedantic -Wfloat-equal -Wunused-macros -Wcast-qual -Wuseless-cast
 SERVER_CCXXFLAGS += -Wlogical-op -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wundef
 SERVER_CCXXFLAGS += -Wcast-align -Wpacked -Wredundant-decls -Wvarargs -Wvector-operation-performance -Wswitch-default
