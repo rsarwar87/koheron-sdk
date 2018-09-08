@@ -51,8 +51,9 @@ DEP := $(subst .o,.d,$(OBJ))
 
 SERVER_CCXX := /usr/bin/arm-linux-gnueabihf-g++-5 -flto
 
-SERVER_CCXXFLAGS := -Wall -Werror -Wextra
-SERVER_CCXXFLAGS += -Wpedantic -Wfloat-equal -Wunused-macros  -Wuseless-cast
+
+SERVER_CCXXFLAGS := -Wall -Werror -Wextra -static-libstdc++
+SERVER_CCXXFLAGS += -Wpedantic -Wfloat-equal -Wunused-macros -Wcast-qual -Wuseless-cast
 SERVER_CCXXFLAGS += -Wlogical-op -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wundef
 SERVER_CCXXFLAGS +=  -Wpacked -Wredundant-decls -Wvarargs -Wvector-operation-performance -Wswitch-default
 SERVER_CCXXFLAGS += -Wuninitialized  -Wmissing-declarations
