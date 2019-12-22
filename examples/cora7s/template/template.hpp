@@ -41,8 +41,8 @@ class TemplateDriver
       m_mask1 = 0;
       m_mask0 = 0;
 
-      set_direction(0, m_mask0);
-      set_direction(1, m_mask1);
+      set_pmod_direction(0, m_mask0);
+      set_pmod_direction(1, m_mask1);
     }
     uint32_t xadc_read(uint32_t channel) {
         return xadc.read_reg(Xadc_regs::read + 4 * channel);
@@ -56,6 +56,10 @@ class TemplateDriver
         set_rbg(id, 0, 0, 256);
 
       set_enable(id, 1);
+    }
+
+    uint64_t get_dna() {
+        return sts.read<reg::dna, uint64_t>();
     }
 
     void set_rbg(uint32_t id, uint16_t r, uint16_t g, uint16_t b) {
@@ -73,7 +77,7 @@ class TemplateDriver
     uint32_t get_ck_outer_io() {
         return sts.read<reg::ck_outer_out>();
     }
-    uint32_t get_ck_user_io() {
+    uint32_t get_user_io() {
         return sts.read<reg::user_io_out>();
     }
     uint32_t get_ck_inner_io() {
@@ -105,7 +109,7 @@ class TemplateDriver
         return sts.read<reg::forty_two>();
     }
 
-    void set_direction(uint16_t id, uint8_t mask) {
+    void set_pmod_direction(uint16_t id, uint8_t mask) {
         if (id == 0) {
           pmod0.write<pmod_regs::direction>(mask);
           m_mask0 = mask;
@@ -117,12 +121,12 @@ class TemplateDriver
         }
     }
 
-    void set_value(uint16_t id, uint32_t value) {
+    void set_pmod_value(uint16_t id, uint32_t value) {
         if (id == 0) pmod0.write<pmod_regs::base>(value);
         else pmod1.write<pmod_regs::base>(value);
     }
 
-    uint32_t get_value(uint16_t id) {
+    uint32_t get_pmod_value(uint16_t id) {
         if (id == 0) return pmod0.read<pmod_regs::base>();
         else return pmod1.read<pmod_regs::base>();
     }
