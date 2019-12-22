@@ -64,7 +64,7 @@ class Ltc2157
 
         // Data format
         uint32_t RAND = 1;
-        uint32_t TWOSCOMP = 1;
+        uint32_t TWOSCOMP = 0;
         write_reg((DATA_FORMAT << 8) + (RAND << 1) + (TWOSCOMP << 0));
         spi_cfg.unlock();
     }
