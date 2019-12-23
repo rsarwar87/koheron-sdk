@@ -40,6 +40,9 @@ memory:
   - name: ocm_s2mm
     offset: '0xFFFF8000'
     range: 32K
+  - name: sclr
+    offset: '0xF8000000'
+    range: 64K
 
 control_registers:
   - led
@@ -57,7 +60,7 @@ xdc:
 
 drivers:
   - server/drivers/common.hpp
-  - ./led_blinker.hpp
+  - ./dma_example.hpp
 
 web:
   - ./web/index.html
