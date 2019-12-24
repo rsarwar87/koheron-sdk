@@ -1,7 +1,6 @@
 /// DMA driver
 ///
 /// (c) Koheron
-
 #ifndef __DRIVERS_ADC_DAC_DMA_HPP__
 #define __DRIVERS_ADC_DAC_DMA_HPP__
 
@@ -43,12 +42,14 @@ namespace Sclr_regs {
 constexpr uint32_t n_pts = 64 * 1024; // Number of words in one descriptor
 constexpr uint32_t n_desc = 64; // Number of descriptors
 
-class DmaDriver
+class DmaExample
 {
   public:
-    DmaDriver(Context& ctx_)
+    DmaExample(Context& ctx_)
     : ctx(ctx_)
+    , sts(ctx.mm.get<mem::status>())
     , ctl(ctx.mm.get<mem::control>())
+    , sdram(ctx.mm.get<mem::SDRAM>())
     , dma(ctx.mm.get<mem::dma>())
     , ram_s2mm(ctx.mm.get<mem::ram_s2mm>())
     , ram_mm2s(ctx.mm.get<mem::ram_mm2s>())
@@ -59,24 +60,28 @@ class DmaDriver
     , sclr(ctx.mm.get<mem::sclr>())
     {
         // Unlock SCLR
+        ctx.log<INFO>("TRACE: Unlocking SCLR \n");
         sclr.write<Sclr_regs::sclr_unlock>(0xDF0D);
         sclr.clear_bit<Sclr_regs::fpga_rst_ctrl, 1>();
 
         // Make sure that the width of the AXI HP port is 64 bit.
+        ctx.log<INFO>("TRACE: setting HP ports are 64-bit \n");
         axi_hp0.clear_bit<0x0, 0>();
         axi_hp0.clear_bit<0x14, 0>();
         axi_hp2.clear_bit<0x0, 0>();
         axi_hp2.clear_bit<0x14, 0>();
 
         // Map the last 64 kB of OCM RAM to the high address space
+        ctx.log<INFO>("TRACE: map OCM \n");
         sclr.write<Sclr_regs::ocm_cfg>(0b1000);
 
+        ctx.log<INFO>("TRACE: clear memory \n");
         for (uint32_t i = 0; i < n_pts * n_desc; i++) {
             ram_s2mm.write_reg(4*i, 0);
         }
+        ctx.log<INFO>("TRACE: initialization completed \n");
 
     }
-
 
     void set_dac_data(const std::vector<uint32_t>& dac_data) {
         for (uint32_t i = 0; i < dac_data.size(); i++) {
@@ -135,10 +140,33 @@ class DmaDriver
         data = ram_s2mm.read_array<uint32_t, n_desc * n_pts>();
         return data;
     }
+    uint64_t get_dna() {
+      return sts.read<reg::dna, uint64_t>();
+    }
+    void set_leds(uint32_t led_value) {
+        ctl.write<reg::led>(led_value);
+    }
+
+    uint32_t get_leds() {
+        return ctl.read<reg::led>();
+    }
+
+    void set_led(uint32_t index, bool status) {
+        ctl.write_bit_reg(reg::led, index, status);
+    }
+
+    uint32_t get_forty_two() {
+        ctx.log<INFO>("TRACE: calling get forty_two \n");
+        uint32_t ret = sts.read<reg::forty_two>();
+        ctx.log<INFO>("TRACE: successfullt retrieved value: %d\n", ret);
+        return ret;
+    }
 
   private:
     Context& ctx;
+    Memory<mem::status>& sts;
     Memory<mem::control>& ctl;
+    Memory<mem::SDRAM>& sdram;
     Memory<mem::dma>& dma;
     Memory<mem::ram_s2mm>& ram_s2mm;
     Memory<mem::ram_mm2s>& ram_mm2s;

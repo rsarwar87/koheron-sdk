@@ -113,20 +113,20 @@ entity system_top is
 		-------------------------------------------------------------------------------------------
 		-- DDR3 PL
 		-------------------------------------------------------------------------------------------
-		DDR3_dq 						: inout std_logic_vector ( 15 downto 0 );
-		DDR3_dqs_p 						: inout std_logic_vector ( 1 downto 0 );
-		DDR3_dqs_n 						: inout std_logic_vector ( 1 downto 0 );
-		DDR3_addr 						: out std_logic_vector ( 13 downto 0 );
-		DDR3_ba 						: out std_logic_vector ( 2 downto 0 );
-		DDR3_ras_n 						: out std_logic;
-		DDR3_cas_n 						: out std_logic;
-		DDR3_we_n 						: out std_logic;
-		DDR3_reset_n 					: out std_logic;
-		DDR3_ck_p 						: out std_logic_vector ( 0 to 0 );
-		DDR3_ck_n 						: out std_logic_vector ( 0 to 0 );
-		DDR3_cke 						: out std_logic_vector ( 0 to 0 );
-		DDR3_dm 						: out std_logic_vector ( 1 downto 0 );
-		DDR3_odt 						: out std_logic_vector ( 0 to 0 );
+--		DDR3_dq 						: inout std_logic_vector ( 15 downto 0 );
+--		DDR3_dqs_p 						: inout std_logic_vector ( 1 downto 0 );
+--		DDR3_dqs_n 						: inout std_logic_vector ( 1 downto 0 );
+--		DDR3_addr 						: out std_logic_vector ( 13 downto 0 );
+--		DDR3_ba 						: out std_logic_vector ( 2 downto 0 );
+--		DDR3_ras_n 						: out std_logic;
+--		DDR3_cas_n 						: out std_logic;
+--		DDR3_we_n 						: out std_logic;
+--		DDR3_reset_n 					: out std_logic;
+--		DDR3_ck_p 						: out std_logic_vector ( 0 to 0 );
+--		DDR3_ck_n 						: out std_logic_vector ( 0 to 0 );
+--		DDR3_cke 						: out std_logic_vector ( 0 to 0 );
+--		DDR3_dm 						: out std_logic_vector ( 1 downto 0 );
+--		DDR3_odt 						: out std_logic_vector ( 0 to 0 );
 				
 		-------------------------------------------------------------------------------------------
 		-- i2c							
@@ -194,23 +194,23 @@ architecture rtl of system_top is
 			IIC_0_scl_t 		: out std_logic;
 			gpio 			    : out std_logic_vector ( 7 downto 0 );
 			
-			DDR3_dq 			: inout std_logic_vector ( 15 downto 0 );
-			DDR3_dqs_p 			: inout std_logic_vector ( 1 downto 0 );
-			DDR3_dqs_n 			: inout std_logic_vector ( 1 downto 0 );
-			DDR3_addr 			: out std_logic_vector ( 13 downto 0 );
-			DDR3_ba 			: out std_logic_vector ( 2 downto 0 );
-			DDR3_ras_n 			: out std_logic;
-			DDR3_cas_n 			: out std_logic;
-			DDR3_we_n 			: out std_logic;
-			DDR3_reset_n 		: out std_logic;
-			DDR3_ck_p 			: out std_logic_vector ( 0 to 0 );
-			DDR3_ck_n 			: out std_logic_vector ( 0 to 0 );
-			DDR3_cke 			: out std_logic_vector ( 0 to 0 );
-			DDR3_dm 			: out std_logic_vector ( 1 downto 0 );
-			DDR3_odt 			: out std_logic_vector ( 0 to 0 );
+--			DDR3_dq 			: inout std_logic_vector ( 15 downto 0 );
+--			DDR3_dqs_p 			: inout std_logic_vector ( 1 downto 0 );
+--			DDR3_dqs_n 			: inout std_logic_vector ( 1 downto 0 );
+--			DDR3_addr 			: out std_logic_vector ( 13 downto 0 );
+--			DDR3_ba 			: out std_logic_vector ( 2 downto 0 );
+--			DDR3_ras_n 			: out std_logic;
+--			DDR3_cas_n 			: out std_logic;
+--			DDR3_we_n 			: out std_logic;
+--			DDR3_reset_n 		: out std_logic;
+--			DDR3_ck_p 			: out std_logic_vector ( 0 to 0 );
+--			DDR3_ck_n 			: out std_logic_vector ( 0 to 0 );
+--			DDR3_cke 			: out std_logic_vector ( 0 to 0 );
+--			DDR3_dm 			: out std_logic_vector ( 1 downto 0 );
+--			DDR3_odt 			: out std_logic_vector ( 0 to 0 );
 			
-			SYS_CLK_clk_n		: in std_logic;
-			SYS_CLK_clk_p		: in std_logic;
+--			SYS_CLK_clk_n		: in std_logic;
+--			SYS_CLK_clk_p		: in std_logic;
 			
 			FCLK_CLK1 			: out std_logic;
 			RESET_N 			: out std_logic
@@ -251,20 +251,20 @@ begin
 
 	i_system : system
 		port map (
-			DDR3_addr			=> DDR3_addr,
-			DDR3_ba				=> DDR3_ba,
-			DDR3_cas_n 			=> DDR3_cas_n,
-			DDR3_ck_n			=> DDR3_ck_n,
-			DDR3_ck_p			=> DDR3_ck_p,
-			DDR3_cke			=> DDR3_cke,
-			DDR3_dm				=> DDR3_dm,
-			DDR3_dq				=> DDR3_dq,
-			DDR3_dqs_n			=> DDR3_dqs_n,
-			DDR3_dqs_p			=> DDR3_dqs_p,
-			DDR3_odt			=> DDR3_odt,
-			DDR3_ras_n			=> DDR3_ras_n,
-			DDR3_reset_n 		=> DDR3_reset_n,
-			DDR3_we_n			=> DDR3_we_n,
+--			DDR3_addr			=> DDR3_addr,
+--			DDR3_ba				=> DDR3_ba,
+--			DDR3_cas_n 			=> DDR3_cas_n,
+--			DDR3_ck_n			=> DDR3_ck_n,
+--			DDR3_ck_p			=> DDR3_ck_p,
+--			DDR3_cke			=> DDR3_cke,
+--			DDR3_dm				=> DDR3_dm,
+--			DDR3_dq				=> DDR3_dq,
+--			DDR3_dqs_n			=> DDR3_dqs_n,
+--			DDR3_dqs_p			=> DDR3_dqs_p,
+--			DDR3_odt			=> DDR3_odt,
+--			DDR3_ras_n			=> DDR3_ras_n,
+--			DDR3_reset_n 		=> DDR3_reset_n,
+--			DDR3_we_n			=> DDR3_we_n,
 			
 			DDR_addr			=> DDR_addr,
 			DDR_ba				=> DDR_ba,
@@ -306,8 +306,8 @@ begin
 			
 			RESET_N				=> Rst_Async_N,
 			
-			SYS_CLK_clk_n		=> CLK200_N,
-			SYS_CLK_clk_p		=> CLK200_P,
+--			SYS_CLK_clk_n		=> CLK200_N,
+--			SYS_CLK_clk_p		=> CLK200_P,
 			
 			gpio			=> Gpio
 		);

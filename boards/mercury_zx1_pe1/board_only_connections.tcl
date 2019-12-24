@@ -183,6 +183,15 @@ write_mig_file_MercuryZX1_SDRAM_0 $str_mig_file_path
 ] $SDRAM
 
 create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_analog_io_rtl:1.0 Vp_Vn
+set rst_mig_7series_0_100M [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset rst_mig_7series_0_100M ]
+connect_bd_intf_net -intf_net axi_mem_intercon_1_M00_AXI [get_bd_intf_pins SDRAM/S_AXI] [get_bd_intf_pins axi_mem_intercon_1/M00_AXI]
+connect_bd_net -net SDRAM_mmcm_locked [get_bd_pins SDRAM/mmcm_locked] [get_bd_pins rst_mig_7series_0_100M/dcm_locked]
+  connect_bd_net -net SDRAM_ui_clk [get_bd_pins SDRAM/ui_clk] [get_bd_pins rst_mig_7series_0_100M/slowest_sync_clk] [get_bd_pins axi_mem_intercon_1/M00_ACLK] 
+  connect_bd_net -net SDRAM_ui_clk_sync_rst [get_bd_pins SDRAM/ui_clk_sync_rst] [get_bd_pins rst_mig_7series_0_100M/ext_reset_in]
+connect_bd_net -net rst_SDRAM_100M_peripheral_aresetn [get_bd_pins SDRAM/aresetn] [get_bd_pins axi_mem_intercon_1/M00_ARESETN] [get_bd_pins rst_mig_7series_0_100M/peripheral_aresetn]
+
+  assign_bd_address -offset [get_memory_offset SDRAM] -range [get_memory_range SDRAM] -target_address_space [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs SDRAM/memmap/memaddr] -force
+
 
 cell xilinx.com:ip:xadc_wiz:3.3 xadc_wiz_0 {
   ENABLE_TEMP_BUS true
@@ -201,12 +210,12 @@ create_bd_port -dir O -from 7 -to 0 gpio
 connect_bd_intf_net -intf_net processing_system7_1_iic_0 [get_bd_intf_ports IIC_0] [get_bd_intf_pins ${ps_name}/IIC_0]
 connect_bd_intf_net -intf_net mig_7series_0_DDR3 [get_bd_intf_ports DDR3] [get_bd_intf_pins SDRAM/DDR3]
 connect_bd_intf_net -intf_net SYS_CLK_1 [get_bd_intf_ports SYS_CLK] [get_bd_intf_pins SDRAM/SYS_CLK]
-connect_bd_net -net processing_system7_1_fclk_clk1 [get_bd_ports FCLK_CLK1] [get_bd_pins ${ps_name}/FCLK_CLK1]
+connect_bd_net [get_bd_ports FCLK_CLK1] [get_bd_pins ${ps_name}/FCLK_CLK1]
 connect_bd_net -net In0_1 [get_bd_ports IRQ0] [get_bd_pins xlconcat_0/In0]
 connect_bd_net -net In1_1 [get_bd_ports IRQ1] [get_bd_pins xlconcat_0/In1]
 connect_bd_net -net xlconcat_0_dout [get_bd_pins ${ps_name}/IRQ_F2P] [get_bd_pins xlconcat_0/dout]
 connect_bd_net [get_bd_ports RESET_N] [get_bd_pins SDRAM/sys_rst] [get_bd_pins ${ps_name}/FCLK_RESET0_N]
 connect_bd_net -net SDIO0_CDN_1 [get_bd_ports SDIO0_CDN] [get_bd_pins ${ps_name}/SDIO0_CDN]
 connect_bd_net -net SDIO0_WP_1 [get_bd_ports SDIO0_WP] [get_bd_pins ${ps_name}/SDIO0_WP]
-apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config { Clk_master {/${ps_name}/FCLK_CLK0 (50 MHz)} Clk_slave {/SDRAM/ui_clk (100 MHz)} Clk_xbar {/ps_0/FCLK_CLK0 (50 MHz)} Master {/ps_0/M_AXI_GP0} Slave {/SDRAM/S_AXI} intc_ip {/axi_mem_intercon_0} master_apm {0}}  [get_bd_intf_pins SDRAM/S_AXI]
+#apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config { Clk_master {/${ps_name}/FCLK_CLK0 (50 MHz)} Clk_slave {/SDRAM/ui_clk (100 MHz)} Clk_xbar {/ps_0/FCLK_CLK0 (50 MHz)} Master {/ps_0/M_AXI_GP0} Slave {/SDRAM/S_AXI} intc_ip {/axi_mem_intercon_0} master_apm {0}}  [get_bd_intf_pins SDRAM/S_AXI]
 

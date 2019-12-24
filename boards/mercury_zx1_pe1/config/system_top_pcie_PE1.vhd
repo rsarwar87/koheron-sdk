@@ -409,16 +409,16 @@ begin
 			end if;
 		end if;
 	end process;
-	Led_N(0)		<= not Gpio(0);	
+	Led_N(0)		<= Gpio(1);	
 	
-	Led_N(1)		<= not LedCnt(LedCnt'high-1); -- 2 times faster
-	Led_N(2) 		<= not LedCnt(LedCnt'high);	
+	Led_N(1)		<= Gpio(2); -- 2 times faster
+	Led_N(2) 		<= Gpio(3);	
 	
 	
-  PE1_LED(3)      <= not LedCnt2(LedCnt2'high);
-  PE1_LED(2)      <= LedCnt3(LedCnt3'high);
-  PE1_LED(1)      <= not LedCnt4(LedCnt4'high-1);
-  PE1_LED(0)      <= not LedCnt5(LedCnt5'high);
+  PE1_LED(3)      <= Gpio(7);
+  PE1_LED(2)      <= Gpio(6);
+  PE1_LED(1)      <= Gpio(5);
+  PE1_LED(0)      <= Gpio(4);
 	-------------------------------------------------------------------------------------------
 	-- unused IOs
 	-------------------------------------------------------------------------------------------

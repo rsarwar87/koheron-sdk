@@ -20,13 +20,13 @@ memory:
     offset: '0x43C00000'
     range: 64K
   - name: ram_mm2s
-    offset: '0x1E000000'
-    range: 16M
+    offset: '0x30000000'
+    range: 128M
   - name: ram_s2mm
-    offset: '0x1F000000'
-    range: 16M
+    offset: '0x38000000'
+    range: 128M
   - name: dma
-    offset: '0x40400000'
+    offset: '0x80000000'
     range: 64K
   - name: axi_hp0
     offset: '0xF8008000'
@@ -43,6 +43,9 @@ memory:
   - name: sclr
     offset: '0xF8000000'
     range: 64K
+  - name: SDRAM
+    offset: '0xA0000000'
+    range: 256M
 
 control_registers:
   - led
@@ -51,7 +54,8 @@ status_registers:
   - forty_two
 
 parameters:
-  fclk0: 100000000 # FPGA clock speed in Hz
+  fclk0: 125000000 # FPGA clock speed in Hz
+  fclk1: 100000000 # FPGA clock speed in Hz
 
 xdc:
   - boards/mercury_zx1_pe1/config/ports.xdc 

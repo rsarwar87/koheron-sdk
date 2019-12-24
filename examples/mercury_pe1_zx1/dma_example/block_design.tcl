@@ -66,8 +66,8 @@ cell xilinx.com:ip:axi_dma:7.1 axi_dma_0 {
   c_m_axis_mm2s_tdata_width 64
   c_mm2s_burst_size 16
 } {
-  S_AXI_LITE axi_mem_intercon_0/M[add_master_interface]_AXI
-  s_axi_lite_aclk ps_0/FCLK_CLK0
+  S_AXI_LITE axi_mem_intercon_1/M[add_master_interface 1]_AXI
+  s_axi_lite_aclk ps_0/FCLK_CLK1
   M_AXI_SG dma_interconnect_omc/S00_AXI
   m_axi_sg_aclk ps_0/FCLK_CLK0
   M_AXI_MM2S dma_interconnect_mm2s/S00_AXI

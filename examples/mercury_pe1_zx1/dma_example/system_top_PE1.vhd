@@ -142,29 +142,9 @@ entity system_top is
 		CLK200_P 						: in std_logic;
 		CLK200_N 						: in std_logic;
 		
-		Vp_Vn_v_n : in STD_LOGIC;
-        Vp_Vn_v_p : in STD_LOGIC;
 		-------------------------------------------------------------------------------------------
 		-- led		
 		-------------------------------------------------------------------------------------------
-        adc_clk_p, adc_clk_n : in STD_LOGIC_VECTOR ( 3 downto 0 );
-        cha_n, cha_p : in STD_LOGIC_VECTOR ( 6 downto 0 );
-        chc_n, chc_p : in STD_LOGIC_VECTOR ( 6 downto 0 );
-        che_n, che_p : in STD_LOGIC_VECTOR ( 6 downto 0 );
-        chg_n, chg_p : in STD_LOGIC_VECTOR ( 6 downto 0 );
-        
-        ad9510_clk, ad9510_csn : out STD_LOGIC;
-        ad9510_mosi : out STD_LOGIC;
-        VCO_PWR_EN : out std_logic;
-        
-        
-        MGT_RCLK0_PCIE_REFCLK_clk_n : in STD_LOGIC_VECTOR ( 0 to 0 );
-        MGT_RCLK0_PCIE_REFCLK_clk_p : in STD_LOGIC_VECTOR ( 0 to 0 );
-        PCIE_MGT_rxn : in STD_LOGIC_VECTOR ( 3 downto 0 );
-        PCIE_MGT_rxp : in STD_LOGIC_VECTOR ( 3 downto 0 );
-        PCIE_MGT_txn : out STD_LOGIC_VECTOR ( 3 downto 0 );
-        PCIE_MGT_txp : out STD_LOGIC_VECTOR ( 3 downto 0 );
-        PCIE_PERST : in STD_LOGIC;
 
 		Led_N							: out	std_logic_vector(2 downto 0)
 	);
@@ -176,7 +156,7 @@ end;
 
 architecture rtl of system_top is
 
-	component MercuryZX1 is
+	component system is
 		port (
 			DDR_cas_n			: inout std_logic;
 			DDR_cke				: inout std_logic;
@@ -212,7 +192,7 @@ architecture rtl of system_top is
 			IIC_0_scl_i 		: in std_logic;
 			IIC_0_scl_o 		: out std_logic;
 			IIC_0_scl_t 		: out std_logic;
-			gpio_tri_o 			: out std_logic_vector ( 7 downto 0 );
+			gpio 			    : out std_logic_vector ( 7 downto 0 );
 			
 			DDR3_dq 			: inout std_logic_vector ( 15 downto 0 );
 			DDR3_dqs_p 			: inout std_logic_vector ( 1 downto 0 );
@@ -232,85 +212,19 @@ architecture rtl of system_top is
 			SYS_CLK_clk_n		: in std_logic;
 			SYS_CLK_clk_p		: in std_logic;
 			
-            
-            Vp_Vn_v_n : in STD_LOGIC;
-            Vp_Vn_v_p : in STD_LOGIC;
-            
-			Clk200 : out STD_LOGIC;
-            adc_clear_error : out STD_LOGIC_VECTOR ( 3 downto 0 );
-            adc_clock : in STD_LOGIC_VECTOR ( 4 downto 0 );
-            adc_data_in_a : in STD_LOGIC_VECTOR ( 13 downto 0 );
-            adc_data_in_b : in STD_LOGIC_VECTOR ( 13 downto 0 );
-            adc_data_in_c : in STD_LOGIC_VECTOR ( 13 downto 0 );
-            adc_data_in_d : in STD_LOGIC_VECTOR ( 13 downto 0 );
-            adc_delay_dec : out STD_LOGIC_VECTOR ( 3 downto 0 );
-            adc_delay_inc : out STD_LOGIC_VECTOR ( 3 downto 0 );
-            adc_error : in STD_LOGIC_VECTOR ( 3 downto 0 );
-            adc_valid : in STD_LOGIC_VECTOR ( 3 downto 0 );
-            spi_sck_i : in STD_LOGIC;
-            spi_sck_o : out STD_LOGIC;
-            spi_sdi_i : in STD_LOGIC;
-            spi_sdo_i : in STD_LOGIC;
-            spi_sdo_o : out STD_LOGIC;
-            spi_ss_i : in STD_LOGIC_VECTOR ( 7 downto 0 );
-            spi_ss_o : out STD_LOGIC_VECTOR ( 7 downto 0 );
-            VCO_PWR_EN : out std_logic;
-            
-            
-            MGT_RCLK0_PCIE_REFCLK_clk_n : in STD_LOGIC_VECTOR ( 0 to 0 );
-            MGT_RCLK0_PCIE_REFCLK_clk_p : in STD_LOGIC_VECTOR ( 0 to 0 );
-            PCIE_MGT_rxn : in STD_LOGIC_VECTOR ( 3 downto 0 );
-            PCIE_MGT_rxp : in STD_LOGIC_VECTOR ( 3 downto 0 );
-            PCIE_MGT_txn : out STD_LOGIC_VECTOR ( 3 downto 0 );
-            PCIE_MGT_txp : out STD_LOGIC_VECTOR ( 3 downto 0 );
-            PCIE_PERST : in STD_LOGIC;
-			
 			FCLK_CLK1 			: out std_logic;
-			ClkAdc : in STD_LOGIC;
 			RESET_N 			: out std_logic
 		);
-	end component MercuryZX1;
+	end component system;
 
-  component adc_aquire_data is
-    generic (
-      RESOLUTION        : integer := 14;
-      IDENTIFICATION    : integer := 0;
-      CH0_IDELAY    : integer := 0;
-      CH1_IDELAY    : integer := 0
-    );
-  Port ( 
-    -- Master Clock/reset
-      RESET               : in  std_logic;
-      CLOCK               : in  std_logic;
-    -- output data
-      Ch_0_Data           : out std_logic_vector(RESOLUTION-1 downto 0);
-      Ch_0_IsValid        : out std_logic;
-    
-    
-      -- Channel A & B input
-      Clk_ADC_p          : in  std_logic;
-      Clk_ADC_n          : in  std_logic;
-      Ch0_p             : in  std_logic_vector(RESOLUTION/2-1 downto 0);
-      ch0_n             : in  std_logic_vector(RESOLUTION/2-1 downto 0);
-      
-      -- Others Status & Control
-      
-      ADC_Clk_Out            : out std_logic;
-      ADC_0_ERROR            : out std_logic;
-      
-      INC, DEC               : in  std_logic;
-      ADC_0_ERROR_CLR        : in  std_logic
-  
-    );
-  end component adc_aquire_data;
 	-----------------------------------------------------------------------------------------------
 	-- signals
 	-----------------------------------------------------------------------------------------------
 
-	signal Rst_Async_N,Rst_Async				: std_logic;
+	signal Rst_Async_N				: std_logic;
 	signal RstChain					: std_logic_vector (7 downto 0) := (others => '0');
 	signal Rst						: std_logic;
-	signal Clk, Clk200              : std_logic;
+	signal Clk						: std_logic;
 
 	signal LedCnt					: unsigned (23 downto 0);
 
@@ -328,79 +242,15 @@ architecture rtl of system_top is
 	signal SDIO0_CDN_s      : std_logic := '0';
 	signal SDIO0_WP_s       : std_logic := '1';
 
-
-      signal adc_clock, adc_clk_buf	: std_logic_vector (4 downto 0) := (others => '0') ;
-      signal spi_csn			: std_logic_vector (7 downto 0);
-      
-      signal spi_clk, spi_miso, spit_status, spi_out, spi_mosi, spi_enable0 : std_logic;
-      
-      type adc_input is array (0 to 4) of std_logic_vector(6 downto 0);
-      type adc_output is array (0 to 4) of std_logic_vector(13 downto 0);
-      signal adc_data_p : adc_input := (others => (others => '0'));
-      signal adc_data_n : adc_input := (others => (others => '0'));
-      signal adc_data_out : adc_output := (others => (others => '0'));
-      signal adc_valid			: std_logic_vector (3 downto 0);
-      signal adc_error			: std_logic_vector (3 downto 0);
-      signal adc_err_clr			: std_logic_vector (3 downto 0);
-      signal adc_delay_inc			: std_logic_vector (3 downto 0);
-      signal adc_delay_dec			: std_logic_vector (3 downto 0);
 begin
 	
 	-----------------------------------------------------------------------------------------------
 	-- processor system
 	-----------------------------------------------------------------------------------------------
 	
-  ad9510_csn  <= spi_csn(0);
-  ad9510_clk  <= spi_clk     when (spi_csn(0) = '0') else '0';
-  ad9510_mosi <= spi_mosi    when (spi_csn(0) = '0') else '0';
-  spi_miso <= spi_mosi;
-  
-  adc_data_n(0) <= cha_n;
-  adc_data_n(1) <= chc_n;
-  adc_data_n(2) <= che_n;
-  adc_data_n(3) <= chg_n;
-  adc_data_p(0) <= cha_p;
-  adc_data_p(1) <= chc_p;
-  adc_data_p(2) <= che_p;
-  adc_data_p(3) <= chg_p;
-  Rst_Async <= not Rst_Async_N;
-  --VCO_PWR_EN  <= '1';
-CLK_GEN: for I in 0 to 3 generate
-   INX:  adc_aquire_data 
-   generic map (
-      IDENTIFICATION => I
-    )
-   port map (
-    --  O => adc_clock(I),  -- Buffer output
-    --  I => adc_clk_p(I),  -- Diff_p buffer input (connect directly to top-level port)
-    --  IB => adc_clk_n(I) -- Diff_n buffer input (connect directly to top-level port)
-       RESET           => Rst_Async,
-      CLOCK            => Clk200,
-    -- output data
-      Ch_0_Data        => adc_data_out(I),
-      Ch_0_IsValid     => adc_valid(I),
-    
-    
-      Clk_ADC_p       => adc_clk_p(I),
-      Clk_ADC_n       => adc_clk_n(I),
-      Ch0_p           => adc_data_p(I),
-      ch0_n           => adc_data_n(I),
-          
-      -- output clock
-      ADC_Clk_Out     => adc_clock(I),
-      
-      -- error
-      ADC_0_ERROR     => adc_error(I),
-      DEC             => adc_delay_dec(I), 
-      INC             => adc_delay_inc(I),
-      ADC_0_ERROR_CLR => adc_err_clr(I)
-      
-   );
-end generate CLK_GEN;
 
-	i_system : MercuryZX1
+	i_system : system
 		port map (
-		ClkAdc => adc_clock(0),
 			DDR3_addr			=> DDR3_addr,
 			DDR3_ba				=> DDR3_ba,
 			DDR3_cas_n 			=> DDR3_cas_n,
@@ -441,57 +291,25 @@ end generate CLK_GEN;
 			
 			SDIO0_CDN           => SDIO0_CDN_s,
 			SDIO0_WP            => SDIO0_WP_s, 
-			
-			Vp_Vn_v_n           => Vp_Vn_v_n,
-			Vp_Vn_v_p           => Vp_Vn_v_p,
 
 			IRQ0				=> IRQ0,
             IRQ1                => IRQ1,
 			
 			FCLK_CLK1			=> Clk,
 			
-			IIC_0_scl_i 		=> iic_0_scl_i,
-			IIC_0_scl_o 		=> iic_0_scl_o,
-			IIC_0_scl_t 		=> iic_0_scl_t,
-			IIC_0_sda_i 		=> iic_0_sda_i,
-			IIC_0_sda_o 		=> iic_0_sda_o,
-			IIC_0_sda_t 		=> iic_0_sda_t,
+			IIC_0_scl_i 		=> IIC_0_scl_i,
+			IIC_0_scl_o 		=> IIC_0_scl_o,
+			IIC_0_scl_t 		=> IIC_0_scl_t,
+			IIC_0_sda_i 		=> IIC_0_sda_i,
+			IIC_0_sda_o 		=> IIC_0_sda_o,
+			IIC_0_sda_t 		=> IIC_0_sda_t,
 			
 			RESET_N				=> Rst_Async_N,
 			
 			SYS_CLK_clk_n		=> CLK200_N,
 			SYS_CLK_clk_p		=> CLK200_P,
 			
-			Clk200 => Clk200,
-			adc_clock => adc_clock,
-			adc_clear_error(3 downto 0) => adc_err_clr(3 downto 0),
-          adc_data_in_a(13 downto 0) => adc_data_out(0),
-          adc_data_in_b(13 downto 0) => adc_data_out(1),
-          adc_data_in_c(13 downto 0) => adc_data_out(2),
-          adc_data_in_d(13 downto 0) => adc_data_out(3),
-          adc_delay_dec(3 downto 0) => adc_delay_dec(3 downto 0),
-          adc_delay_inc(3 downto 0) => adc_delay_inc(3 downto 0),
-          adc_error(3 downto 0) => adc_error(3 downto 0),
-          adc_valid(3 downto 0) => adc_valid(3 downto 0),
-			
-          spi_sck_i => spi_clk,
-          spi_sck_o => spi_clk,
-          spi_sdi_i => spi_miso,
-          spi_sdo_i => spi_mosi,
-          spi_sdo_o => spi_mosi,
-          spi_ss_i(7 downto 0) => spi_csn(7 downto 0),
-          spi_ss_o(7 downto 0) => spi_csn(7 downto 0),
-          
-            MGT_RCLK0_PCIE_REFCLK_clk_n => MGT_RCLK0_PCIE_REFCLK_clk_n,
-            MGT_RCLK0_PCIE_REFCLK_clk_p => MGT_RCLK0_PCIE_REFCLK_clk_p,
-            PCIE_MGT_rxn => PCIE_MGT_rxn,
-            PCIE_MGT_rxp => PCIE_MGT_rxp,
-            PCIE_MGT_txn => PCIE_MGT_txn,
-            PCIE_MGT_txp => PCIE_MGT_txp,
-            PCIE_PERST   => PCIE_PERST,
-			
-			VCO_PWR_EN => VCO_PWR_EN,
-			gpio_tri_o			=> Gpio
+			gpio			=> Gpio
 		);
 		
 
