@@ -13,7 +13,7 @@ TMP ?= tmp
 
 KOHERON_VERSION_FILE := $(SDK_PATH)/version
 KOHERON_VERSION := $(shell cat $(KOHERON_VERSION_FILE))
-VIVADO_VERSION := 2018.3
+VIVADO_VERSION := 2019.2
 VIVADO_PATH := /opt/Xilinx/Vivado
 PYTHON := python
 

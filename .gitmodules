@@ -1,0 +1,6 @@
+[submodule "examples/mercury_pe1_zx1/dma_example/ip_repo/xdma_dsc_byp_cltr"]
+	path = examples/mercury_pe1_zx1/dma_example/ip_repo/xdma_dsc_byp_cltr
+	url = https://github.com/rsarwar87/xdma_dsc_byp_cltr
+[submodule "examples/mercury_pe1_zx1/fmc104adc-dma-pcie/ip_repo/xdma_bypass_controller"]
+	path = examples/mercury_pe1_zx1/fmc104adc-dma-pcie/ip_repo/xdma_bypass_controller
+	url = https://github.com/rsarwar87/xdma_dsc_byp_cltr

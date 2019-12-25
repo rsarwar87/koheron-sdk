@@ -1,3 +1,0 @@
-/home/rsarwar/workspace/fpga/koheron-sdk-orig/examples/mercury_pe1_zx1/dma_example/server/buildz/CMakeFiles/rebuild_cache.dir
-/home/rsarwar/workspace/fpga/koheron-sdk-orig/examples/mercury_pe1_zx1/dma_example/server/buildz/CMakeFiles/serverd.dir
-/home/rsarwar/workspace/fpga/koheron-sdk-orig/examples/mercury_pe1_zx1/dma_example/server/buildz/CMakeFiles/edit_cache.dir
