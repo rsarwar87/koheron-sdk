@@ -1,0 +1,115 @@
+---
+name: PE1_XZ1_7030_DMA
+board: boards/mercury_zx1_pe1
+version: 0.1.1
+
+cores:
+  - fpga/cores/axi_ctl_register_v1_0
+  - fpga/cores/axi_sts_register_v1_0
+  - fpga/cores/tlast_gen_v1_0
+  - fpga/cores/dna_reader_v1_0
+
+memory:
+  - name: control
+    offset: '0x60000000'
+    range: 4K
+  - name: status
+    offset: '0x50000000'
+    range: 4K
+  - name: xadc
+    offset: '0x43C00000'
+    range: 64K
+  - name: ram_s2mm0
+    offset: '0x30000000'
+    range: 128M
+  - name: ram_s2mm1
+    offset: '0x38000000'
+    range: 128M
+  - name: dma0
+    offset: '0x80000000'
+    range: 64K
+  - name: dma1
+    offset: '0x80010000'
+    range: 64K
+  - name: axi_hp0
+    offset: '0xF8008000'
+    range: 4K
+  - name: axi_hp2
+    offset: '0xF800A000'
+    range: 4K
+  - name: ocm_s2mm0
+    offset: '0xFFFF0000'
+    range: 32K
+  - name: ocm_s2mm1
+    offset: '0xFFFF8000'
+    range: 32K
+  - name: sclr
+    offset: '0xF8000000'
+    range: 64K
+  - name: SDRAM
+    offset: '0xA0000000'
+    range: 256M
+  - name: axi_fifo_mm_s
+    offset: '0x40130000'
+    range: 32K
+  - name: adc_spi
+    offset: '0x40100000'
+    range: 64K
+  - name: pcie_gpio
+    offset: '0x00000000'
+    range: 32K
+  - name: pcie_bypass_0
+    offset: '0x00010000'
+    range: 32K
+  - name: pcie_bypass_1
+    offset: '0x00020000'
+    range: 32K
+  - name: pcie_bypass_2
+    offset: '0x00030000'
+    range: 32K
+  - name: pcie_bypass_3
+    offset: '0x00040000'
+    range: 32K
+
+control_registers:
+  - adc_clear_error
+  - adc_delay_dec
+  - adc_delay_inc
+  - led
+  - vco_power_en
+  - gpio_to_pcie
+  - trigger_threshold[3]
+
+status_registers:
+  - forty_two
+  - adc_clk[4]
+  - adc_in[2]
+  - adc_error
+  - adc_valid
+  - gpio_from_pcie
+
+
+parameters:
+  fclk0: 125000000 # FPGA clock speed in Hz
+  fclk1: 100000000 # FPGA clock speed in Hz
+  adc_clk: 250000000
+  channel: 4 
+
+xdc:
+  - boards/mercury_zx1_pe1/config/ports.xdc 
+  - boards/mercury_zx1_pe1/config/pcie.xdc 
+  - ./constraints.xdc
+
+drivers:
+  - server/drivers/common.hpp
+  - ./AdcQspiDriver.hpp
+  - ./FifoDriver.hpp
+  - ./DeviceDriver.hpp
+  - ./AdcDmaSGDriver.hpp
+
+web:
+  - ./web/index.html
+  - web/koheron.ts
+  - web/led-blinker.ts
+  - ./web/app.ts
+  - web/main.css
