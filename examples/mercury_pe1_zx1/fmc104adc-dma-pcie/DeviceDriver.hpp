@@ -27,10 +27,13 @@ class TopLevel
 
     uint32_t adcSpiInitialize()
     {
+      ctx.log<INFO>("Starting initial initialization of the ClockTree. \n");
       using namespace std::chrono_literals;
       qSpiWrite(0x00, 0x30); // reset clock tree
+      ctx.log<INFO>("Reset ClockTree. \n");
       std::this_thread::sleep_for(1ms);
       qSpiWrite(0x00, 0x10); // pull it out of reset
+      ctx.log<INFO>("Pull out of reset. \n");
       std::this_thread::sleep_for(1ms);
 
         //set output for C
@@ -107,6 +110,7 @@ class TopLevel
       std::this_thread::sleep_for(1ms);
       qSpiWrite(0x5A, 0x01); // update registers
       std::this_thread::sleep_for(1ms);
+      ctx.log<INFO>("Finished initial initialization of the ClockTree. \n");
 
       return 1;
     }
@@ -122,11 +126,11 @@ class TopLevel
     }
     uint32_t get_adc_error()
     {
-      return sts.read<reg::adc_error>();
+      return (sts.read<reg::adc_error>() >> 28);
     }
     uint32_t get_adc_valid()
     {
-      return sts.read<reg::adc_valid>();
+      return (sts.read<reg::adc_valid>() >> 28);
     }
     uint32_t get_fortytwo()
     {

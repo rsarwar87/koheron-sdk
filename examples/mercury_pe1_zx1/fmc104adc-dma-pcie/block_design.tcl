@@ -90,6 +90,7 @@ cell xilinx.com:ip:axi_quad_spi:3.2 adc_spi {
   sck_o spi_sck_o 
   ss_o spi_ss_o 
 }
+assign_bd_address -offset [get_memory_offset adc_spi] -range [get_memory_range adc_spi] -target_address_space [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs adc_spi/AXI_LITE/Reg] -force 
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_ClkAdc_250M  {
 } {
   slowest_sync_clk ClkAdc
@@ -125,10 +126,7 @@ cell xilinx.com:ip:axi_fifo_mm_s:4.1 adc_axis_fifo {
   S_AXI adc_axi_clock_converter/M_AXI
   AXI_STR_RXD adc_axis_dwidth_converter/M_AXIS
 }
-assign_bd_address [get_bd_addr_segs adc_axis_fifo/S_AXI/Mem0]
-set memory_segment [get_bd_addr_segs {ps_0/Data/SEG_adc_axis_fifo_Mem0}]
-set_property offset [get_memory_offset axi_fifo_mm_s] $memory_segment
-set_property range [get_memory_range axi_fifo_mm_s] $memory_segment
+assign_bd_address -offset [get_memory_offset axi_fifo_mm_s] -range [get_memory_range axi_fifo_mm_s] -target_address_space [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs adc_fifo/adc_axis_fifo/S_AXI/Mem0] -force 
 
 cell xilinx.com:ip:smartconnect:1.0 dma_interconnect_omc {
   NUM_SI 2
