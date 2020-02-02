@@ -2,7 +2,6 @@ proc add_ctl_sts {{mclk "None"}  {mrstn "None"}} {
   add_config_register ctl control $mclk $mrstn $config::control_size
   add_status_register sts status $mclk $mrstn $config::status_size
 }
-
 proc add_config_register {module_name memory_name mclk mrstn {num_ports 32} {intercon_idx 0}} {
 
   set bd [current_bd_instance .]
@@ -116,10 +115,13 @@ proc add_status_register {module_name memory_name mclk mrstn {num_ports 32} {int
   set_property range  [get_memory_range $memory_name]  $memory_segment
   set_property offset [get_memory_offset $memory_name] $memory_segment
 
+  global isZynqMP
   # DNA (hidden ports)
-  cell pavel-demin:user:dna_reader:1.0 dna {} {
-    aclk /$mclk
-    aresetn /$mrstn
+  if {$isZynqMP == 0} {
+    cell pavel-demin:user:dna_reader:1.0 dna {} {
+      aclk /$mclk
+      aresetn /$mrstn
+    }
   }
 
   set left_ports $num_ports
@@ -150,8 +152,13 @@ proc add_status_register {module_name memory_name mclk mrstn {num_ports 32} {int
     incr concat_idx
   }
 
-  connect_pins concat_0/In0 [get_slice_pin dna/dna_data 31 0]
-  connect_pins concat_0/In1 [get_slice_pin dna/dna_data 56 32]
+  if {$isZynqMP == 0} {
+    connect_pins concat_0/In0 [get_slice_pin dna/dna_data 31 0]
+    connect_pins concat_0/In1 [get_slice_pin dna/dna_data 56 32]
+  } else {
+    connect_pins concat_0/In0 [get_constant_pin 4222 32]
+    connect_pins concat_0/In1 [get_constant_pin 78661 32]
+  }
 
   # Other ports
   for {set i $n_hidden_ports} {$i < $num_ports} {incr i} {
