@@ -3,20 +3,7 @@
 # - Device tree
 # - U-boot
 # - Linux kernel
-
--include $(OS_PATH)/board.mk
-ifneq ("$(wildcard $(BOARD_PATH)/board.mk)","")
--include $(BOARD_PATH)/board.mk
-endif
-ZYNQ_TYPE ?= zynq
-VIVADO_VER ?= $(VIVADO_VERSION)
-include $(OS_PATH)/$(ZYNQ_TYPE).mk
-
-
-PATCHES := $(BOARD_PATH)/patches
-PROC := ps7_cortexa9_0
-HSI := source $(VIVADO_PATH)/$(VIVADO_VER)/settings64.sh && hsi -nolog -nojournal -mode batch
-BOOTGEN := source $(VIVADO_PATH)/$(VIVADO_VER)/settings64.sh && bootgen
+include $(OS_PATH)/toolchain.mk
 
 BOARD := $(shell basename $(BOARD_PATH))
 
@@ -183,8 +170,8 @@ $(TMP_OS_PATH)/$(LINUX_IMAGE): $(LINUX_PATH) $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_defc
 	cp $</arch/$(ARCH)/boot/$(LINUX_IMAGE) $@
 	@echo [$@] OK
 
-
-
+$(TMP_PROJECT_PATH)/overlay.dtb: $(TMP_OS_PATH)/overlay.dtb
+	cp $(TMP_OS_PATH)/overlay.dtb  $(TMP_PROJECT_PATH)/overlay.dtb
 
 $(TMP_OS_PATH)/overlay.dtb: $(TMP_OS_PATH)/overlay/system-top.dts
 	sed -i 's/.bin/$(NAME).bit.bin/g' $(TMP_OS_PATH)/overlay/pl.dtsi
