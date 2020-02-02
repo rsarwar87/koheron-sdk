@@ -49,7 +49,7 @@ OBJ := $(SERVER_OBJ) $(INTERFACE_DRIVERS_OBJ) $(DRIVERS_OBJ) $(CONTEXT_OBJS)
 DEP := $(subst .o,.d,$(OBJ))
 -include $(DEP)
 
-SERVER_CCXX := /usr/bin/arm-linux-gnueabihf-g++-5 -flto
+SERVER_CCXX = /usr/bin/$(GCC_ARCH)-g++-5 -flto
 
 SERVER_CCXXFLAGS := -Wall -Werror -Wextra -static-libstdc++
 SERVER_CCXXFLAGS += -Wpedantic -Wfloat-equal -Wunused-macros -Wcast-qual -Wuseless-cast
@@ -60,10 +60,12 @@ SERVER_CCXXFLAGS += -Wuninitialized  -Wmissing-declarations
 SERVER_CCXXFLAGS += -I$(TMP_SERVER_PATH) -I$(SERVER_PATH)/core -I$(SDK_PATH) -I. -I$(SERVER_PATH)/context -I$(SERVER_PATH)/drivers -I$(PROJECT_PATH)
 SERVER_CCXXFLAGS += -DKOHERON_VERSION=$(KOHERON_VERSION).$(shell git rev-parse --short HEAD)
 SERVER_CCXXFLAGS += -MMD -MP -O3
-# Arch flags obtain by running on the Zynq:
-# gcc -march=native -Q --help=target
-SERVER_CCXXFLAGS += -march=armv7-a -mcpu=cortex-a9 -mfpu=vfpv3-d16 -mvectorize-with-neon-quad -mfloat-abi=hard
+SERVER_CCXXFLAGS += -MMD -MP -O3 $(GCC_FLAGS)
 SERVER_CCXXFLAGS += -std=c++14 -pthread
+
+PHONY: gcc_flags
+gcc_flags:
+	@echo $(GCC_FLAGS)
 
 $(TMP_SERVER_PATH)/%.o: $(SERVER_PATH)/context/%.cpp
 	$(SERVER_CCXX) -c $(SERVER_CCXXFLAGS) -o $@ $<
