@@ -17,9 +17,6 @@ UBOOT_TAR := $(TMP)/u-boot-xlnx-$(UBOOT_TAG).tar.gz
 LINUX_TAR := $(TMP)/linux-xlnx-$(LINUX_TAG).tar.gz
 DTREE_TAR := $(TMP)/device-tree-xlnx-$(DTREE_TAG).tar.gz
 
-LINUX_CFLAGS := "-O2 -march=armv7-a -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=hard"
-UBOOT_CFLAGS := "-O2 -march=armv7-a -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=hard"
-
 TMP_OS_VERSION_FILE := $(TMP_OS_PATH)/version.json
 
 $(TMP_OS_VERSION_FILE): $(KOHERON_VERSION_FILE)
@@ -31,7 +28,7 @@ DTREE_SWITCH = $(TMP_OS_PATH)/devicetree_$(DTREE_LOC)
 endif
 
 .PHONY: os
-os: $(INSTRUMENT_ZIP) www api $(TMP_OS_PATH)/boot.bin $(TMP_OS_PATH)/$(LINUX_IMAGE) $(DTREE_SWITCH) $(TMP_OS_PATH)/devicetree.dtb $(TMP_OS_VERSION_FILE)
+os: $(INSTRUMENT_ZIP) www api $(TMP_OS_PATH)/boot.bin $(TMP_OS_PATH)/$(LINUX_IMAGE) $(DTREE_SWITCH)  $(TMP_OS_VERSION_FILE)
 
 # Build image (run as root)
 .PHONY: image
