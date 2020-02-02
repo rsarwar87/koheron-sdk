@@ -13,7 +13,7 @@ TMP ?= tmp
 
 KOHERON_VERSION_FILE := $(SDK_PATH)/version
 KOHERON_VERSION := $(shell cat $(KOHERON_VERSION_FILE))
-VIVADO_VERSION := 2019.2
+VIVADO_VERSION := 2019.1
 VIVADO_PATH := /opt/Xilinx/Vivado
 PYTHON := python
 
@@ -143,6 +143,7 @@ setup: setup_fpga setup_server setup_web setup_os
 .PHONY: setup_base
 setup_base:
 	sudo apt-get install -y g++-5-arm-linux-gnueabihf
+	sudo apt install -y g++-aarch64-linux-gnu
 	# On Ubuntu 18.04 you may have to link:	
 	# sudo ln -s /usr/bin/arm-linux-gnueabihf-gcc-5 /usr/bin/arm-linux-gnueabihf-gcc
 	# sudo ln -s /usr/bin/arm-linux-gnueabihf-g++-5 /usr/bin/arm-linux-gnueabihf-g++	
@@ -162,7 +163,7 @@ setup_server: setup_base
 setup_web: setup_base
 	sudo apt-get install -y nodejs
 	sudo apt-get install -y node-typescript
-	# sudo apt-get install -y npm # npm installed with nodejs
+	sudo apt-get install -y npm # npm installed with nodejs
 	#sudo rm -f /usr/bin/node && sudo ln -s /usr/bin/nodejs /usr/bin/node
 	npm install typescript
 	npm install @types/jquery@2.0.46 @types/jquery-mousewheel@3.1.5 websocket @types/node
