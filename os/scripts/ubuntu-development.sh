@@ -5,8 +5,22 @@ os_path=$2
 tmp_os_path=$3
 name=$4
 os_version_file=$5
+zynq_type=$6
 image=$tmp_project_path/${name}-development.img
 size=1024
+
+ubuntu_version=18.04.1
+if [ "${zynq_type}" = "zynqmp" ]; then
+    echo "Building Ubuntu ${ubuntu_version} rootfs for Zynq-MPSoC..."
+    root_tar=ubuntu-base-${ubuntu_version}-base-arm64.tar.gz
+    linux_image=Image
+    qemu_path=/usr/bin/qemu-aarch64-static
+else
+    echo "Building Ubuntu ${ubuntu_version} rootfs for Zynq-7000..."
+    root_tar=ubuntu-base-${ubuntu_version}-base-armhf.tar.gz
+    linux_image=uImage
+    qemu_path=/usr/bin/qemu-arm-static
+fi
 
 dd if=/dev/zero of=$image bs=1M count=${size}
 
@@ -17,8 +31,6 @@ losetup ${device} ${image}
 boot_dir=`mktemp -d /tmp/BOOT.XXXXXXXXXX`
 root_dir=`mktemp -d /tmp/ROOT.XXXXXXXXXX`
 
-ubuntu_version=16.04.3
-root_tar=ubuntu-base-${ubuntu_version}-base-armhf.tar.gz
 root_url=http://cdimage.ubuntu.com/ubuntu-base/releases/${ubuntu_version}/release/$root_tar
 
 passwd=changeme
@@ -27,8 +39,8 @@ timezone=Europe/Paris
 # Create partitions
 
 parted -s $device mklabel msdos
-parted -s $device mkpart primary fat16 4MB 16MB
-parted -s $device mkpart primary ext4 16MB 100%
+parted -s $device mkpart primary fat16 4MB 512MB
+parted -s $device mkpart primary ext4 512MB 100%
 
 boot_dev=/dev/`lsblk -ln -o NAME -x NAME $device | sed '2!d'`
 root_dev=/dev/`lsblk -ln -o NAME -x NAME $device | sed '3!d'`
@@ -45,7 +57,7 @@ mount $root_dev $root_dir
 
 # Copy files to the boot file system
 
-cp $tmp_os_path/boot.bin $tmp_os_path/devicetree.dtb $tmp_os_path/uImage $os_path/uEnv.txt $boot_dir
+#cp $tmp_os_path/boot.bin $tmp_os_path/devicetree.dtb $tmp_os_path/$linux_image $os_path/uEnv.txt $boot_dir
 
 # Copy Ubuntu Core to the root file system
 
@@ -56,7 +68,8 @@ tar -zxf tmp/$root_tar --directory=$root_dir
 # Add missing configuration files and packages
 
 cp /etc/resolv.conf $root_dir/etc/
-cp /usr/bin/qemu-arm-static $root_dir/usr/bin/
+#cp /usr/bin/qemu-arm-static $root_dir/usr/bin/
+cp $qemu_path $root_dir/usr/bin/
 
 # Add Web app
 mkdir $root_dir/usr/local/www
@@ -104,7 +117,7 @@ cat <<- EOF_CAT > etc/fstab
 # /etc/fstab: static file system information.
 # <file system> <mount point>   <type>  <options>           <dump>  <pass>
 /dev/mmcblk0p2  /               ext4    rw,noatime          0       1
-/dev/mmcblk0p1  /boot           vfat    ro,noatime          0       2
+/dev/mmcblk0p1  /boot           vfat    rw,noatime          0       2
 tmpfs           /tmp            tmpfs   defaults,noatime    0       0
 tmpfs           /var/log        tmpfs   size=1M,noatime     0       0
 EOF_CAT
@@ -121,31 +134,33 @@ cat <<- EOF_CAT >> etc/hosts
 127.0.1.1    koheron
 EOF_CAT
 
-apt-get -y install locales
+apt -y install locales
 
 locale-gen en_US.UTF-8
 update-locale LANG=en_US.UTF-8
 
 sed -i '/^# deb .* universe$/s/^# //' etc/apt/sources.list
 
-apt-get update
-apt-get -y upgrade
+apt update
+apt -y upgrade
 
 echo $timezone > etc/timezone
 dpkg-reconfigure --frontend=noninteractive tzdata
 
-apt-get -y install openssh-server ntp usbutils psmisc lsof \
-  parted curl less vim iw ntfs-3g \
-  bash-completion unzip
+DEBIAN_FRONTEND=noninteractive apt install -yq ntp
+apt install -y openssh-server
+apt install -y usbutils psmisc lsof
+apt install -y parted curl less vim iw ntfs-3g
+apt install -y bash-completion unzip
 
-apt-get install -y udev net-tools netbase ifupdown network-manager lsb-base
-apt-get install -y ntpdate sudo rsync
-apt-get install -y kmod
+apt install -y udev net-tools netbase ifupdown network-manager lsb-base
+apt install -y ntpdate sudo rsync
+apt install -y kmod
 
-apt-get install -y nginx
-apt-get install -y build-essential python-dev
-apt-get install -y python-numpy
-apt-get install -y python-pip python-setuptools python-all-dev python-wheel
+apt install -y nginx
+apt install -y build-essential python-dev
+apt install -y python-numpy
+apt install -y python-pip python-setuptools python-all-dev python-wheel
 
 pip install --upgrade pip==9.0.3
 pip install flask
@@ -156,7 +171,7 @@ systemctl enable unzip-default-instrument
 systemctl enable koheron-server
 systemctl enable nginx
 
-sed -i 's/^PermitRootLogin.*/PermitRootLogin yes/' etc/ssh/sshd_config
+sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 touch etc/udev/rules.d/75-persistent-net-generator.rules
 
@@ -179,9 +194,8 @@ iface eth0 inet dhcp
   post-up ntpdate -u ntp.u-psud.fr
 EOF_CAT
 
-apt-get clean
+apt clean
 echo root:$passwd | chpasswd
-service ntp stop
 history -c
 
 EOF_CHROOT
@@ -192,8 +206,8 @@ cp $os_path/config/nginx.conf $root_dir/etc/nginx/nginx.conf
 cp $os_path/config/nginx-server.conf $root_dir/etc/nginx/sites-enabled/nginx-server.conf
 cp $os_path/systemd/nginx.service $root_dir/etc/systemd/system/nginx.service
 
-rm $root_dir/etc/resolv.conf
-rm $root_dir/usr/bin/qemu-arm-static
+#rm $root_dir/etc/resolv.conf
+rm $root_dir/usr/bin/qemu-a*
 
 # Unmount file systems
 
