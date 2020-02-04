@@ -22,8 +22,8 @@ set_property PACKAGE_PIN W3 [get_ports FMC_MGT_TX_N[0]]
 
 set_property PACKAGE_PIN AC3 [get_ports FMC_HB_N[0]] # CC
 set_property PACKAGE_PIN AC4 [get_ports FMC_HB_P[0]] # CC 
-set_property PACKAGE_PIN AB1 [get_ports FMC_HB_N[1]] # inverted
-set_property PACKAGE_PIN AC1 [get_ports FMC_HB_P[1]]  # inverted
+set_property PACKAGE_PIN AC1 [get_ports FMC_HB_N[1]] 
+set_property PACKAGE_PIN AB1 [get_ports FMC_HB_P[1]] 
 set_property PACKAGE_PIN AB2 [get_ports FMC_HB_N[2]] # inverted
 set_property PACKAGE_PIN AC2 [get_ports FMC_HB_P[2]] # inverted
 set_property PACKAGE_PIN AF1 [get_ports FMC_HB_N[3]] # inverted
