@@ -197,8 +197,5 @@ set_property PACKAGE_PIN T1   [get_ports {IO_B66_L6_AD6_T1_P}]
 # -------------------------------------------------------------------------------------------------
 
 
-set_property PACKAGE_PIN D14  [get_ports {OSC_N}]
-set_property PACKAGE_PIN D15  [get_ports {OSC_P}]
-
 
 
