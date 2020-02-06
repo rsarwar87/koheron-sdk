@@ -8,12 +8,12 @@ SHELL := bash
 CONFIG ?= examples/red-pitaya/led-blinker/config.yml
 SDK_PATH ?= .
 MODE ?= development
-HOST ?= 192.168.1.89
+HOST ?= 192.168.1.7
 TMP ?= tmp
 
 KOHERON_VERSION_FILE := $(SDK_PATH)/version
 KOHERON_VERSION := $(shell cat $(KOHERON_VERSION_FILE))
-VIVADO_VERSION := 2019.2
+VIVADO_VERSION := 2019.1
 VIVADO_PATH := /opt/Xilinx/Vivado
 PYTHON := python
 
