@@ -14,9 +14,7 @@ XDEV=/sys/bus/platform/drivers/xdevcfg/f8007000.devcfg/prog_done
 FMAN=/sys/class/fpga_manager/fpga0/firmware
 FFULL=/configfs/device-tree/overlays/full/
 if [ -f "$XDEV" ]; then
-    echo "$XDEV exist"
-    /bin/cat ${LIVE_DIRNAME}/${NAME}.bit > /dev/xdevcfg
-    /bin/cat /sys/bus/platform/drivers/xdevcfg/f8007000.devcfg/prog_done
+    echo "Handled by koheron-server"
 elif [ -f "$FMAN" ]; then
     echo "$FMAN exist"
     mkdir -p /config
