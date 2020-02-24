@@ -62,10 +62,9 @@ cell xilinx.com:ip:axi_dma:7.1 axi_dma_0 {
   c_s2mm_burst_size 16
   c_m_axi_s2mm_data_width 128
   c_m_axi_mm2s_data_width 128
-  c_m_axis_mm2s_tdata_width 64
+  c_m_axis_mm2s_tdata_width 128
   c_mm2s_burst_size 16
   c_sg_include_stscntrl_strm {0} 
-  c_addr_width {32}
 } {
   S_AXI_LITE axi_mem_intercon_0/M[add_master_interface]_AXI
   s_axi_lite_aclk ps_0/pl_clk0
@@ -105,7 +104,7 @@ set_property range [get_memory_range ram_s2mm] [get_bd_addr_segs {axi_dma_0/Data
 set_property offset [get_memory_offset ram_s2mm] [get_bd_addr_segs {axi_dma_0/Data_S2MM/SEG_ps_0_HP1_DDR_LOW}]
 
 
-delete_bd_objs [get_bd_addr_segs axi_dma_0/Data_SG/SEG_ps_0_LPD_DDRi_LOW] \
+delete_bd_objs [get_bd_addr_segs axi_dma_0/Data_SG/SEG_ps_0_LPD_DDR_LOW] \
         [get_bd_addr_segs axi_dma_0/Data_SG/SEG_ps_0_LPD_PCIE_LOW] \
         [get_bd_addr_segs axi_dma_0/Data_SG/SEG_ps_0_LPD_QSPI] \
         [get_bd_addr_segs axi_dma_0/Data_MM2S/SEG_ps_0_HP0_PCIE_LOW] \

@@ -3,9 +3,11 @@
 import pdb
 import os
 import time
+from random import random
 from koheron import command, connect
 import matplotlib.pyplot as plt
 import numpy as np
+import pdb
 
 class AdcDacDma(object):
     def __init__(self, client):
@@ -42,6 +44,9 @@ class AdcDacDma(object):
         self.set_dac_data(dac_data[::2] + 65536 * dac_data[1::2])
 
     @command()
+    def log_axi_widths(self):
+        pass
+    @command()
     def start_dma(self):
         pass
 
@@ -59,13 +64,12 @@ class AdcDacDma(object):
         self.adc[1::2] = (np.int32(data >> 16) - 32768) % 65536 - 32768
 
 if __name__=="__main__":
-    host = os.getenv('HOST','10.211.3.133')
+    host = os.getenv('HOST','10.211.3.31')
     client = connect(host, name='trenz_teb080x_te803_dma_example')
     driver = AdcDacDma(client)
-
     print ("Printing DNA: {}".format(driver.get_forty_two()))
 
-    fs = 250e6
+    fs = 250e6 * random()
     fmin = 1e3 # Hz
     fmax = 1e6 # Hz
 
@@ -82,6 +86,7 @@ if __name__=="__main__":
 
     print("Get ADC data ({} points)".format(driver.n))
     driver.start_dma()
+    time.sleep(1)
     driver.get_adc()
     driver.stop_dma()
 
@@ -92,3 +97,4 @@ if __name__=="__main__":
     plt.xlabel('Time (us)')
     plt.ylabel('ADC Raw data')
     plt.show()
+

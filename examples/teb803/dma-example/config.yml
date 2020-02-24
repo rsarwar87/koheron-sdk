@@ -17,6 +17,9 @@ memory:
   - name: xadc
     offset: '0xA4003000'
     range: 64K
+  - name: ocm_backup
+    offset: '0x6FFD0000'
+    range: 196K
   - name: ram_mm2s
     offset: '0x60000000'
     range: 256M
@@ -27,14 +30,23 @@ memory:
     offset: '0xA4010000'
     range: 64K
   - name: ocm_mm2s
-    offset: '0xFFFF0000'
-    range: 32K
-  - name: ocm_s2mm
-    offset: '0xFFFF8000'
-    range: 32K
-  - name: sclr
-    offset: '0xF8000000'
+    offset: '0xFFFC0000'
     range: 64K
+  - name: ocm_s2mm
+    offset: '0xFFFC8000'
+    range: 64K
+  - name: axi_m_hpm_fpd
+    offset: '0xFD615000'
+    range: 4K
+  - name: axi_s_lpd
+    offset: '0xFF9B0000'
+    range: 4K
+  - name: axi_s_hp0
+    offset: '0xFD380000'
+    range: 4K
+  - name: axi_s_hp1
+    offset: '0xFD390000'
+    range: 4K
 
 control_registers:
   - led
