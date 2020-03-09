@@ -173,7 +173,7 @@ $(TMP_PROJECT_PATH)/overlay.dtb: $(TMP_OS_PATH)/overlay.dtb
 $(TMP_OS_PATH)/overlay.dtb: $(TMP_OS_PATH)/overlay/system-top.dts
 	sed -i 's/.bin/$(NAME).bit.bin/g' $(TMP_OS_PATH)/overlay/pl.dtsi
 	$(OS_PATH)/dtc-1.5.0/dtc -O dtb -o $@ \
-	  -i $(TMP_OS_PATH)/overlay -b 0 $(TMP_OS_PATH)/overlay/pl.dtsi
+	  -i $(TMP_OS_PATH)/overlay -b 0 -@ $(TMP_OS_PATH)/overlay/pl.dtsi
 	@echo [$@] OK
 
 $(TMP_OS_PATH)/devicetree.dtb: $(TMP_OS_PATH)/devicetree/system-top.dts

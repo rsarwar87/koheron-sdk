@@ -86,7 +86,7 @@ if __name__=="__main__":
 
     print("Get ADC data ({} points)".format(driver.n))
     driver.start_dma()
-    time.sleep(1)
+    time.sleep(2)
     driver.get_adc()
     driver.stop_dma()
 

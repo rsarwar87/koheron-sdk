@@ -80,6 +80,8 @@ class AdcDacDma
           }
           ocm_backup.write<0>(0x123456);
         }
+          for (uint32_t i = 0; i < 64*1024/4; i++) 
+            ocm_mm2s.write_reg(4*i+0x4, 0);
 
     }
     void restore_ocma() {
@@ -235,6 +237,11 @@ class AdcDacDma
     void log_dma() {
 
         ctx.log<INFO>("MM2S LOG \n");
+    ctx.log<INFO>("DMAHalted = %d \n",
+                  dma.read_bit<Dma_regs::mm2s_dmasr, 0>());
+    ctx.log<INFO>("DMAIdle = %d \n", dma.read_bit<Dma_regs::mm2s_dmasr, 1>());
+    ctx.log<INFO>("DMASDInc = %d \n",
+                  dma.read_bit<Dma_regs::mm2s_dmasr, 3>());
         ctx.log<INFO>("DMAIntErr = %d \n", dma.read_bit<Dma_regs::mm2s_dmasr, 4>());
         ctx.log<INFO>("DMASlvErr = %d \n", dma.read_bit<Dma_regs::mm2s_dmasr, 5>());
         ctx.log<INFO>("DMADecErr = %d \n", dma.read_bit<Dma_regs::mm2s_dmasr, 6>());
@@ -248,6 +255,11 @@ class AdcDacDma
         ctx.log<INFO>("\n");
 
         ctx.log<INFO>("S2MM LOG \n");
+    ctx.log<INFO>("DMAHalted = %d \n",
+                  dma.read_bit<Dma_regs::s2mm_dmasr, 0>());
+    ctx.log<INFO>("DMAIdle = %d \n", dma.read_bit<Dma_regs::s2mm_dmasr, 1>());
+    ctx.log<INFO>("DMASDInc = %d \n",
+                  dma.read_bit<Dma_regs::s2mm_dmasr, 3>());
         ctx.log<INFO>("DMAIntErr = %d \n", dma.read_bit<Dma_regs::s2mm_dmasr, 4>());
         ctx.log<INFO>("DMASlvErr = %d \n", dma.read_bit<Dma_regs::s2mm_dmasr, 5>());
         ctx.log<INFO>("DMADecErr = %d \n", dma.read_bit<Dma_regs::s2mm_dmasr, 6>());
@@ -259,6 +271,14 @@ class AdcDacDma
                 - mem::ocm_s2mm_addr)/0x40);
         ctx.log<INFO>("\n");
 
+        if (dma.read_bit<Dma_regs::mm2s_dmasr, 6>())
+        {
+          uint32_t id = (dma.read<Dma_regs::mm2s_curdesc>() - mem::ocm_mm2s_addr)/0x40;
+          ctx.log<INFO>("MM Descriptor (%u) LOG \n", id);
+          ctx.log<INFO>("MM Next Address: x0%08x \n", ocm_mm2s.read_reg(0x40 * id + Sg_regs::nxtdesc));
+          ctx.log<INFO>("MM buffer Address: x0%08x \n", ocm_mm2s.read_reg(0x40 * id + Sg_regs::buffer_address));
+        ctx.log<INFO>("MM_STATUS = %d \n", ocm_s2mm.read_reg(0x40 * id + Sg_regs::status));
+        }
         if (dma.read_bit<Dma_regs::s2mm_dmasr, 6>())
         {
           uint32_t id = (dma.read<Dma_regs::s2mm_curdesc>() - mem::ocm_s2mm_addr)/0x40;
