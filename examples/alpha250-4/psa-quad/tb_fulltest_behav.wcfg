@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_fulltest_time_synth.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="global_pkg" />
+            <top_module name="tb_fulltest" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="8786068233fs"></ZoomStartTime>
+      <ZoomEndTime time="9865986354fs"></ZoomEndTime>
+      <Cursor1Time time="9686000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="265"></NameColumnWidth>
+      <ValueColumnWidth column_width="232"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="12" />
+   <wvobject type="logic" fp_name="/tb_fulltest/CLK">
+      <obj_property name="ElementShortName">CLK</obj_property>
+      <obj_property name="ObjectShortName">CLK</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_fulltest/RST">
+      <obj_property name="ElementShortName">RST</obj_property>
+      <obj_property name="ObjectShortName">RST</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group519">
+      <obj_property name="label">fifo_dma</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/bus_adc_tready">
+         <obj_property name="ElementShortName">bus_adc_tready</obj_property>
+         <obj_property name="ObjectShortName">bus_adc_tready</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/\bus_adc_tready[0]_i_1_n_0 ">
+         <obj_property name="ElementShortName">\bus_adc_tready[0]_i_1_n_0 </obj_property>
+         <obj_property name="ObjectShortName">\bus_adc_tready[0]_i_1_n_0 </obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fulltest/psacore/\bus_fifo_tdata[0] ">
+         <obj_property name="ElementShortName">\bus_fifo_tdata[0] [63:0]</obj_property>
+         <obj_property name="ObjectShortName">\bus_fifo_tdata[0] [63:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/bus_fifo_tlast">
+         <obj_property name="ElementShortName">bus_fifo_tlast</obj_property>
+         <obj_property name="ObjectShortName">bus_fifo_tlast</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/bus_fifo_tvalid">
+         <obj_property name="ElementShortName">bus_fifo_tvalid</obj_property>
+         <obj_property name="ObjectShortName">bus_fifo_tvalid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fulltest/psacore/\psa_core_generator[0].d_fifo /s_axis_tdata">
+         <obj_property name="ElementShortName">s_axis_tdata[63:0]</obj_property>
+         <obj_property name="ObjectShortName">s_axis_tdata[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/\psa_core_generator[0].d_fifo /s_axis_tlast">
+         <obj_property name="ElementShortName">s_axis_tlast</obj_property>
+         <obj_property name="ObjectShortName">s_axis_tlast</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/\psa_core_generator[0].d_fifo /s_axis_tready">
+         <obj_property name="ElementShortName">s_axis_tready</obj_property>
+         <obj_property name="ObjectShortName">s_axis_tready</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/\psa_core_generator[0].d_fifo /s_axis_tvalid">
+         <obj_property name="ElementShortName">s_axis_tvalid</obj_property>
+         <obj_property name="ObjectShortName">s_axis_tvalid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fulltest/psacore/\psa_core_generator[0].d_fifo /m_axis_tdata">
+         <obj_property name="ElementShortName">m_axis_tdata[63:0]</obj_property>
+         <obj_property name="ObjectShortName">m_axis_tdata[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/\psa_core_generator[0].d_fifo /m_axis_tlast">
+         <obj_property name="ElementShortName">m_axis_tlast</obj_property>
+         <obj_property name="ObjectShortName">m_axis_tlast</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/\psa_core_generator[0].d_fifo /m_axis_tready">
+         <obj_property name="ElementShortName">m_axis_tready</obj_property>
+         <obj_property name="ObjectShortName">m_axis_tready</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/\psa_core_generator[0].d_fifo /m_axis_tvalid">
+         <obj_property name="ElementShortName">m_axis_tvalid</obj_property>
+         <obj_property name="ObjectShortName">m_axis_tvalid</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fulltest/psacore/m_adc_tdata">
+         <obj_property name="ElementShortName">m_adc_tdata[63:0]</obj_property>
+         <obj_property name="ObjectShortName">m_adc_tdata[63:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/m_adc_tlast">
+         <obj_property name="ElementShortName">m_adc_tlast</obj_property>
+         <obj_property name="ObjectShortName">m_adc_tlast</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/m_adc_tready">
+         <obj_property name="ElementShortName">m_adc_tready</obj_property>
+         <obj_property name="ObjectShortName">m_adc_tready</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/m_adc_tvalid">
+         <obj_property name="ElementShortName">m_adc_tvalid</obj_property>
+         <obj_property name="ObjectShortName">m_adc_tvalid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_fulltest/psacore/dma_seeking">
+         <obj_property name="ElementShortName">dma_seeking</obj_property>
+         <obj_property name="ObjectShortName">dma_seeking</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fulltest/psacore/nprog_empty">
+         <obj_property name="ElementShortName">nprog_empty[7:0]</obj_property>
+         <obj_property name="ObjectShortName">nprog_empty[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_fulltest/psacore/dma_idx">
+         <obj_property name="ElementShortName">dma_idx[2:0]</obj_property>
+         <obj_property name="ObjectShortName">dma_idx[2:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group173">
+      <obj_property name="label">fifo_psa</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_fulltest/ADC0_IN">
+      <obj_property name="ElementShortName">ADC0_IN[15:0]</obj_property>
+      <obj_property name="ObjectShortName">ADC0_IN[15:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+      <obj_property name="CellHeight">100</obj_property>
+      <obj_property name="AnalogYRangeMin">7903</obj_property>
+      <obj_property name="AnalogYRRangeMax">9531</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_fulltest/TIMEOUT">
+      <obj_property name="ElementShortName">TIMEOUT[31:0]</obj_property>
+      <obj_property name="ObjectShortName">TIMEOUT[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group218">
+      <obj_property name="label">accumulator</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group300">
+      <obj_property name="label">trigger</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group318">
+      <obj_property name="label">mca</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group331">
+      <obj_property name="label">timestamp</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group342">
+      <obj_property name="label">event</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group358">
+      <obj_property name="label">datamover</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+</wave_config>
