@@ -32,6 +32,11 @@ class Drv8825
       return ret; 
     }
     template<uint32_t offset>
+    void disable_backlash()
+    {
+      set_backlash<offset>(0,0);
+    }
+    template<uint32_t offset>
     void disable_tracking()
     {
       ctl.write<reg::trackctrl0 + offset*0x4>(0);
