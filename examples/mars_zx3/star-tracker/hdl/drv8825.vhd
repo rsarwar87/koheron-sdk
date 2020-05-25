@@ -21,7 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
@@ -51,6 +51,8 @@ entity drv8825 is
            ctrl_cmdduration : in STD_LOGIC_VECTOR (31 downto 0);    -- speed of command
            ctrl_backlash_tick : in STD_LOGIC_VECTOR (31 downto 0);  -- speed of backlash
            ctrl_backlash_duration : in STD_LOGIC_VECTOR (31 downto 0); -- duration of backlash
+           ctrl_counter_load : in STD_LOGIC_VECTOR (31 downto 0); -- duration of backlash
+           ctrl_counter_max : in STD_LOGIC_VECTOR (31 downto 0); -- duration of backlash
            ctrl_trackctrl : in STD_LOGIC_VECTOR (31 downto 0)    -- speed, start, direction
           );
 end drv8825;
@@ -78,7 +80,7 @@ architecture Behavioral of drv8825 is
     signal state_backlash : state_machine_backlash := seek;
     
     signal stepping_clk, cnt_enable : std_logic := '0';
-    signal current_stepper_counter : std_logic_vector(30 downto 0) := (others => '0');
+    signal current_stepper_counter : std_logic_vector(29 downto 0) := (others => '0');
     
     TYPE state_machine_motor IS (idle, tracking, command, park);  -- Define the states
     signal state_motor : state_machine_motor := idle;
@@ -94,8 +96,8 @@ begin
     
     ctrl_status(3) <= drv8825_fault_n;
     ctrl_status(31 downto 4) <= (others => '0');
-    ctrl_step_count(31) <= '0';
-    ctrl_step_count(30 downto 0) <= current_stepper_counter;
+    ctrl_step_count(31 downto 30) <= "00";
+    ctrl_step_count(29 downto 0) <= current_stepper_counter;
     trigger_changes : process (clk_50, rstn_50)
     begin
         if (rstn_50 = '0') then
@@ -227,6 +229,7 @@ begin
                     if (ctr_backlash_cnt = ctr_backlash_duration_buf) then
                         state_backlash <= done;
                     end if;
+                
                 when done =>
                     state_backlash <= seek;
                     ctr_backlash_cnt <= 0;
@@ -245,7 +248,7 @@ begin
 
 command_block: block
     signal ctr_cmdtick_in : integer range 0 to 2**31-1 := 1;
-    signal ctr_cmdduration_in : std_logic_vector(30 downto 0) := (others => '0');
+    signal ctr_cmdduration_in : std_logic_vector(29 downto 0) := (others => '0');
     signal ctr_cmd_direction_in  : std_logic := '0';
     signal ctr_cmd_in : std_logic := '0';
     signal ctr_cmdcancel_in : std_logic := '0';
@@ -262,11 +265,20 @@ command_block: block
     signal ctr_trackmode_in : std_logic_vector(2 downto 0) := "000";
     
     --signal stepper_counter_int : integer range 0 to 2**31-1 := 1;
-    signal target_counter_int : std_logic_vector(30 downto 0) := (others => '0');
+    signal target_counter_int : std_logic_vector(29 downto 0) := (others => '0');
     
     ATTRIBUTE MARK_DEBUG of ctr_cmd_in, ctr_cmdcancel_in, ctr_goto_in, ctr_park_in, ctr_cmdmode_in, ctr_cmdtick_in, ctr_cmdduration_in: SIGNAL IS "TRUE";
     ATTRIBUTE MARK_DEBUG of ctr_track_enabled_in, ctr_track_direction_in, ctr_tracktick_in, ctr_trackmode_in: SIGNAL IS "TRUE";
+    
+    
+    
 begin
+    
+    speed_control : process (clk_50, rstn_50) 
+    begin
+        if ()
+    
+    end process;
     
     issue_command: process (clk_50, rstn_50)
     begin
@@ -377,7 +389,6 @@ begin
             ctr_track_enabled <= ctr_track_enabled;
             ctr_track_direction <= ctr_track_direction;
             
-            
             ctr_backlash_tick_in<= ctr_backlash_tick_in;
             ctr_backlash_duration_in <= ctr_backlash_duration_in;
             ctr_backlash_duration_buf <= ctr_backlash_duration_buf;
@@ -392,7 +403,7 @@ begin
                 ctr_goto_in  <=  ctrl_cmdcontrol(1);
                 ctr_park_in <= ctrl_cmdcontrol(3);
                 ctr_cmdmode_in <= ctrl_cmdcontrol(6 downto 4);
-                ctr_cmdduration_in(30 downto 0) <= ctrl_cmdduration(30 downto 0);
+                ctr_cmdduration_in(29 downto 0) <= ctrl_cmdduration(29 downto 0);
                 
                 ctr_tracktick_in <= to_integer(unsigned(ctrl_trackctrl(31 downto 5)));
                 ctr_tracktick_buf <= ctr_tracktick_in;
@@ -408,7 +419,7 @@ begin
             if (state_backlash /= processing) then
                 ctr_backlash_tick_in <= to_integer(unsigned(ctrl_backlash_tick(31 downto 3)));
                 ctr_backlash_tick_buf <= ctr_backlash_tick_in;
-                ctr_backlash_duration_in <= to_integer(unsigned(ctrl_backlash_duration(30 downto 0)));
+                ctr_backlash_duration_in <= to_integer(unsigned(ctrl_backlash_duration(29 downto 0)));
                 ctr_backlash_duration_buf <= ctr_backlash_duration_in;
                 current_mode_back <= ctrl_backlash_tick(2 downto 0);
             end if;
@@ -421,20 +432,101 @@ end block command_block;
 --------------------------------------------------------------------------------------------
 -- step counter
 --------------------------------------------------------------------------------------------
-   cnt_enable <= '1' when ((state_motor /= idle) and (state_backlash /= processing)) else '0';
+stepper_count : block
+    signal counter_clk : std_logic := '0';
+    signal load_count  : std_logic := '0';
+    signal load_counter, load_counter_buf: std_logic_vector (29 downto 0) := (others => '0');
+    signal max_counter : std_logic_vector (30 downto 0) := (others => '1');
+    
+    TYPE load_counter_state IS (normal, buf0, buf3, buf1, buf2, buf4);  -- Define the states
+    signal state_counter : load_counter_state := normal;
+    
+begin        
+
+   loadcounter : process (clk_50, rstn_50)
+   begin
+    if (rstn_50 = '0') then
+        state_counter <= normal;
+        cnt_enable <= '0';
+        counter_clk <= '0';
+        
+        max_counter <= (others => '1');
+        load_count <= '0';
+        load_counter <= (others => '0');
+    elsif (rising_edge(clk_50)) then
+        state_counter <= state_counter;
+        cnt_enable <= '0';
+        counter_clk <= '0';
+        load_count <= '0';
+        load_counter <= load_counter;
+        max_counter <= max_counter;
+        case state_counter is
+            when normal =>
+                if ((state_motor /= idle) and (state_backlash /= processing)) then
+                    cnt_enable <= '1';
+                else
+                    cnt_enable <= '0';
+                end if;
+                counter_clk <= stepping_clk;
+                if (max_counter(30) = '0' and current_stepper_counter = max_counter(29 downto 0) and stepping_clk = '0') then
+                    state_counter <= buf0;
+                    load_counter <= (others => '0');
+                    load_counter(1) <= '1';
+                elsif (max_counter(30) = '0' and to_integer(unsigned(current_stepper_counter)) = 1073741823 and stepping_clk = '0') then
+                    state_counter <= buf0;
+                    load_counter <= max_counter(29 downto 0) - x"2";
+                elsif ((state_motor /= park) and (state_motor /= command) and stepping_clk = '0') then
+                    if (ctrl_counter_load(31) = '1' and load_counter_buf /= ctrl_counter_load(29 downto 0)) then
+                        state_counter <= buf0;
+                        load_counter_buf <= ctrl_counter_load(29 downto 0);
+                        load_counter <= ctrl_counter_load(29 downto 0);
+                    elsif (ctrl_counter_max(31) = '1') then
+                        max_counter(30 downto  0) <= ctrl_counter_load(30 downto 0) + '1';
+                    end if;
+                end if;
+             when buf0 =>
+                counter_clk <= not counter_clk;
+                state_counter <= buf1;
+                cnt_enable <= '1';
+                load_count <= '1';
+             when buf1 =>
+                counter_clk <= not counter_clk;
+                state_counter <= buf2;
+                cnt_enable <= '1';
+                load_count <= '1';
+             when buf2 =>
+                counter_clk <= not counter_clk;
+                state_counter <= buf3;
+                cnt_enable <= '1';
+                load_count <= '1';
+             when buf3 =>
+                counter_clk <= not counter_clk;
+                state_counter <= buf4;
+                cnt_enable <= '1';
+                load_count <= '1';
+             when buf4 =>
+                counter_clk <= not counter_clk;
+                state_counter <= normal;
+                cnt_enable <= '1';
+                load_count <= '1';
+        end case;
+    end if;
+   end process;
+
+   --cnt_enable <= '1' when ((state_motor /= idle) and (state_backlash /= processing)) else '0';
    stepping_counter: COUNTER_LOAD_MACRO
    generic map (
       COUNT_BY => X"000000000001", -- Count by value
       DEVICE => "7SERIES",         -- Target Device: "VIRTEX5", "7SERIES", "SPARTAN6" 
-      WIDTH_DATA => 31)            -- Counter output bus width, 1-48
+      WIDTH_DATA => 30)            -- Counter output bus width, 1-48
    port map (
       Q => current_stepper_counter,                 -- Counter ouput, width determined by WIDTH_DATA generic 
-      CLK => stepping_clk,             -- 1-bit clock input
+      CLK => counter_clk,             -- 1-bit clock input
       CE => cnt_enable,               -- 1-bit clock enable input
       DIRECTION => current_direction_buf(0), -- 1-bit up/down count direction input, high is count up
-      LOAD => '0',           -- 1-bit active high load input
-      LOAD_DATA => current_stepper_counter, -- Counter load data, width determined by WIDTH_DATA generic 
+      LOAD => load_count,           -- 1-bit active high load input
+      LOAD_DATA => load_counter, -- Counter load data, width determined by WIDTH_DATA generic 
       RST => '0'              -- 1-bit active high synchronous reset
    );
-
+end block stepper_count;
 end Behavioral;
