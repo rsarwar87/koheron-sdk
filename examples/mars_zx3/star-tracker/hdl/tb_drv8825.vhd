@@ -50,8 +50,11 @@ component drv8825 is
            ctrl_status : out STD_LOGIC_VECTOR (31 downto 0);
            ctrl_cmdcontrol : in STD_LOGIC_VECTOR (31 downto 0); -- steps, go, stop, direction
            ctrl_cmdtick : in STD_LOGIC_VECTOR (31 downto 0);    -- speed of command
+           ctrl_cmdduration : in std_logic_vector(31 downto 0);
            ctrl_backlash_tick : in STD_LOGIC_VECTOR (31 downto 0);  -- speed of backlash
            ctrl_backlash_duration : in STD_LOGIC_VECTOR (31 downto 0); -- duration of backlash
+           ctrl_counter_load : in STD_LOGIC_VECTOR (31 downto 0); -- duration of backlash
+           ctrl_counter_max : in STD_LOGIC_VECTOR (31 downto 0); -- duration of backlash
            ctrl_trackctrl : in STD_LOGIC_VECTOR (31 downto 0)    -- speed, start, direction
           );
 end component;
@@ -65,12 +68,14 @@ signal drv8825_rst_n            :  STD_LOGIC;
 signal drv8825_step             :  STD_LOGIC;
 signal drv8825_direction        :  STD_LOGIC;
 signal drv8825_fault_n          : STD_LOGIC;
-signal ctrl_step_count          :  STD_LOGIC_VECTOR (31 downto 0);
+signal ctrl_step_count, ctrl_cmdduration          :  STD_LOGIC_VECTOR (31 downto 0);
 signal ctrl_status              :  STD_LOGIC_VECTOR (31 downto 0);
 signal ctrl_cmdcontrol          : STD_LOGIC_VECTOR (31 downto 0); -- steps, go, stop, direction
 signal ctrl_cmdtick             : STD_LOGIC_VECTOR (31 downto 0);    -- speed of command
 signal ctrl_backlash_tick       : STD_LOGIC_VECTOR (31 downto 0);  -- speed of backlash
 signal ctrl_backlash_duration   : STD_LOGIC_VECTOR (31 downto 0); -- duration of backlash
+signal ctrl_counter_load        :  STD_LOGIC_VECTOR (31 downto 0); -- duration of backlash
+signal ctrl_counter_max         :  STD_LOGIC_VECTOR (31 downto 0); -- duration of backlash
 signal ctrl_trackctrl           : STD_LOGIC_VECTOR (31 downto 0);    -- speed, start, direction
 
 constant CLK_PERIOD : time := 20 ns;
@@ -88,36 +93,76 @@ begin
           ctrl_backlash_tick       <= (others => '0'); 
           ctrl_backlash_duration       <= (others => '0');
           ctrl_trackctrl       <= x"00000000"; 
-              
-          
+          ctrl_counter_load    <= x"00000000";
+          ctrl_counter_max     <= x"00000000";
+          ctrl_cmdduration     <= x"00000000";
           wait for CLK_PERIOD*150;
            rstn_50 <='1';                    --then apply reset for 2 clock cycles.
+          
           wait for CLK_PERIOD*1000;
           ctrl_trackctrl         <= x"0000FFFF";   --then apply reset for 2 clock cycles.
           ctrl_backlash_tick     <= x"00000FFF"; 
           ctrl_backlash_duration <= x"00000FFF";
+          ctrl_counter_load    <= x"8000FFFF";
+          ctrl_counter_max     <= x"800FFFFF";
+          ctrl_cmdduration     <= x"00000000";
+          wait for CLK_PERIOD*10000;
+          ctrl_counter_load    <= x"0000FFFF";
           wait for CLK_PERIOD*10000;
           ctrl_trackctrl       <= x"0000FFF1"; 
+          ctrl_counter_load    <= x"8000FFFF";
+          ctrl_cmdduration     <= x"00000000";
           wait for CLK_PERIOD*10000;
+          ctrl_counter_load    <= x"0000FFFF";
           ctrl_cmdtick <= x"000000FF";
           ctrl_cmdcontrol(0)       <= '1'; -- ctr_cmd_in
           ctrl_cmdcontrol(1)       <= '0'; -- ctr_goto_in
           ctrl_cmdcontrol(2)       <= '1'; -- ctr_cmd_direction_in
           ctrl_cmdcontrol(3)       <= '0'; -- ctr_cmd_park
           ctrl_cmdcontrol(6 downto 4) <= "000"; -- ctr_cmdmode_in
-          ctrl_cmdcontrol(10 downto 7) <= "1111"; -- ctr_cmdmode_in
+          ctrl_cmdcontrol(10 downto 7) <= "0000"; -- ctr_cmdmode_in
+          ctrl_cmdduration          <= x"0000000F";
           wait for CLK_PERIOD*10;
+          ctrl_counter_load    <= x"800FFFF0";
           ctrl_cmdcontrol(0)       <= '0';
           wait for CLK_PERIOD*50000;
+          ctrl_counter_load    <= x"0000FFFF";
           ctrl_cmdtick <= x"000000FF";
           ctrl_cmdcontrol(0)       <= '1'; -- ctr_cmd_in
           ctrl_cmdcontrol(1)       <= '1'; -- ctr_goto_in
           ctrl_cmdcontrol(2)       <= '1'; -- ctr_cmd_direction_in
           ctrl_cmdcontrol(3)       <= '0'; -- ctr_cmd_park
           ctrl_cmdcontrol(6 downto 4) <= "000"; -- ctr_cmdmode_in
-          ctrl_cmdcontrol(30 downto 7) <= (others=>'1'); -- ctr_cmdduration_in
+          ctrl_cmdcontrol(30 downto 7) <= (others=>'0'); -- ctr_cmdduration_in
+          ctrl_cmdduration          <= x"0000000F";
           wait for CLK_PERIOD*10000;         
+          ctrl_counter_max     <= x"8000000F";
+          ctrl_counter_load    <= x"80000000";
           ctrl_cmdcontrol(31)       <= '1';
+          wait for CLK_PERIOD*100000;          
+          ctrl_trackctrl       <= x"0000FFFF"; 
+          ctrl_counter_load    <= x"00000000";
+          wait for CLK_PERIOD*105000;
+          ctrl_trackctrl       <= x"00000000"; 
+          ctrl_counter_max     <= x"800FFFFF";
+          ctrl_counter_load    <= x"80000512";
+          wait for CLK_PERIOD*5000;
+          ctrl_counter_load    <= x"0000FFFF";
+          ctrl_cmdcontrol(0)       <= '0'; -- ctr_cmd_in
+          wait for CLK_PERIOD*10000;
+          ctrl_cmdtick <= x"000000FF"; -- spped / period
+          ctrl_cmdcontrol(0)       <= '1'; -- ctr_cmd_in
+          ctrl_cmdcontrol(1)       <= '0'; -- ctr_goto_in
+          ctrl_cmdcontrol(2)       <= '0'; -- ctr_cmd_direction_in
+          ctrl_cmdcontrol(3)       <= '0'; -- ctr_cmd_park
+          ctrl_cmdcontrol(6 downto 4) <= "111"; -- ctr_cmdmode_in
+          ctrl_cmdcontrol(7)       <= '1'; -- ctr_cmd_park
+          ctrl_cmdcontrol(30 downto 8) <= (others=>'0'); -- ctr_cmdduration_in
+          ctrl_cmdcontrol(31)      <= '0';
+          ctrl_cmdduration          <= x"0000FFFF";
+          wait for CLK_PERIOD*400000;
+          ctrl_cmdcontrol(31)      <= '1';
+          ctrl_cmdcontrol(30)      <= '0';
           wait for CLK_PERIOD*500000000;
     end process;
 
@@ -148,6 +193,9 @@ begin
       ctrl_cmdtick => ctrl_cmdtick,
       ctrl_backlash_tick => ctrl_backlash_tick,
       ctrl_backlash_duration => ctrl_backlash_duration,
+      ctrl_counter_load => ctrl_counter_load,
+      ctrl_counter_max => ctrl_counter_max,
+      ctrl_cmdduration => ctrl_cmdduration,
       ctrl_trackctrl => ctrl_trackctrl
     );
 
