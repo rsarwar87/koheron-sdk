@@ -287,11 +287,15 @@ command_block: block
     constant aceel_steps : integer := 7;
     signal divider : integer range 0 to 7 := aceel_steps;
     type array_30 is array (0 to 7) of std_logic_vector (29 downto 0);
-    type array_i30 is array (0 to 7) of integer range 0 to 2**31-1;
+    type array_i30 is array (0 to 7) of integer range 0 to 2**30-1;
+    type array_i32 is array (0 to 7) of integer range -2**30-1 to 2**30-1;
     signal decceleration_map, acceleration_map : array_30 := (others => (others => '0'));
+    signal decceleration_map_buf : array_i32 := (others => 0);
     signal speedmap_map : array_i30 := (others => 1100000);
     constant total_accel_count : integer := 12500;
     signal cuttoff_special : std_logic := '0';
+    
+    signal cutoff_signed : integer := 0;
 begin
     current_speed_buffer <= std_logic_vector(to_unsigned(issue_speed, current_speed_buffer'length));
     accel_control : process (clk_50, rstn_50)
@@ -309,6 +313,7 @@ begin
             done_acceleration <= '0';
             divider <= aceel_steps;
             speedmap_map <= (others => 100000);
+            decceleration_map_buf <= (others => 0);
         elsif (rising_edge(clk_50)) then
             current_direction_buf(3 downto 1) <= current_direction_buf(2 downto 0);
             current_speed_buf(1 to 3) <= current_speed_buf(0 to 2);
@@ -323,17 +328,8 @@ begin
             acceleration_map <= acceleration_map;
             speedmap_map <= speedmap_map;
             acceleration_map(0) <= init_count;
---            for I in 1 to 7 loop
---            if  ( max_counter(30) = '1' and (unsigned(acceleration_map(I)) > unsigned(max_counter(29 downto 0)))) then
---                if (state_motor = command and state_motor = park) then
---                    if issue_direction = '1' then
---                        acceleration_map(I) <= std_logic_vector(unsigned(acceleration_map(I)) - unsigned(max_counter(29 downto 0)));
---                    else
---                        acceleration_map(I) <=std_logic_vector(unsigned(max_counter(29 downto 0)) - unsigned(acceleration_map(I)));
---                    end if;
---                end if;
---            end if;
---            end loop;
+            decceleration_map_buf <= decceleration_map_buf;
+
             if (state_motor = park or state_motor = command) then  
                 if (use_acceleration = '1') then
                     --current_speed_buf(0) <= issue_speed;
@@ -346,25 +342,37 @@ begin
                         speedmap_map(I) <= to_integer(unsigned(current_scaled_buffer(31 downto 8-I)));
                         if (issue_direction = '1') then
                             if cuttoff_special = '0' then 
-                                decceleration_map(I) <= std_logic_vector(((unsigned(target_counter_int) - unsigned(acceleration_map(I)) - unsigned(cutoff_count) + unsigned(max_counter2)) mod unsigned(max_counter2)) );
+                                decceleration_map_buf(I) <= to_integer(unsigned(target_counter_int) - unsigned(acceleration_map(I)) - unsigned(cutoff_count));
                             else
-                                decceleration_map(I) <= std_logic_vector(((unsigned(target_counter_int) - unsigned(acceleration_map(I)) + unsigned(cutoff_count) + unsigned(max_counter2)) mod unsigned(max_counter2)) );
+                                decceleration_map_buf(I) <= to_integer(unsigned(target_counter_int) - unsigned(acceleration_map(I)) + unsigned(cutoff_count));
                             end if;
-                                
                         else
-                            if cuttoff_special = '1' then
-                            decceleration_map(I) <= std_logic_vector((unsigned(target_counter_int) + unsigned(acceleration_map(I)) + unsigned(cutoff_count) + unsigned(max_counter2)) mod unsigned(max_counter2) );
-                            else
-                            decceleration_map(I) <= std_logic_vector((unsigned(target_counter_int) + unsigned(acceleration_map(I)) + unsigned(cutoff_count) + unsigned(max_counter2)) mod unsigned(max_counter2) );
-                            end if;
+                            decceleration_map_buf(I) <= to_integer(unsigned(target_counter_int) + unsigned(acceleration_map(I)) + unsigned(cutoff_count));
+                        end if;
+                        if decceleration_map_buf(I) < 0 then
+                            decceleration_map(I) <= std_logic_vector(to_unsigned(decceleration_map_buf(I) + to_integer(unsigned(max_counter2)), 30));
+                        elsif decceleration_map_buf(I) >  to_integer(unsigned(max_counter2)) then
+                            decceleration_map(I) <= std_logic_vector(to_unsigned(decceleration_map_buf(I) - to_integer(unsigned(max_counter2)), 30));
+                        else
+                            decceleration_map(I) <= std_logic_vector(to_unsigned(decceleration_map_buf(I), 30));
                         end if;
                     end loop;
                     if (done_acceleration = '0' and acceleration_counter = 0) then
                         acceleration_counter <= total_accel_count;
                         if issue_direction = '1' then
-                           acceleration_map(divider) <= std_logic_vector((unsigned(current_stepper_counter) - unsigned(acceleration_map(0))) mod unsigned(max_counter2) ); -- current - init
+                           if (unsigned(current_stepper_counter) < unsigned(acceleration_map(0))) then
+                            acceleration_map(divider) <= std_logic_vector((unsigned(max_counter2) + unsigned(current_stepper_counter) - unsigned(acceleration_map(0))) ); -- current - init                                
+                           else
+                            acceleration_map(divider) <= std_logic_vector(unsigned(current_stepper_counter) - unsigned(acceleration_map(0))); -- current - init
+                           end if;
                         else
-                           acceleration_map(divider) <= std_logic_vector((unsigned(acceleration_map(0)) - unsigned(current_stepper_counter)) mod unsigned(max_counter2) );
+                           if unsigned(acceleration_map(0)) < unsigned(current_stepper_counter) then
+                            acceleration_map(divider) <= std_logic_vector(unsigned(acceleration_map(0)) - unsigned(current_stepper_counter) + unsigned(max_counter2));
+                           elsif unsigned(acceleration_map(0)) < unsigned(current_stepper_counter) then
+                            acceleration_map(divider) <= std_logic_vector(unsigned(acceleration_map(0)) - unsigned(current_stepper_counter) - unsigned(max_counter2));
+                           else
+                            acceleration_map(divider) <= std_logic_vector(unsigned(acceleration_map(0)) - unsigned(current_stepper_counter) );
+                           end if;
                         end if;
                         divider <= divider - 1;
                         if (divider = 1) then
@@ -390,6 +398,7 @@ begin
                 decceleration_map <= (others => (others => '0'));
                 acceleration_map <= (others => (others => '0'));
                 speedmap_map <= (others => 100000);
+                decceleration_map_buf <= (others => 0);
             end if;
             
         end if;
@@ -411,6 +420,7 @@ begin
             cutoff_count <= (others => '0');
             issue_stop <= '0';
             cuttoff_special <= '0';
+            cutoff_signed <= 0;
         elsif (rising_edge(clk_50)) then
             --stepper_counter_int <= to_integer(unsigned(current_stepper_counter));
             target_counter_int <= target_counter_int;
@@ -423,8 +433,15 @@ begin
             init_count <= init_count;
             issue_speed <= issue_speed;
             issue_stop <= '0';
-            cutoff_count <= cutoff_count;
+            if (cutoff_signed < 0) then
+                cutoff_count <= std_logic_vector(to_unsigned(cutoff_signed + to_integer(unsigned(max_counter2)), cutoff_count'length));
+            elsif (cutoff_signed > to_integer(unsigned(max_counter2))) then
+                cutoff_count <= std_logic_vector(to_unsigned(cutoff_signed - to_integer(unsigned(max_counter2)), cutoff_count'length));
+            else
+                cutoff_count <= std_logic_vector(to_unsigned(cutoff_signed, cutoff_count'length));
+            end if;
             cuttoff_special <= cuttoff_special;
+            
 --            if  ( max_counter(30) = '0' and (unsigned(target_counter_int) > unsigned(max_counter(29 downto 0)))) then
 --                if (state_motor_buf = command and state_motor_buf = park) then
 --                    if issue_direction = '1' then
@@ -445,18 +462,18 @@ begin
                                 if (issue_direction = '1') then
                                 --cutoff_count <=  std_logic_vector( (unsigned(current_stepper_counter) - unsigned(target_counter_int) + unsigned(acceleration_map(1)) + unsigned(max_counter2) ) mod unsigned(max_counter2));
                                 if unsigned(target_counter_int) > unsigned(current_stepper_counter) then
-                                    cutoff_count <=  std_logic_vector( unsigned(target_counter_int) - unsigned(current_stepper_counter) - unsigned(acceleration_map(1)));
+                                    cutoff_signed <=  to_integer( unsigned(target_counter_int) - unsigned(current_stepper_counter) - unsigned(acceleration_map(1)));
                                     cuttoff_special <= '0';
                                 else
-                                    cutoff_count <=  std_logic_vector( (unsigned(current_stepper_counter) - unsigned(target_counter_int) + unsigned(acceleration_map(1)) + unsigned(max_counter2) ) mod unsigned(max_counter2));
+                                    cutoff_signed <=  to_integer( (unsigned(current_stepper_counter) - unsigned(target_counter_int) + unsigned(acceleration_map(1)) ) );
                                     cuttoff_special <= '1';
                                 end if;
                                 else
                                 if unsigned(target_counter_int) > unsigned(current_stepper_counter) then
-                                    cutoff_count <=  std_logic_vector( unsigned(max_counter2) - unsigned(target_counter_int) + unsigned(current_stepper_counter) - unsigned(acceleration_map(1)));
+                                    cutoff_signed <=  to_integer( unsigned(max_counter2) - unsigned(target_counter_int) + unsigned(current_stepper_counter) - unsigned(acceleration_map(1)));
                                     cuttoff_special <= '1';
                                 else
-                                    cutoff_count <=  std_logic_vector( (unsigned(current_stepper_counter) - unsigned(target_counter_int) - unsigned(acceleration_map(1)) + unsigned(max_counter2)) mod unsigned(max_counter2));
+                                    cutoff_signed <=  to_integer( (unsigned(current_stepper_counter) - unsigned(target_counter_int) - unsigned(acceleration_map(1)) ) );
                                     cuttoff_special <= '0';
                                 end if;
                                 end if;
@@ -475,10 +492,23 @@ begin
                             state_motor_buf <= idle;
                         else
                             if (issue_stop = '0') then
+                                if (issue_direction = '1') then
+                                --cutoff_count <=  std_logic_vector( (unsigned(current_stepper_counter) - unsigned(target_counter_int) + unsigned(acceleration_map(1)) + unsigned(max_counter2) ) mod unsigned(max_counter2));
                                 if unsigned(target_counter_int) > unsigned(current_stepper_counter) then
-                                    cutoff_count <=  std_logic_vector( unsigned(target_counter_int) - unsigned(current_stepper_counter) - unsigned(acceleration_map(1)));
+                                    cutoff_signed <=  to_integer( unsigned(target_counter_int) - unsigned(current_stepper_counter) - unsigned(acceleration_map(1)));
+                                    cuttoff_special <= '0';
                                 else
-                                    cutoff_count <=  std_logic_vector( unsigned(current_stepper_counter) - unsigned(target_counter_int) - unsigned(acceleration_map(1)));
+                                    cutoff_signed <=  to_integer( (unsigned(current_stepper_counter) - unsigned(target_counter_int) + unsigned(acceleration_map(1)) ) );
+                                    cuttoff_special <= '1';
+                                end if;
+                                else
+                                if unsigned(target_counter_int) > unsigned(current_stepper_counter) then
+                                    cutoff_signed <=  to_integer( unsigned(max_counter2) - unsigned(target_counter_int) + unsigned(current_stepper_counter) - unsigned(acceleration_map(1)));
+                                    cuttoff_special <= '1';
+                                else
+                                    cutoff_signed <=  to_integer( (unsigned(current_stepper_counter) - unsigned(target_counter_int) - unsigned(acceleration_map(1)) ) );
+                                    cuttoff_special <= '0';
+                                end if;
                                 end if;
                             end if;
                             issue_stop <= '1';
@@ -498,9 +528,17 @@ begin
                            target_counter_int <= ctr_cmdduration_in;
                         else
                             if (ctr_cmd_direction_in = '1') then
-                                target_counter_int <= std_logic_vector( (unsigned(current_stepper_counter) + unsigned(ctr_cmdduration_in)) mod unsigned(max_counter2)  );
+                                if (unsigned(current_stepper_counter) + unsigned(ctr_cmdduration_in) > unsigned(max_counter2)) then
+                                    target_counter_int <= std_logic_vector( (unsigned(current_stepper_counter) + unsigned(ctr_cmdduration_in)) - unsigned(max_counter2)  );
+                                else
+                                    target_counter_int <= std_logic_vector( (unsigned(current_stepper_counter) + unsigned(ctr_cmdduration_in)) );
+                                end if;
                             else
-                                target_counter_int <= std_logic_vector( (unsigned(current_stepper_counter) - unsigned(ctr_cmdduration_in)) mod unsigned(max_counter2) );
+                                if (unsigned(current_stepper_counter)  > unsigned(ctr_cmdduration_in)) then
+                                    target_counter_int <= std_logic_vector( (unsigned(current_stepper_counter) - unsigned(ctr_cmdduration_in)) );
+                                else
+                                    target_counter_int <= std_logic_vector( (unsigned(current_stepper_counter) - unsigned(ctr_cmdduration_in)) + unsigned(max_counter2) );
+                                end if;
                             end if;
                         end if;
                         init_count <= current_stepper_counter;
@@ -521,7 +559,8 @@ begin
                     else 
                         state_motor_buf <= idle;
                     end if; 
-                    cuttoff_special <= '0';
+                    --cuttoff_special <= '0';
+                    cutoff_signed <= 0;
             end case;
          
         
