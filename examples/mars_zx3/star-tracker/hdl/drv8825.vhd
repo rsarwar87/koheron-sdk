@@ -292,7 +292,7 @@ command_block: block
     signal decceleration_map, acceleration_map : array_30 := (others => (others => '0'));
     signal decceleration_map_buf : array_i32 := (others => 0);
     signal speedmap_map : array_i30 := (others => 1100000);
-    constant total_accel_count : integer := 12500;
+    constant total_accel_count : integer := 12500000;
     signal cuttoff_special : std_logic := '0';
     
     signal cutoff_signed : integer := 0;
@@ -455,7 +455,7 @@ begin
             case (state_motor_buf) is
                 when command => 
                     if (ctr_cmdcancel_in = '1') then 
-                        if (ctr_cmdcancelnow_in = '1' or use_acceleration = '0') then
+                        if ((ctr_cmdcancelnow_in = '1' or use_acceleration = '0') and stepping_clk = '1') then
                             state_motor_buf <= idle;
                         else
                             if (issue_stop = '0') then

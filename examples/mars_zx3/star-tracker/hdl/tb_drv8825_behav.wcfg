@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="4284147018489fs"></ZoomStartTime>
-      <ZoomEndTime time="31742142596303fs"></ZoomEndTime>
-      <Cursor1Time time="14223250000000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="38711966030355fs"></ZoomEndTime>
+      <Cursor1Time time="2200024299000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="190"></NameColumnWidth>
-      <ValueColumnWidth column_width="115"></ValueColumnWidth>
+      <ValueColumnWidth column_width="111"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="60" />
+   <WVObjectSize size="61" />
    <wvobject type="logic" fp_name="/tb_drv8825/clk_50">
       <obj_property name="ElementShortName">clk_50</obj_property>
       <obj_property name="ObjectShortName">clk_50</obj_property>
@@ -356,6 +356,44 @@
       <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf">
+      <obj_property name="ElementShortName">decceleration_map_buf[0:7]</obj_property>
+      <obj_property name="ObjectShortName">decceleration_map_buf[0:7]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[0]">
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">[0]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[1]">
+         <obj_property name="ElementShortName">[1]</obj_property>
+         <obj_property name="ObjectShortName">[1]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[2]">
+         <obj_property name="ElementShortName">[2]</obj_property>
+         <obj_property name="ObjectShortName">[2]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[3]">
+         <obj_property name="ElementShortName">[3]</obj_property>
+         <obj_property name="ObjectShortName">[3]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[4]">
+         <obj_property name="ElementShortName">[4]</obj_property>
+         <obj_property name="ObjectShortName">[4]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[5]">
+         <obj_property name="ElementShortName">[5]</obj_property>
+         <obj_property name="ObjectShortName">[5]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[6]">
+         <obj_property name="ElementShortName">[6]</obj_property>
+         <obj_property name="ObjectShortName">[6]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[7]">
+         <obj_property name="ElementShortName">[7]</obj_property>
+         <obj_property name="ObjectShortName">[7]</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject type="array" fp_name="/tb_drv8825/U0/command_block/acceleration_map">
       <obj_property name="ElementShortName">acceleration_map[0:7][29:0]</obj_property>
