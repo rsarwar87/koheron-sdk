@@ -17,6 +17,8 @@ memory:
     range: 4K
 
 control_registers:
+  - counter_load[2]
+  - counter_max[2]
   - cmdcontrol[2]
   - cmdduration[2]
   - trackctrl[2]

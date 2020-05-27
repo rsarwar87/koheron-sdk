@@ -52,6 +52,8 @@ connect_port_pin drv8825_step_dc      drv8825_dc/drv8825_step
 connect_port_pin drv8825_direction_dc drv8825_dc/drv8825_direction
 # connect_port_pin drv8825_fault_n_dc   drv8825_dc/drv8825_fault_n  
 
+connect_pins drv8825_ra/rstn_50 proc_sys_reset_0/peripheral_aresetn
+connect_pins drv8825_ra/clk_50 ps_0/FCLK_CLK0
 connect_pins drv8825_ra/ctrl_cmdcontrol [ctl_pin cmdcontrol0]
 connect_pins drv8825_ra/ctrl_trackctrl [ctl_pin trackctrl0]
 connect_pins drv8825_ra/ctrl_backlash_duration [ctl_pin backlash_duration0]
@@ -60,7 +62,11 @@ connect_pins drv8825_ra/ctrl_cmdduration [ctl_pin cmdduration0]
 connect_pins drv8825_ra/ctrl_cmdtick [ctl_pin cmdtick0]
 connect_pins drv8825_ra/ctrl_status [sts_pin status0]
 connect_pins drv8825_ra/ctrl_step_count [sts_pin step_count0]
+connect_pins drv8825_ra/ctrl_counter_load [ctl_pin counter_load0]
+connect_pins drv8825_ra/ctrl_counter_max [ctl_pin counter_max0]
 
+connect_pins drv8825_dc/rstn_50 proc_sys_reset_0/peripheral_aresetn
+connect_pins drv8825_dc/clk_50 ps_0/FCLK_CLK0
 connect_pins drv8825_dc/ctrl_cmdcontrol [ctl_pin cmdcontrol1]
 connect_pins drv8825_dc/ctrl_trackctrl [ctl_pin trackctrl1]
 connect_pins drv8825_dc/ctrl_backlash_duration [ctl_pin backlash_duration1]
@@ -69,6 +75,8 @@ connect_pins drv8825_dc/ctrl_cmdduration [ctl_pin cmdduration1]
 connect_pins drv8825_dc/ctrl_cmdtick [ctl_pin cmdtick1]
 connect_pins drv8825_dc/ctrl_status [sts_pin status1]
 connect_pins drv8825_dc/ctrl_step_count [sts_pin step_count1]
+connect_pins drv8825_dc/ctrl_counter_load [ctl_pin counter_load1]
+connect_pins drv8825_dc/ctrl_counter_max [ctl_pin counter_max1]
 
 
 
