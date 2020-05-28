@@ -71,7 +71,7 @@ architecture Behavioral of drv8825 is
     signal max_counter2: std_logic_vector (29 downto 0) := (others => '0');
     
     signal ctr_backlash_tick_buf : integer range 0 to 2**31-1 := 1;
-    signal ctr_backlash_duration_buf : integer range 0 to 2**31-1 := 1;
+    signal ctr_backlash_duration_buf : unsigned (29 downto 0) := (others => '0');
     TYPE state_machine_backlash IS (seek, processing, done, disabled);  -- Define the states
     signal state_backlash : state_machine_backlash := seek;
     
@@ -90,8 +90,9 @@ architecture Behavioral of drv8825 is
     signal max_counter : std_logic_vector (30 downto 0) := (others => '1');
 begin
     
-    ctrl_status(3) <= drv8825_fault_n;
-    ctrl_status(31 downto 4) <= (others => '0');
+    
+    
+    
     ctrl_step_count(31 downto 30) <= "00";
     ctrl_step_count(29 downto 0) <= current_stepper_counter;
     trigger_changes : process (clk_50, rstn_50)
@@ -118,13 +119,20 @@ begin
             drv8825_direction <= '0';
             drv8825_mode <= (others => '0');
             drv8825_step <= '0';
-            ctrl_status(2 downto 0) <= (others => '0');
+            ctrl_status <= (others => '0');
         elsif (rising_edge(clk_50)) then
             drv8825_enable_n<='0';
             drv8825_sleep_n<= '1';
             drv8825_rst_n  <= '1';
+            ctrl_status <= (others => '0');
             drv8825_mode <= (others => '0');
+            ctrl_status(3) <= drv8825_fault_n;          
             ctrl_status(2 downto 0) <= "000";
+            if  state_backlash = disabled then 
+                ctrl_status(4) <= '0';
+            else 
+                ctrl_status(4) <= '1';
+            end if;
             case state_motor is
                 when idle  =>
                     drv8825_direction <= '0';
@@ -147,14 +155,14 @@ begin
                     drv8825_mode <= current_mode_out;
                     ctrl_status(2) <= '0';
                     ctrl_status(1) <= '1';
-                    ctrl_status(0) <= '0';
+                    --ctrl_status(0) <= '0';
                 when park =>
                     drv8825_direction <= current_direction_buf(0);
                     drv8825_step <= stepping_clk;
                     drv8825_mode <= current_mode_out;
                     ctrl_status(2) <= '1';
                     ctrl_status(1) <= '1';
-                    ctrl_status(0) <= '0';
+                    --ctrl_status(0) <= '0';
                 when others => 
                     drv8825_direction <= current_direction_buf(1);
                     drv8825_step <= stepping_clk;
@@ -169,8 +177,7 @@ begin
 -- clock divider
 --------------------------------------------------------------------------------------------
 clock_block: block
-    signal ctr_backlash_ptr : integer range 0 to 2**30 := 1;
-    signal ctr_backlash_cnt : integer range 0 to 2**30 := 1;
+    signal ctr_backlash_cnt : unsigned (29 downto 0) := (others => '0');
     
      signal counter_buf :integer range 0 to 2**31-1 := 1;
      signal count :integer range 0 to 2**31-1 := 1;
@@ -202,15 +209,16 @@ begin
     backslash: process (clk_50, rstn_50)
     begin
         if (rstn_50 = '0') then
-            ctr_backlash_cnt <= 0;
+            ctr_backlash_cnt <= (others => '0');
             state_backlash   <= seek;
             counter_buf <= 1;
         elsif (rising_edge(clk_50)) then
             counter_buf <= current_speed_buf(1);
             current_mode_out <= current_mode_buf;
+            ctr_backlash_cnt <= ctr_backlash_cnt;
             case (state_backlash) is
                 when seek =>
-                    ctr_backlash_cnt <= 0;
+                    ctr_backlash_cnt <= (others => '0');
                     if (state_change_trigger = direction OR state_change_trigger = direction_speed) then
                         state_backlash <= processing;
                         counter_buf <= ctr_backlash_tick_buf;
@@ -229,9 +237,9 @@ begin
                 
                 when done =>
                     state_backlash <= seek;
-                    ctr_backlash_cnt <= 0;
+                    ctr_backlash_cnt <= (others => '0');
                 when disabled => 
-                    if (ctr_backlash_duration_buf /= 0) then
+                    if (not (ctr_backlash_duration_buf = 0)) then
                         state_backlash <= seek;
                     end if;
                 when others =>
@@ -255,7 +263,7 @@ command_block: block
     signal ctr_cmdmode_in : std_logic_vector(2 downto 0) := "000";
     
     signal ctr_backlash_tick_in  : integer range 0 to 2**31-1 := 1;
-    signal ctr_backlash_duration_in  : integer range 0 to 2**31-1 := 1;
+    signal ctr_backlash_duration_in  : unsigned (29 downto 0) := (others => '0');
     
     signal ctr_track_enabled_in : std_logic := '0';
     signal ctr_track_direction_in : std_logic := '0';
@@ -264,9 +272,6 @@ command_block: block
     
     --signal stepper_counter_int : integer range 0 to 2**31-1 := 1;
     signal target_counter_int : std_logic_vector(29 downto 0) := (others => '0');
-    
-    ATTRIBUTE MARK_DEBUG of ctr_cmd_in, ctr_cmdcancel_in, ctr_goto_in, ctr_park_in, ctr_cmdmode_in, ctr_cmdtick_in, ctr_cmdduration_in: SIGNAL IS "TRUE";
-    ATTRIBUTE MARK_DEBUG of ctr_track_enabled_in, ctr_track_direction_in, ctr_tracktick_in, ctr_trackmode_in: SIGNAL IS "TRUE";
     
     
     signal ctr_cmd_buf, ctr_park_buf : std_logic := '0';
@@ -296,6 +301,12 @@ command_block: block
     signal cuttoff_special : std_logic := '0';
     
     signal cutoff_signed : integer := 0;
+    
+    
+    ATTRIBUTE MARK_DEBUG of divider, use_acceleration, done_acceleration, acceleration_counter, acceleration_map, decceleration_map: SIGNAL IS "TRUE";
+    ATTRIBUTE MARK_DEBUG of ctr_cmd_in, ctr_cmdcancel_in, ctr_goto_in, ctr_park_in, cuttoff_special, ctr_cmdtick_in, ctr_cmdduration_in: SIGNAL IS "TRUE";
+    ATTRIBUTE MARK_DEBUG of ctr_track_enabled_in, ctr_track_direction_in, ctr_tracktick_in, target_counter_int: SIGNAL IS "TRUE";
+    
 begin
     current_speed_buffer <= std_logic_vector(to_unsigned(issue_speed, current_speed_buffer'length));
     accel_control : process (clk_50, rstn_50)
@@ -581,8 +592,8 @@ begin
             use_acceleration <= '0';
             ctr_cmdcancelnow_in <= '0';
             
-            ctr_backlash_duration_buf <= 0;
-            ctr_backlash_duration_in <= 0;
+            ctr_backlash_duration_buf <= (others => '0');
+            ctr_backlash_duration_in <= (others => '0');
             ctr_backlash_tick_in <= 1;
             ctr_backlash_tick_buf <= 1;
             current_mode_back <= (others => '0');
@@ -639,7 +650,7 @@ begin
             if (state_backlash /= processing) then
                 ctr_backlash_tick_in <= to_integer(unsigned(ctrl_backlash_tick(31 downto 3)));
                 ctr_backlash_tick_buf <= ctr_backlash_tick_in;
-                ctr_backlash_duration_in <= to_integer(unsigned(ctrl_backlash_duration(29 downto 0)));
+                ctr_backlash_duration_in <= (unsigned(ctrl_backlash_duration(29 downto 0)));
                 ctr_backlash_duration_buf <= ctr_backlash_duration_in;
                 current_mode_back <= ctrl_backlash_tick(2 downto 0);
             end if;
