@@ -43,7 +43,7 @@ class SkyTrackerInterface(object):
     def set_motor_period_usec(self, axis, isSlew, val):
         return self.client.recv_bool()
     @command()
-    def set_current_position(self, axis, val):
+    def set_goto_target(self, axis, val):
         return self.client.recv_bool()
     @command()
     def set_goto_increment(self, axis, val):
@@ -185,16 +185,18 @@ class SkyTrackerInterface(object):
         for i in range(0, 2):
             print('\n\nset_min_period{0} : {1}'.format(i, self.set_min_period(i, 0.051)))
             print('set_max_period{0} : {1}'.format(i, self.set_max_period(i, 268435.0)))
-            print('set_backlash{0} : {1}'.format(i, self.set_backlash(i, 150.1, 127, 7)))
+            print('set_backlash{0} : {1}'.format(i, self.set_backlash(i, 15.1, 127, 7)))
             print('set_steps_per_rotation{0} : {1}'.format(i, self.set_steps_per_rotation(i, 0xffffff)))
             print('set_current_position{0} : {1}'.format(i, self.set_current_position(i, 0xfff)))
+            print('set_goto_target{0} : {1}'.format(i, self.set_goto_target(i, 0xfffff)))
+            print('set_goto_increment{0} : {1}'.format(i, self.set_goto_increment(i, 0xfffff)))
             print('==========================================')
             for j in range (0, 2):
 #                print('set_motor_mode{0}-{1} : {2}'.format(i, j, self.set_motor_mode(i, j, 7)))
                 print('set_speed_ratio{0}-{1} : {2}'.format(i, j, self.set_speed_ratio(i, j, 25.7)))
                 print('set_motor_highspeedmode{0}-{1} : {2}'.format(i, j, self.set_motor_highspeedmode(i, j, True)))
                 print('set_motor_direction{0}-{1} : {2}'.format(i, j, self.set_motor_direction(i, j, True)))
-                print('set_motor_period_usec{0}-{1} : {2}'.format(i, j, self.set_motor_period_usec(i, j, 1.2+100*i)))
+                print('set_motor_period_usec{0}-{1} : {2}'.format(i, j, self.set_motor_period_usec(i, j, 302.2+100*i + j*10)))
 
     def PrintAll(self):
         print("get_version: {0}".format(self.get_version()))
@@ -207,6 +209,8 @@ class SkyTrackerInterface(object):
             print('get_min_period{0}: {1}'.format(i, self.get_min_period(i)))
             print('get_raw_status{0}: {1}'.format(i, self.get_raw_status(i)))
             print('get_raw_stepcount{0}: {1}'.format(i, self.get_raw_stepcount(i)))
+            print('get_goto_increment{0}: {1}'.format(i, self.get_goto_increment(i)))
+            print('get_goto_target{0}: {1}'.format(i, self.get_goto_target(i)))
             print('=========================')
             for j in range (0, 2):
                 print('get_spped_ratio{0}-{1}: {2}'.format(i, j, self.get_speed_ratio(i, j)))
@@ -224,14 +228,18 @@ if __name__ == '__main__':
     host = os.getenv('HOST','192.168.1.114')
     client = connect(host, name='mars_star_tracker')
     driver = SkyTrackerInterface(client)
-    driver.enable_backlash(0)
-    driver.enable_backlash(1)
     driver.PrintAll()
     driver.Initialize()
+    driver.enable_backlash(0)
+    driver.enable_backlash(1)
 
     print(driver.swp_cmd_StartMotion(0, True, False))
     print(driver.swp_cmd_StartMotion(1, True, False))
-    time.sleep(3)
+    print(driver.swp_cmd_StartMotion(0, False, True))
+    print(driver.swp_cmd_StartMotion(1, False, True))
+    time.sleep(5)
+    driver.cancel_raw_command(0, False)
+    driver.cancel_raw_command(1, False)
     driver.PrintAll()
 
 
