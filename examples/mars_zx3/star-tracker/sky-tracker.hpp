@@ -2,8 +2,8 @@
 ///
 /// (c) Koheron
 
-#ifndef __DRIVERS_ASCOM_INTERFACE_HPP__
-#define __DRIVERS_ASCOM_INTERFACE_HPP__
+#ifndef __DRIVERS_SKY_INTERFACE_HPP__
+#define __DRIVERS_SKY_INTERFACE_HPP__
 
 #include <context.hpp>
 #include <drv8825.hpp>
@@ -13,9 +13,9 @@ enum t_status { Idle = 0, Slew, GoTo, Parking, Undefined };
       1000000.0 / ((double)(prm::fclk0));  // Number of descriptors
 
 using namespace std::chrono_literals;
-class ASCOMInterface {
+class SkyTrackerInterface {
  public:
-  ASCOMInterface(Context& ctx_)
+  SkyTrackerInterface(Context& ctx_)
       : ctx(ctx_),
         ctl(ctx.mm.get<mem::control>()),
         sts(ctx.mm.get<mem::status>()),
@@ -359,221 +359,33 @@ class ASCOMInterface {
     else stepper.set_current_position<1>(val);
     return true;
   }
-  /*
-      void cmd_setsideIVal(uint8_t axis, uint32_t _sideIVal){ //set Method
-        if (!check_axis_id(axis, __func__)) return;
-          cmd.siderealIVal[axis] = _sideIVal;
-      }
-
-      void cmd_setFVal(uint8_t axis, bool _FVal){ //Set Method
-        if (!check_axis_id(axis, __func__)) return;
-          cmd.FVal[axis] = _FVal;
-      }
-
-      void cmd_setjVal(uint8_t axis, uint32_t _jVal){ //Set Method
-        if (!check_axis_id(axis, __func__)) return;
-          cmd.jVal[axis] = _jVal;
-      }
-
-      void cmd_setIVal(uint8_t axis, uint32_t _IVal){ //Set Method
-        if (!check_axis_id(axis, __func__)) return;
-          cmd.IVal[axis] = _IVal;
-      }
-
-      void cmd_setaVal(uint8_t axis, uint32_t _aVal){ //Set Method
-        if (!check_axis_id(axis, __func__)) return;
-          cmd.aVal[axis] = _aVal;
-      }
-
-      void cmd_setbVal(uint8_t axis, uint32_t _bVal){ //Set Method
-        if (!check_axis_id(axis, __func__)) return;
-          cmd.bVal[axis] = _bVal;
-      }
-
-      void cmd_setsVal(uint8_t axis, uint32_t _sVal){ //Set Method
-        if (!check_axis_id(axis, __func__)) return;
-          cmd.sVal[axis] = _sVal;
-      }
-
-      void cmd_setHVal(uint8_t axis, uint32_t _HVal){ //Set Method
-        if (!check_axis_id(axis, __func__)) return;
-          cmd.HVal[axis] = _HVal;
-      }
-
-      void cmd_setGVal(uint8_t axis, uint8_t _GVal){ //Set Method
-        if (!check_axis_id(axis, __func__)) return;
-          cmd.GVal[axis] = _GVal;
-      }
-  */
-
-  // Initialize                = 'F',
-  bool swp_cmd_Initialize(uint8_t axis) {
-    bool ret = true;
-    size_t i = axis;
+  uint32_t get_goto_increment(uint8_t axis) {
+    if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
+    ctx.log<INFO>("%s(%u): %u\n", __func__, axis, m_params.GotoNCycles[axis]);
+    return m_params.GotoNCycles[axis];
+  }
+  bool set_goto_increment(uint8_t axis, uint32_t ncycles) {
     if (!check_axis_id(axis, __func__)) return false;
-    // for (i = 0; i < 2; i++)
-    {
-      ret &= disable_raw_tracking(i);
-      ret &= disable_raw_backlash(i);
-      ret &= cancel_raw_command(i, false);
-    }
-    if (!ret)
-      ctx.log<INFO>("ASCOMInteface: %s Successful\n", __func__);
-    else
-      ctx.log<ERROR>("ASCOMInteface: %s Failed\n", __func__);
-    return ret;
-  }
-  // InquireMotorBoardVersion  = 'e',
-  uint32_t swp_get_BoardVersion() {
-    ctx.log<INFO>("ASCOMInteface: %s\n", __func__);
-    return get_version();
-  }
-  // InquireGridPerRevolution  = 'a', // steps per axis revolution
-  uint32_t swp_get_GridPerRevolution(uint8_t axis) {
-    return get_steps_per_rotation(axis);
-  }
-
-  // InquireTimerInterruptFreq = 'b', // sidereal rate of axis   steps per
-  // worm???
-  uint32_t swp_get_TimerInterruptFreq() {
-    return prm::fclk0;
-  }
-  // Encoder stuff (g) // speed scalar for high speed skew
-  // InquireHighSpeedRatio     = 'g',
-  double swp_get_HighSpeedRatio(uint8_t axis) {
-    return get_speed_ratio(axis, false);
-  }
-  // InstantAxisStop (L) + NotInstantAxisStop (K)
-  bool swp_cmd_StopAxis(uint8_t axis, bool instant) {
-    if (instant || !check_axis_id(axis, __func__)) return false;
-    ctx.log<INFO>("ASCOMInteface: %s- isInstant: %u\n", __func__, instant);
-    uint32_t status = get_raw_status(axis);
-    bool ret = true;
-    if ((status & 0x1) == 1) ret = disable_raw_tracking(axis);
-    if (status > 1) ret = cancel_raw_command(axis, instant);
-    return ret;
-  }
-  // SetAxisPositionCmd        = 'E', set current position
-  bool swp_set_AxisPosition(uint8_t axis, uint32_t value) {
-    return set_current_position(axis, value);
-  }
-  // GetAxisPosition           = 'j', // current position
-  uint32_t swp_get_AxisPosition(uint8_t axis) {
-    return get_raw_stepcount(axis);
-  }
-  // GetAxisStatus             = 'f',
-  uint32_t swp_get_AxisStatus(uint8_t axis) {
-    return get_raw_status(axis);
-  }
-  // SetMotionMode             = 'G', mode and direction
-  bool swp_set_MotionModeDirection(uint8_t axis, bool isForward, bool isSlew,
-                                   bool isHighSpeed) {
-    //[1] direction and mode, i.e. high/low speed in eqmod?
-    if (!check_axis_id(axis, __func__)) return false;
-    ctx.log<INFO>(
-        "ASCOMInteface: %s- isSlew: %u; isForward: %u; isHighSpeed: %u\n",
-        __func__, isForward, isSlew, isHighSpeed);
-    // TODO
-    m_params.motorDirection[isSlew][axis] = isForward;
-    m_params.highSpeedMode[isSlew][axis] = isHighSpeed;
-    bool ret = true;
-    return ret;
-  }
-  // set goto target - SetGotoTargetIncrement    = 'H', // set goto position
-  bool swp_set_GotoTargetIncrement(uint8_t axis, uint32_t ncycles) {
-    if (!check_axis_id(axis, __func__)) return false;
-    ctx.log<INFO>("ASCOMInteface: %s- Command recieved: %u\n", __func__,
-                  ncycles);
+    ctx.log<INFO>("%s(%u): %u\n", __func__, axis, ncycles);
     m_params.GotoNCycles[axis] = ncycles % m_params.stepPerRotation[axis];
     return true;
   }
-  // NOT SURE SetBreakPointIncrement    = 'M',
-  // does nothing ??
-  bool swp_set_BreakPointIncrement(uint8_t axis, uint32_t ncycles) {
-    if (!check_axis_id(axis, __func__)) return false;
-    ctx.log<INFO>("ASCOMInteface: %s- Command recieved: %u\n", __func__,
-                  ncycles);
-    // TODO
-    bool ret = true;
-    return ret;
+  uint32_t get_goto_target(uint8_t axis) {
+    if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
+    ctx.log<INFO>("%s(%u): %u\n", __func__, axis, m_params.GotoTarget[axis]);
+    return m_params.GotoTarget[axis];
   }
-  // SetBreakStep              = 'U', // does nothing??
-  bool swp_set_BreakStep(uint8_t axis, uint32_t ncycles) {
+  bool set_goto_target(uint8_t axis, uint32_t target) {
     if (!check_axis_id(axis, __func__)) return false;
-    ctx.log<INFO>("ASCOMInteface: %s- Command recieved: %u\n", __func__,
-                  ncycles);
-    bool ret = true;
-    // TODO
-    return ret;
-  }
-  // SetGotoTarget             = 'S', // does nothing??
-  bool swp_set_GotoTarget(uint8_t axis, uint32_t target) {
-    if (!check_axis_id(axis, __func__)) return false;
-    ctx.log<INFO>("ASCOMInteface: %s- Command recieved: %u\n", __func__,
-                  target);
     if (target > m_params.stepPerRotation[axis]) {
       ctx.log<ERROR>("%s(%u) val out of range %u (max=%u)\n", __func__, axis,
                      target, m_params.stepPerRotation[axis]);
       return false;
     }
+    ctx.log<INFO>("%s(%u): %u\n", __func__, axis, target);
     m_params.GotoTarget[axis] = target;
     return true;
   }
-  // SetStepPeriod             = 'I', //set slew speed
-  bool swp_set_StepPeriod(uint8_t axis, bool isSlew, uint32_t period_usec) {
-    return set_motor_period_usec(axis, isSlew, period_usec);
-  }
-  // StartMotion               = 'J', // start
-  bool swp_cmd_StartMotion(uint8_t axis, bool isSlew, bool use_accel) {
-    if (!check_axis_id(axis, __func__)) return false;
-
-    bool ret = false;
-    if (isSlew)
-      ret = start_raw_tracking(axis, m_params.motorDirection[isSlew][axis],
-                              m_params.period_ticks[isSlew][axis],
-                              m_params.motorMode[isSlew][axis]);
-    else
-      ret = send_raw_command(axis, m_params.motorDirection[isSlew][axis],
-                             m_params.GotoNCycles[axis],
-                             m_params.period_ticks[isSlew][axis],
-                             m_params.motorMode[isSlew][axis], false, use_accel);
-    return ret;
-  }
-  // GetHomePosition           = 'd', // Get Home position encoder count
-  // (default at startup)
-  // not used in eqmod
-  uint32_t swp_get_HomePosition(uint8_t axis) {
-    if (!check_axis_id(axis, __func__)) return 0;
-    return 0;
-  }
-  // InquireAuxEncoder         = 'd', // EQ8/AZEQ6/AZEQ5 only
-  uint32_t swp_get_AuxEncoder(uint8_t axis) {
-    // return microstep config
-    if (!check_axis_id(axis, __func__)) return 0xFF;
-    // TODO
-    return 1;  // get_motor_mode(axis, m_params.motorStatus[axis] == GoTo ?
-               // false : true );
-  }
-  // SetFeatureCmd             = 'W', // EQ8/AZEQ6/AZEQ5 only
-  bool swp_set_Feature(uint8_t axis, uint8_t cmd) {  // not used
-    ctx.log<INFO>("ASCOMInteface: %s-%u Command recieved: %u\n", __func__, axis, cmd);
-    return true;
-  }
-  // GetFeatureCmd             = 'q', // EQ8/AZEQ6/AZEQ5 only
-  uint32_t swp_get_Feature(uint8_t axis) {
-    // return the gear change settings
-    if (!check_axis_id(axis, __func__)) return 0x0;
-    ctx.log<INFO>("ASCOMInteface: %s- Command recieved:\n", __func__);
-    return 1;
-  }
-  // SetPolarScopeLED          = 'V',
-  bool swp_set_PolarScopeLED() { return true; }
-
- private:
-  Context& ctx;
-  Memory<mem::control>& ctl;
-  Memory<mem::status>& sts;
-  Drv8825& stepper;
 
   typedef struct {
     // class variables
@@ -610,6 +422,13 @@ class ASCOMInterface {
                              // than minSpeed if doing a very slow IVal.
   } parameters;
   parameters m_params;
+
+ private:
+  Context& ctx;
+  Memory<mem::control>& ctl;
+  Memory<mem::status>& sts;
+  Drv8825& stepper;
+
 
   bool check_axis_id(int8_t axis, std::string str) {
     if (axis > 1) {

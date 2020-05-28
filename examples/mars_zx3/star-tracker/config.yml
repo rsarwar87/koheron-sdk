@@ -42,7 +42,8 @@ xdc:
 drivers:
   - server/drivers/common.hpp
   - ./drv8825.hpp
-  - ./indi_interface.hpp
+  - ./sky-tracker.hpp
+  - ./ascom_interface.hpp
 
 web:
   - ./web/index.html

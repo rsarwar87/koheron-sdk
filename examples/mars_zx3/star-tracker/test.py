@@ -4,7 +4,7 @@ import os
 from koheron import command, connect
 import time
 
-class ASCOMInterface(object):
+class SkyTrackerInterface(object):
     def __init__(self, client):
         self.client = client
 
@@ -41,6 +41,12 @@ class ASCOMInterface(object):
         return self.client.recv_bool()
     @command()
     def set_motor_period_usec(self, axis, isSlew, val):
+        return self.client.recv_bool()
+    @command()
+    def set_current_position(self, axis, val):
+        return self.client.recv_bool()
+    @command()
+    def set_goto_increment(self, axis, val):
         return self.client.recv_bool()
     # getters
     @command()
@@ -88,6 +94,12 @@ class ASCOMInterface(object):
     @command()
     def get_raw_status(self, axis):
         return self.client.recv_uint32()
+    @command()
+    def get_goto_increment(self, axis):
+        return self.client.recv_uint32()
+    @command()
+    def get_goto_target(self, axis):
+        return self.client.recv_uint32()
 
     # command
     @command()
@@ -117,55 +129,55 @@ class ASCOMInterface(object):
 
 
     # skywathcer interface
-    @command()
+    @command("ASCOMInterface")
     def swp_cmd_Initialize(self, axis):
         return self.client.recv_bool()
-    @command()
+    @command("ASCOMInterface")
     def swp_get_BoardVersion(self):
         return self.client.recv_uint32()
-    @command()
+    @command("ASCOMInterface")
     def swp_get_GridPerRevolution(self, axis):
         return self.client.recv_uint32()
-    @command()
+    @command("ASCOMInterface")
     def swp_get_TimerInterruptFreq(self):
         return self.client.recv_uint32()
-    @command()
+    @command("ASCOMInterface")
     def swp_get_HighSpeedRatio(self, axis):
         return self.client.recv_double()
-    @command()
+    @command("ASCOMInterface")
     def swp_cmd_StopAxis(self, axis, instant):
         return self.client.recv_bool()
-    @command()
+    @command("ASCOMInterface")
     def swp_set_AxisPosition(self, axis, value):
         return self.client.recv_bool()
-    @command()
+    @command("ASCOMInterface")
     def swp_get_AxisPosition(self, axis):
         return self.client.recv_uint32()
-    @command()
+    @command("ASCOMInterface")
     def swp_set_MotionModeDirection(self, axis, isSlew, isForward, isHighSpeed):
         return self.client.recv_bool()
-    @command()
+    @command("ASCOMInterface")
     def swp_set_GotoTarget(self, axis, targt):
         return self.client.recv_bool()
-    @command()
+    @command("ASCOMInterface")
     def swp_set_GotoTargetIncrement(self, axis, ncycles):
         return self.client.recv_bool()
-    @command()
+    @command("ASCOMInterface")
     def swp_set_StepPeriod(self, axis, isSlew, period_usec):
         return self.client.recv_bool()
-    @command()
+    @command("ASCOMInterface")
     def swp_cmd_StartMotion(self, axis, isSlew, use_accel):
         return self.client.recv_bool()
-    @command()
+    @command("ASCOMInterface")
     def swp_set_HomePosition(self, axis, period_usec):
         return self.client.recv_bool()
-    @command()
+    @command("ASCOMInterface")
     def swp_get_AuxEncoder(self, axis):
         return self.client.recv_uint32()
-    @command()
+    @command("ASCOMInterface")
     def swp_set_Feature(self, axis, cmd):
         return self.client.recv_bool()
-    @command()
+    @command("ASCOMInterface")
     def swp_get_Feature(self, axis):
         return self.client.recv_uint32()
 
@@ -211,7 +223,7 @@ class ASCOMInterface(object):
 if __name__ == '__main__':
     host = os.getenv('HOST','192.168.1.114')
     client = connect(host, name='mars_star_tracker')
-    driver = ASCOMInterface(client)
+    driver = SkyTrackerInterface(client)
     driver.enable_backlash(0)
     driver.enable_backlash(1)
     driver.PrintAll()
