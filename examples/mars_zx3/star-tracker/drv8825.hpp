@@ -89,8 +89,8 @@ class Drv8825
     void cancel_command(bool instant){
         uint32_t cmd = (1 << 31) + (instant << 30); 
         ctl.write<reg::cmdcontrol0 + offset*0x4>(cmd);
-        std::this_thread::sleep_for(1ms);
-        ctl.write<reg::cmdcontrol0 + offset*0x4>(0);
+        //std::this_thread::sleep_for(1ms);
+        //ctl.write<reg::cmdcontrol0 + offset*0x4>(0);
         ctx.log<INFO>("DRV8825-%s: %s; cmd = 0x%08x\n", offset == 0 ? "SA" : "DC", 
             __func__, cmd);
     }
