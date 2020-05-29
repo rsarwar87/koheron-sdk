@@ -37,15 +37,49 @@ class Drv8825
       set_backlash<offset>(0,0,0);
     }
     template<uint32_t offset>
-    void disable_tracking()
+    void disable_tracking(bool instant)
     {
+      if (!instant)
+      {
+        uint32_t current_settings = ctl.read<reg::trackctrl0 + offset*0x4>();
+        uint32_t period_ticks = current_settings >> 5;
+        uint32_t mode = (current_settings >> 2) & 0x7;
+        bool isCCW = (current_settings >> 1) & 0x1;
+        if (period_ticks > 0 && period_ticks < 500*1000/20)
+        {
+          for (size_t i = 2; i < (500*1000/20)/period_ticks; i++)
+          {
+            std::this_thread::sleep_for(50ms);
+            uint32_t tmp = period_ticks*i;
+            uint32_t cmd = 1 + (isCCW << 1) + (mode << 2) +((tmp) << 5);
+            ctx.log<INFO>("DRV8825-%s: %s: CCW=%u, period=0x%08x, mode=%u cmd=0x%08x\n", 
+                    offset == 0 ? "SA" : "DC", __func__,
+                    isCCW, tmp, mode, cmd);
+            ctl.write<reg::trackctrl0 + offset*0x4>(cmd);
+          }
+        }
+      }
       ctl.write<reg::trackctrl0 + offset*0x4>(0);
       ctx.log<INFO>("DRV8825-%s: %s\n", offset == 0 ? "SA" : "DC", __func__);
     }
     template<uint32_t offset>
     void enable_tracking(bool isCCW, uint32_t period_ticks, uint8_t mode)
     {
-        uint32_t cmd = 1 + (isCCW << 1) + (mode << 2) +((period_ticks) << 5);
+        uint32_t cmd = 0;
+        if (period_ticks < 500*1000/20)
+        {
+          for (size_t i = (500*1000/20)/period_ticks; i > 0; i--)
+          {
+            std::this_thread::sleep_for(50ms);
+            uint32_t tmp = period_ticks*i;
+            cmd = 1 + (isCCW << 1) + (mode << 2) +((tmp) << 5);
+            ctx.log<INFO>("DRV8825-%s: %s: CCW=%u, period=0x%08x, mode=%u cmd=0x%08x\n", 
+                    offset == 0 ? "SA" : "DC", __func__,
+                    isCCW, tmp, mode, cmd);
+            ctl.write<reg::trackctrl0 + offset*0x4>(cmd);
+          }
+        }
+        cmd = 1 + (isCCW << 1) + (mode << 2) +((period_ticks) << 5);
         ctl.write<reg::trackctrl0 + offset*0x4>(cmd);
         ctx.log<INFO>("DRV8825-%s: %s: CCW=%u, period=0x%08x, mode=%u cmd=0x%08x\n", 
             offset == 0 ? "SA" : "DC", __func__,

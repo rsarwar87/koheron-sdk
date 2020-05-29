@@ -24,7 +24,7 @@ class ASCOMInterface {
     if (!check_axis_id(axis, __func__)) return false;
     // for (i = 0; i < 2; i++)
     {
-      ret &= sti.disable_raw_tracking(i);
+      ret &= sti.disable_raw_tracking(i, false);
       ret &= sti.disable_raw_backlash(i);
       ret &= sti.cancel_raw_command(i, false);
     }
@@ -60,7 +60,7 @@ class ASCOMInterface {
     ctx.log<INFO>("ASCOMInteface: %s- isInstant: %u\n", __func__, instant);
     uint32_t status = sti.get_raw_status(axis);
     bool ret = true;
-    if ((status & 0x1) == 1) ret = sti.disable_raw_tracking(axis);
+    if ((status & 0x1) == 1) ret = sti.disable_raw_tracking(axis, instant);
     if (status > 1) ret = sti.cancel_raw_command(axis, instant);
     return ret;
   }

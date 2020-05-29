@@ -209,17 +209,17 @@ class SkyTrackerInterface {
     }
     uint32_t _ticks = (uint32_t)((val_usec / fclk0_period_us) + .5);
     m_params.maxPeriod[axis] = _ticks;
-    ctx.log<INFO>("%s(%u): %u\n", __func__, axis, m_params.maxPeriod[axis]);
+    ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.maxPeriod[axis]);
     return true;
   }
   double get_min_period(int8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
-    ctx.log<INFO>("%s(%u): %u\n", __func__, axis, m_params.minPeriod[axis]);
+    ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.minPeriod[axis]);
     return (((double)m_params.minPeriod[axis]) * fclk0_period_us);
   }
   double get_max_period(int8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
-    ctx.log<INFO>("%s(%u): %u\n", __func__, axis, m_params.maxPeriod[axis]);
+    ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.maxPeriod[axis]);
     return (((double)m_params.maxPeriod[axis]) * fclk0_period_us);
   }
   uint32_t get_motor_period_ticks(int8_t axis, bool isSlew) {
@@ -230,7 +230,7 @@ class SkyTrackerInterface {
   }
   double get_motor_period_usec(int8_t axis, bool isSlew) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
-    ctx.log<INFO>("%s(%u-%u): %u\n", __func__, axis, isSlew,
+    ctx.log<INFO>("%s(%u-%u): %9.5f\n", __func__, axis, isSlew,
                   m_params.period_usec[isSlew][axis]);
     return (m_params.period_usec[isSlew][axis]);
   }
@@ -304,12 +304,12 @@ class SkyTrackerInterface {
       stepper.disable_backlash<1>();
     return true;
   }
-  bool disable_raw_tracking(int8_t axis) {
+  bool disable_raw_tracking(int8_t axis, bool instant) {
     if (!check_axis_id(axis, __func__)) return false;
     if (axis == 0)
-      stepper.disable_tracking<0>();
+      stepper.disable_tracking<0>(instant);
     else
-      stepper.disable_tracking<1>();
+      stepper.disable_tracking<1>(instant);
     return true;
   }
   bool start_raw_tracking(int8_t axis, bool isForward, uint32_t periodticks,
