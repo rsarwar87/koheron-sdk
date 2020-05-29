@@ -108,74 +108,74 @@ entity system_top is
 		FMC_CLK0_M2C_P		: in	std_logic;
 		FMC_CLK1_M2C_N		: in	std_logic;
 		FMC_CLK1_M2C_P		: in	std_logic;
-		FMC_LA00_CC_N		: inout	std_logic;
-		FMC_LA00_CC_P		: inout	std_logic;
-		FMC_LA01_CC_N		: inout	std_logic;
-		FMC_LA01_CC_P		: inout	std_logic;
-		FMC_LA02_N			: inout	std_logic;
-		FMC_LA02_P			: inout	std_logic;
-		FMC_LA03_N			: inout	std_logic;
-		FMC_LA03_P			: inout	std_logic;
-		FMC_LA04_N			: inout	std_logic;
-		FMC_LA04_P			: inout	std_logic;
-		FMC_LA05_N			: inout	std_logic;
-		FMC_LA05_P			: inout	std_logic;
-		FMC_LA06_N			: inout	std_logic;
-		FMC_LA06_P			: inout	std_logic;
-		FMC_LA07_N			: inout	std_logic;
-		FMC_LA07_P			: inout	std_logic;
-		FMC_LA08_N			: inout	std_logic;
-		FMC_LA08_P			: inout	std_logic;
-		FMC_LA09_N			: inout	std_logic;
-		FMC_LA09_P			: inout	std_logic;
-		FMC_LA10_N			: inout	std_logic;
-		FMC_LA10_P			: inout	std_logic;
-		FMC_LA11_N			: inout	std_logic;
-		FMC_LA11_P			: inout	std_logic;
-		FMC_LA12_N			: inout	std_logic;
-		FMC_LA12_P			: inout	std_logic;
-		FMC_LA13_N			: inout	std_logic;
-		FMC_LA13_P			: inout	std_logic;
-		FMC_LA14_N			: inout	std_logic;
-		FMC_LA14_P			: inout	std_logic;
-		FMC_LA15_N			: inout	std_logic;
-		FMC_LA15_P			: inout	std_logic;
-		FMC_LA16_N			: inout	std_logic;
-		FMC_LA16_P			: inout	std_logic;
-		FMC_LA17_CC_N		: inout	std_logic;
-		FMC_LA17_CC_P		: inout	std_logic;
-		FMC_LA18_CC_N		: inout	std_logic;
-		FMC_LA18_CC_P		: inout	std_logic;
-		FMC_LA19_N			: inout	std_logic;
-		FMC_LA19_P			: inout	std_logic;
-		FMC_LA20_N			: inout	std_logic;
-		FMC_LA20_P			: inout	std_logic;
-		FMC_LA21_N			: inout	std_logic;
-		FMC_LA21_P			: inout	std_logic;
-		FMC_LA22_N			: inout	std_logic;
-		FMC_LA22_P			: inout	std_logic;
-		FMC_LA23_N			: inout	std_logic;
-		FMC_LA23_P			: inout	std_logic;
-		FMC_LA24_N			: inout	std_logic;
-		FMC_LA24_P			: inout	std_logic;
-		FMC_LA25_N			: inout	std_logic;
-		FMC_LA25_P			: inout	std_logic;
-		FMC_LA26_N			: inout	std_logic;
-		FMC_LA26_P			: inout	std_logic;
-		FMC_LA27_N			: inout	std_logic;
-		FMC_LA27_P			: inout	std_logic;
-		FMC_LA28_N			: inout	std_logic;
-		FMC_LA28_P			: inout	std_logic;
-		FMC_LA29_N			: inout	std_logic;
-		FMC_LA29_P			: inout	std_logic;
-		FMC_LA30_N			: inout	std_logic;
-		FMC_LA30_P			: inout	std_logic;
-		FMC_LA31_N			: inout	std_logic;
-		FMC_LA31_P			: inout	std_logic;
-		FMC_LA32_N			: inout	std_logic;
-		FMC_LA32_P			: inout	std_logic;
-		FMC_LA33_N			: inout	std_logic;
-		FMC_LA33_P			: inout	std_logic;
+		FMC_LA00_CC_N		: out	std_logic;
+		FMC_LA00_CC_P		: out	std_logic;
+		FMC_LA01_CC_N		: out	std_logic;
+		FMC_LA01_CC_P		: out	std_logic;
+		FMC_LA02_N			: out	std_logic;
+		FMC_LA02_P			: out	std_logic;
+		FMC_LA03_N			: out	std_logic;
+		FMC_LA03_P			: out	std_logic;
+		FMC_LA04_N			: out	std_logic;
+		FMC_LA04_P			: out	std_logic;
+		FMC_LA05_N			: out	std_logic;
+		FMC_LA05_P			: out	std_logic;
+		FMC_LA06_N			: out	std_logic;
+		FMC_LA06_P			: out	std_logic;
+		FMC_LA07_N			: out	std_logic;
+		FMC_LA07_P			: out	std_logic;
+		FMC_LA08_N			: out	std_logic;
+		FMC_LA08_P			: out	std_logic;
+		FMC_LA09_N			: out	std_logic;
+		FMC_LA09_P			: out	std_logic;
+		FMC_LA10_N			: out	std_logic;
+		FMC_LA10_P			: out	std_logic;
+		FMC_LA11_N			: out	std_logic;
+		FMC_LA11_P			: out	std_logic;
+		FMC_LA12_N			: out	std_logic;
+		FMC_LA12_P			: out	std_logic;
+		FMC_LA13_N			: out	std_logic;
+		FMC_LA13_P			: out	std_logic;
+		FMC_LA14_N			: out	std_logic;
+		FMC_LA14_P			: out	std_logic;
+		FMC_LA15_N			: out	std_logic;
+		FMC_LA15_P			: out	std_logic;
+		FMC_LA16_N			: out	std_logic;
+		FMC_LA16_P			: out	std_logic;
+		FMC_LA17_CC_N		: out	std_logic;
+		FMC_LA17_CC_P		: out	std_logic;
+		FMC_LA18_CC_N		: out	std_logic;
+		FMC_LA18_CC_P		: out	std_logic;
+		FMC_LA19_N			: out	std_logic;
+		FMC_LA19_P			: out	std_logic;
+		FMC_LA20_N			: out	std_logic;
+		FMC_LA20_P			: out	std_logic;
+		FMC_LA21_N			: out	std_logic;
+		FMC_LA21_P			: out	std_logic;
+		FMC_LA22_N			: out	std_logic;
+		FMC_LA22_P			: out	std_logic;
+		FMC_LA23_N			: out	std_logic;
+		FMC_LA23_P			: out	std_logic;
+		FMC_LA24_N			: out	std_logic;
+		FMC_LA24_P			: out	std_logic;
+		FMC_LA25_N			: out	std_logic;
+		FMC_LA25_P			: out	std_logic;
+		FMC_LA26_N			: out	std_logic;
+		FMC_LA26_P			: out	std_logic;
+		FMC_LA27_N			: out	std_logic;
+		FMC_LA27_P			: out	std_logic;
+		FMC_LA28_N			: out	std_logic;
+		FMC_LA28_P			: out	std_logic;
+		FMC_LA29_N			: out	std_logic;
+		FMC_LA29_P			: out	std_logic;
+		FMC_LA30_N			: out	std_logic;
+		FMC_LA30_P			: out	std_logic;
+		FMC_LA31_N			: out	std_logic;
+		FMC_LA31_P			: out	std_logic;
+		FMC_LA32_N			: out	std_logic;
+		FMC_LA32_P			: out	std_logic;
+		FMC_LA33_N			: out	std_logic;
+		FMC_LA33_P			: out	std_logic;
 	
         -------------------------------------------------------------------------------------------
 		-- ez-usb fx3 interface
@@ -364,16 +364,16 @@ begin
             drv8825_rst_n_ra => FMC_LA29_P,
             drv8825_sleep_n_dc => FMC_LA24_N,
             drv8825_sleep_n_ra => FMC_LA24_P,
-            drv8825_step_dc => FMC_LA21_N,
-            drv8825_step_ra => FMC_LA21_P
+            drv8825_step_dc => FMC_LA02_N,
+            drv8825_step_ra => FMC_LA02_P
 
 		);
     FMC_LA16_P <= mode_ra(2);
     FMC_LA15_P <= mode_ra(1);
-    FMC_LA17_CC_P <= mode_ra(0);
+    FMC_LA07_P <= mode_ra(0);
     FMC_LA16_N    <= mode_dc(2);
     FMC_LA15_N    <= mode_dc(1);
-    FMC_LA17_CC_N <= mode_dc(0);
+    FMC_LA07_N <= mode_dc(0);
 	-- supply voltage for thh DDR3 memory
     DDR3_VSEL       <= '0'; -- 1.35V
 --  DDR3_VSEL       <= 'Z'; -- 1.5V

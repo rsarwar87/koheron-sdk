@@ -113,7 +113,7 @@ begin
         
     registered_output : process(clk_50, rstn_50) begin
         if (rstn_50 = '0') then
-            drv8825_enable_n<='0';
+            drv8825_enable_n<='1';
             drv8825_sleep_n<= '0';
             drv8825_rst_n  <= '0';
             drv8825_direction <= '0';
@@ -121,11 +121,13 @@ begin
             drv8825_step <= '0';
             ctrl_status <= (others => '0');
         elsif (rising_edge(clk_50)) then
-            drv8825_enable_n<='0';
-            drv8825_sleep_n<= '1';
-            drv8825_rst_n  <= '1';
+            drv8825_enable_n<='1';
+            drv8825_sleep_n<= '0';
+            drv8825_rst_n  <= '0';
+            drv8825_direction <= '0';
+            drv8825_step <= '0';
+            drv8825_mode <= "000";
             ctrl_status <= (others => '0');
-            drv8825_mode <= (others => '0');
             ctrl_status(3) <= drv8825_fault_n;          
             ctrl_status(2 downto 0) <= "000";
             if  state_backlash = disabled then 
@@ -134,18 +136,13 @@ begin
                 ctrl_status(4) <= '1';
             end if;
             case state_motor is
-                when idle  =>
-                    drv8825_direction <= '0';
-                    drv8825_step <= '0';
-                    drv8825_mode <= current_mode_out;
-                    ctrl_status(0) <= '0';
-                    ctrl_status(1) <= '0';
-                    ctrl_status(2) <= '0';
-                    drv8825_mode <= (others => '0');
                 when tracking =>
                     drv8825_direction <= current_direction_buf(0);
                     drv8825_step <= stepping_clk;
                     drv8825_mode <= current_mode_out;
+                    drv8825_enable_n<='0';
+                    drv8825_sleep_n<= '1';
+                    drv8825_rst_n  <= '1';
                     ctrl_status(1) <= '0';
                     ctrl_status(0) <= '1';
                     ctrl_status(2) <= '0';
@@ -153,6 +150,9 @@ begin
                     drv8825_direction <= current_direction_buf(0);
                     drv8825_step <= stepping_clk;
                     drv8825_mode <= current_mode_out;
+                    drv8825_enable_n<='0';
+                    drv8825_sleep_n<= '1';
+                    drv8825_rst_n  <= '1';
                     ctrl_status(2) <= '0';
                     ctrl_status(1) <= '1';
                     --ctrl_status(0) <= '0';
@@ -160,12 +160,15 @@ begin
                     drv8825_direction <= current_direction_buf(0);
                     drv8825_step <= stepping_clk;
                     drv8825_mode <= current_mode_out;
+                    drv8825_enable_n<='0';
+                    drv8825_sleep_n<= '1';
+                    drv8825_rst_n  <= '1';
                     ctrl_status(2) <= '1';
                     ctrl_status(1) <= '1';
                     --ctrl_status(0) <= '0';
                 when others => 
-                    drv8825_direction <= current_direction_buf(1);
-                    drv8825_step <= stepping_clk;
+                    drv8825_direction <= '0';
+                    drv8825_step <= '0';
                     drv8825_mode <= current_mode_out;
                     ctrl_status(0) <= '0';
                     ctrl_status(2) <= '0';
