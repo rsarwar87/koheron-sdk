@@ -8,7 +8,7 @@ set(CMAKE_CONFIGURATION_TYPES "Release" CACHE STRING "" FORCE)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto -m32 -march=native -O3 -MMD -MP -Wall  -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto -march=native -O3 -MMD -MP -Wall  -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lm -static-libgcc -static-libstdc++ ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wfloat-equal -Wunused-macros -Wcast-qual ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wlogical-op -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wundef ")
@@ -25,12 +25,14 @@ include_directories(/usr/include)
 include_directories(../../../../tmp/examples/mars_zx3/star-tracker/server/) # update this line to compile for different device
 
 # create static library
-add_library(kdriver SHARED driver.cpp)
+add_library(fpgaskytracker SHARED driver.cpp)
+set_target_properties(fpgaskytracker  PROPERTIES PUBLIC_HEADER "fpgaskytracker.hpp")
 
 # create shared library
-add_library(kdriverStatic STATIC driver.cpp)
-set_target_properties(kdriverStatic PROPERTIES OUTPUT_NAME kdriver)
-
-set_target_properties(kdriver PROPERTIES COMPILE_OPTIONS "-m32" LINK_FLAGS "-m32")
+add_library(fpgaskytrackerStatic STATIC driver.cpp)
+set_target_properties(fpgaskytrackerStatic PROPERTIES OUTPUT_NAME fpgaskytracker)
+set_target_properties(fpgaskytrackerStatic  PROPERTIES PUBLIC_HEADER "fpgaskytracker.hpp")
+install(TARGETS fpgaskytracker LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include)
+install(TARGETS fpgaskytrackerStatic ARCHIVE DESTINATION lib PUBLIC_HEADER DESTINATION include)
 #set_target_properties(kdriverStatic PROPERTIES COMPILE_OPTIONS "-m32" LINK_FLAGS "-m32")
 

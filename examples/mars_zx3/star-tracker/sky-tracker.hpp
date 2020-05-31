@@ -54,6 +54,7 @@ class SkyTrackerInterface {
       m_params.backlash_ticks[i] = 0x300;    //_eVal: Version number
       m_params.backlash_ncycle[i] = 0x3000;  //_aVal: Steps per axis revolution
       m_params.backlash_mode[i] = 0x3;  //_aVal: Steps per axis revolution
+      m_params.initialized[i] = false;  //_aVal: Steps per axis revolution
     }
   }
 
@@ -211,6 +212,16 @@ class SkyTrackerInterface {
     m_params.maxPeriod[axis] = _ticks;
     ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.maxPeriod[axis]);
     return true;
+  }
+  uint32_t get_min_period_ticks(int8_t axis) {
+    if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
+    ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.minPeriod[axis]);
+    return (m_params.minPeriod[axis]);
+  }
+  double get_max_period_ticks(int8_t axis) {
+    if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
+    ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.maxPeriod[axis]);
+    return (m_params.maxPeriod[axis]);
   }
   double get_min_period(int8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
@@ -420,6 +431,7 @@ class SkyTrackerInterface {
     uint32_t
         backlash_ncycle[2];  // Speed at which mount should stop. May be lower
                              // than minSpeed if doing a very slow IVal.
+    bool  initialized[2]; 
   } parameters;
   parameters m_params;
 

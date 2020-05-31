@@ -32,6 +32,7 @@ class ASCOMInterface {
       ctx.log<INFO>("ASCOMInteface: %s Successful\n", __func__);
     else
       ctx.log<ERROR>("ASCOMInteface: %s Failed\n", __func__);
+    sti.m_params.initialized[i] = ret;
     return ret;
   }
   // InquireMotorBoardVersion  = 'e',
@@ -73,8 +74,20 @@ class ASCOMInterface {
     return sti.get_raw_stepcount(axis);
   }
   // GetAxisStatus             = 'f',
-  uint32_t swp_get_AxisStatus(uint8_t axis) {
-    return sti.get_raw_status(axis);
+  std::array<bool, 8> swp_get_AxisStatus(uint8_t axis) {
+    // Initialized, running, direction, speedmode, isGoto, isSlew
+    uint32_t status = sti.get_raw_status(axis);
+    bool isGoto = (status >> 1) & 0x1;
+    bool isSlew = status & 0x1;
+    bool fault = (status >> 3) & 0x1;
+    bool backlash = (status >> 4) & 0x1;
+    bool direction = sti.get_motor_direction(axis, isSlew);
+    bool running = isGoto || isSlew;
+    bool speedmode = sti.get_motor_highspeedmode(axis, isSlew);
+    std::array<bool, 8> ret = { sti.m_params.initialized[axis],  running,
+      direction, speedmode, isGoto, isSlew, backlash, fault
+    };
+    return ret;
   }
   // SetMotionMode             = 'G', mode and direction
   bool swp_set_MotionModeDirection(uint8_t axis, bool isForward, bool isSlew,
@@ -167,6 +180,21 @@ class ASCOMInterface {
   // SetPolarScopeLED          = 'V',
   bool swp_set_PolarScopeLED() { return true; }
 
+
+  bool enable_backlash(uint8_t axis, bool enable) {
+    if (enable) return sti.enable_backlash(axis);
+    else return sti.disable_raw_backlash(axis);
+  }
+  bool set_backlash_period(uint8_t axis, uint32_t ticks)
+  {
+    sti.m_params.backlash_ticks[axis] = ticks;
+    return true; 
+  }
+  bool set_backlash_cycles(uint8_t axis, uint32_t cycles)
+  {
+    sti.m_params.backlash_ncycle[axis] = cycles;
+    return true; 
+  }
  private:
   Context& ctx;
   SkyTrackerInterface& sti;
@@ -179,6 +207,11 @@ class ASCOMInterface {
     ctx.log<INFO>("ASCOMInteface: %s\n", str);
     return true;
   }
+
+
+
+
+    
 };
 
 #endif  // __DRIVERS_LED_BLINKER_HPP__

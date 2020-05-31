@@ -1,15 +1,15 @@
 #include <koheron-client.hpp>
 
-#include "driver.hpp"
+#include "fpgaskytracker.hpp"
 
-static KoheronClient* client;
+static std::unique_ptr<KoheronClient> client;
 
 ASCOM_sky_interface::ASCOM_sky_interface(const char* host, int port) {
-  client = new KoheronClient(host, port);
+  client = std::make_unique<KoheronClient>(host, port);
   client->connect();
 }
 ASCOM_sky_interface::~ASCOM_sky_interface(){
-  if (client != NULL) delete client;
+  client.reset();
 }
 // SetPolarScopeLED          = 'V',
 bool ASCOM_sky_interface::swp_set_PolarScopeLED() {
@@ -98,9 +98,9 @@ bool ASCOM_sky_interface::swp_set_MotionModeDirection(uint8_t axis,
 }
 
 // GetAxisStatus             = 'f',
-uint32_t ASCOM_sky_interface::swp_get_AxisStatus(uint8_t axis) {
+std::array<bool, 8> ASCOM_sky_interface::swp_get_AxisStatus(uint8_t axis) {
   client->call<op::ASCOMInterface::swp_get_AxisStatus>(axis);
-  auto buffer = client->recv<op::ASCOMInterface::swp_get_AxisStatus, uint32_t>();
+  auto buffer = client->recv<op::ASCOMInterface::swp_get_AxisStatus, std::array<bool, 8>>();
   return buffer;
 }
 
@@ -155,6 +155,21 @@ uint32_t ASCOM_sky_interface::swp_get_BoardVersion() {
 bool ASCOM_sky_interface::swp_cmd_Initialize(uint8_t axis) {
   client->call<op::ASCOMInterface::swp_cmd_Initialize>(axis);
   auto buffer = client->recv<op::ASCOMInterface::swp_cmd_Initialize, bool>();
+  return buffer;
+}
+bool ASCOM_sky_interface::cmd_enable_backlash(uint8_t axis, bool enable) {
+  client->call<op::ASCOMInterface::enable_backlash>(axis, enable);
+  auto buffer = client->recv<op::ASCOMInterface::enable_backlash, bool>();
+  return buffer;
+}
+bool ASCOM_sky_interface::cmd_set_backlash_period(uint8_t axis, uint32_t ticks) {
+  client->call<op::ASCOMInterface::set_backlash_period>(axis, ticks);
+  auto buffer = client->recv<op::ASCOMInterface::set_backlash_period, bool>();
+  return buffer;
+}
+bool ASCOM_sky_interface::cmd_set_backlash_cycles(uint8_t axis, uint32_t ticks) {
+  client->call<op::ASCOMInterface::set_backlash_cycles>(axis, ticks);
+  auto buffer = client->recv<op::ASCOMInterface::set_backlash_cycles, bool>();
   return buffer;
 }
 
