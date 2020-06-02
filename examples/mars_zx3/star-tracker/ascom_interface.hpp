@@ -28,7 +28,7 @@ class ASCOMInterface {
       ret &= sti.disable_raw_backlash(i);
       ret &= sti.cancel_raw_command(i, false);
     }
-    if (!ret)
+    if (ret)
       ctx.log<INFO>("ASCOMInteface: %s Successful\n", __func__);
     else
       ctx.log<ERROR>("ASCOMInteface: %s Failed\n", __func__);
