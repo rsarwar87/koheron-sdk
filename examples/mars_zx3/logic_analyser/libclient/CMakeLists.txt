@@ -8,7 +8,7 @@ set(CMAKE_CONFIGURATION_TYPES "Release" CACHE STRING "" FORCE)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto -march=native -O3 -MMD -MP -Wall  -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto -march=native -O3 -MMD -MP -Wall  -pthread -g3")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lm -static-libgcc -static-libstdc++ ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wfloat-equal -Wunused-macros -Wcast-qual ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wlogical-op -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wundef ")
@@ -26,7 +26,6 @@ include_directories(../../../../tmp/examples/mars_zx3/logic_analyser/server/) # 
 
 # create static library
 add_library(fpgaskytracker SHARED driver.cpp)
-set_target_properties(fpgaskytracker  PROPERTIES PUBLIC_HEADER "fpgaskytracker.hpp")
 
 # create shared library
 add_library(fpgaskytrackerStatic STATIC driver.cpp)

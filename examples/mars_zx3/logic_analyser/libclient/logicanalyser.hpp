@@ -17,7 +17,7 @@ class logic_analyser_interface {
 
   bool start_dma();
   bool stop_dma();
-  std::array<uint32_t, 64 * 1024 * 64> get_adc_data();
+  bool get_adc_data(uint32_t *arra);
   uint64_t get_dna();
   uint32_t get_forty_two();
 

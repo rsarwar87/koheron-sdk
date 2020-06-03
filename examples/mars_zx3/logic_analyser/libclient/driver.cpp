@@ -2,9 +2,31 @@
 
 #include "logicanalyser.hpp"
 #include "log.hpp"
+#include <sys/resource.h>
 namespace sky_driver {
 static std::unique_ptr<KoheronClient> client;
 static syslog_stream klog;
+  void increase_stack_size()
+  {
+    const rlim_t kStackSize = 100 * 64 * 64 * 1024;   // min stack size = 16 MB
+    struct rlimit rl;
+    int result;
+
+    result = getrlimit(RLIMIT_STACK, &rl);
+    if (result == 0)
+    {
+        if (rl.rlim_cur < kStackSize)
+        {
+            rl.rlim_cur = kStackSize;
+            result = setrlimit(RLIMIT_STACK, &rl);
+            if (result != 0)
+            {
+                fprintf(stderr, "setrlimit returned result = %d\n", result);
+                klog << "setrlimit returned result = " << result;
+            }
+        }
+    }
+  }
 }
 using namespace sky_driver;
 
@@ -13,6 +35,7 @@ logic_analyser_interface::logic_analyser_interface(const char* host, int port) {
   client = std::make_unique<KoheronClient>(host, port);
   client->connect();
   klog << "Initialization completed" << std::endl;
+  increase_stack_size();
 }
 logic_analyser_interface::~logic_analyser_interface(){
   klog << "calling from " << __func__ << std::endl;
@@ -54,13 +77,15 @@ bool logic_analyser_interface::stop_dma() {
   klog << "returning from " << __func__ << std::endl;
   return true;
 }
-std::array<uint32_t, 64 * 1024 * 64>  logic_analyser_interface::get_adc_data() {
+bool logic_analyser_interface::get_adc_data(uint32_t* arra) {
   klog << "calling from " << __func__ << std::endl;
   client->call<op::DmaExample::get_adc_data>();
   klog << "retrieving from " << __func__ << std::endl;
   auto buffer = client->recv<op::DmaExample::get_adc_data, std::array<uint32_t, 64 * 1024 * 64> >();
+  for (size_t i = 0; i < 64*1024*64; i++)
+    arra[i] = buffer[i];
   klog << "returning from " << __func__ << std::endl;
-  return buffer;
+  return true;
 }
 
 uint32_t logic_analyser_interface::get_forty_two() {
