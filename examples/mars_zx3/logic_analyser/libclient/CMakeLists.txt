@@ -29,6 +29,8 @@ add_library(fpgaskytracker SHARED driver.cpp)
 
 # create shared library
 add_library(fpgaskytrackerStatic STATIC driver.cpp)
+add_executable(example main.cpp)
+target_link_libraries(example fpgaskytrackerStatic)
 set_target_properties(fpgaskytrackerStatic PROPERTIES OUTPUT_NAME logicanalyser)
 set_target_properties(fpgaskytrackerStatic  PROPERTIES PUBLIC_HEADER "logicanalyser.hpp")
 install(TARGETS fpgaskytracker LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include)
