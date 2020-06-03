@@ -3,6 +3,7 @@
 #include "logicanalyser.hpp"
 #include "log.hpp"
 #include <sys/resource.h>
+
 namespace sky_driver {
 static std::unique_ptr<KoheronClient> client;
 static syslog_stream klog;
@@ -77,13 +78,17 @@ bool logic_analyser_interface::stop_dma() {
   klog << "returning from " << __func__ << std::endl;
   return true;
 }
-bool logic_analyser_interface::get_adc_data(uint32_t* arra) {
+bool logic_analyser_interface::get_adc_data(std::bitset<16>* arra) {
   klog << "calling from " << __func__ << std::endl;
   client->call<op::DmaExample::get_adc_data>();
   klog << "retrieving from " << __func__ << std::endl;
   auto buffer = client->recv<op::DmaExample::get_adc_data, std::array<uint32_t, 64 * 1024 * 64> >();
   for (size_t i = 0; i < 64*1024*64; i++)
-    arra[i] = buffer[i];
+  {
+      uint16_t *parr16 = (uint16_t*)(&(buffer[i]));
+      arra[i*2] = parr16[0];
+      arra[i*2 + 1] = parr16[1];
+  }
   klog << "returning from " << __func__ << std::endl;
   return true;
 }

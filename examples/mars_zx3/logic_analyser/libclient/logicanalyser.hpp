@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <array>
+#include <bitset>
 
 
 class logic_analyser_interface {
@@ -17,7 +18,7 @@ class logic_analyser_interface {
 
   bool start_dma();
   bool stop_dma();
-  bool get_adc_data(uint32_t *arra);
+  bool get_adc_data(std::bitset<16> *arra);
   uint64_t get_dna();
   uint32_t get_forty_two();
 

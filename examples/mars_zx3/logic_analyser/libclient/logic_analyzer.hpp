@@ -1,12 +1,13 @@
 #ifndef __MAIN__CPP
 #define __MAIN__CPP
 
-#include <logicanalyser.hpp>
+#include "logicanalyser.hpp"
 #include <memory>
 #include <iostream>
 #include <array>
 #include <thread>
 #include <sys/resource.h>
+#include <bitset>
 
 using namespace std::chrono_literals;
 class logic_analyser_window {
@@ -21,11 +22,11 @@ class logic_analyser_window {
         std::cout << e.what() << std::endl;
         EXIT_FAILURE;
     }
-    data = new uint32_t[64*64*1024];
+    data = new std::bitset<16>[2*64*64*1024];
 
   }
 
-  uint32_t* get_data()
+  std::bitset<16>* get_data()
   {
     try{
         ptr->start_dma();
@@ -84,7 +85,7 @@ class logic_analyser_window {
 
  private:
   std::unique_ptr<logic_analyser_interface> ptr;
-  uint32_t *data;
+  std::bitset<16> *data;
 };
 
 
