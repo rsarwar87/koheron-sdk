@@ -183,7 +183,7 @@ class SkyTrackerInterface(object):
 
     def Initialize(self):
         for i in range(0, 2):
-            print('\n\nset_min_period{0} : {1}'.format(i, self.set_min_period(i, 0.051)))
+            print('\n\nset_min_period{0} : {1}'.format(i, self.set_min_period(i, 24)))
             print('set_max_period{0} : {1}'.format(i, self.set_max_period(i, 268435.0)))
             print('set_backlash{0} : {1}'.format(i, self.set_backlash(i, 15.1, 127, 7)))
             print('set_steps_per_rotation{0} : {1}'.format(i, self.set_steps_per_rotation(i, 4505600)))
@@ -193,10 +193,10 @@ class SkyTrackerInterface(object):
             print('==========================================')
             for j in range (0, 2):
 #                print('set_motor_mode{0}-{1} : {2}'.format(i, j, self.set_motor_mode(i, j, 7)))
-                print('set_speed_ratio{0}-{1} : {2}'.format(i, j, self.set_speed_ratio(i, j, 25.7)))
+                print('set_speed_ratio{0}-{1} : {2}'.format(i, j, self.set_speed_ratio(i, j, 1)))
                 print('set_motor_highspeedmode{0}-{1} : {2}'.format(i, j, self.set_motor_highspeedmode(i, j, True)))
                 print('set_motor_direction{0}-{1} : {2}'.format(i, j, self.set_motor_direction(i, j, 0)))
-                print('set_motor_period_usec{0}-{1} : {2}'.format(i, j, self.set_motor_period_usec(i, j, 17)))
+                print('set_motor_period_usec{0}-{1} : {2}'.format(i, j, self.set_motor_period_usec(i, j, 19.1*2)))
 
     def PrintAll(self):
         print("get_version: {0}".format(self.get_version()))

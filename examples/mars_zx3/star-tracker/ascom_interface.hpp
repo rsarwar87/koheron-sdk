@@ -131,8 +131,8 @@ class ASCOMInterface {
     return sti.set_goto_target(axis, target);
   }
   // SetStepPeriod             = 'I', //set slew speed
-  bool swp_set_StepPeriod(uint8_t axis, bool isSlew, uint32_t period_usec) {
-    return sti.set_motor_period_usec(axis, isSlew, period_usec);
+  bool swp_set_StepPeriod(uint8_t axis, bool isSlew, uint32_t period_ticks) {
+    return sti.set_motor_period_ticks(axis, isSlew, period_ticks);
   }
   // StartMotion               = 'J', // start
   bool swp_cmd_StartMotion(uint8_t axis, bool isSlew, bool use_accel) {
