@@ -3,6 +3,7 @@
 import os
 from koheron import command, connect
 import time
+import pdb
 
 class SkyTrackerInterface(object):
     def __init__(self, client):
@@ -130,60 +131,60 @@ class SkyTrackerInterface(object):
 
     # skywathcer interface
     @command("ASCOMInterface")
-    def swp_cmd_Initialize(self, axis):
+    def SwpCmdInitialize(self, axis):
         return self.client.recv_bool()
     @command("ASCOMInterface")
-    def swp_get_BoardVersion(self):
+    def SwpGetBoardVersion(self):
         return self.client.recv_uint32()
     @command("ASCOMInterface")
-    def swp_get_GridPerRevolution(self, axis):
+    def SwpGetGridPerRevolution(self, axis):
         return self.client.recv_uint32()
     @command("ASCOMInterface")
-    def swp_get_TimerInterruptFreq(self):
+    def SwpGetTimerInterruptFreq(self):
         return self.client.recv_uint32()
     @command("ASCOMInterface")
-    def swp_get_HighSpeedRatio(self, axis):
+    def SwpGetHighSpeedRatio(self, axis):
         return self.client.recv_double()
     @command("ASCOMInterface")
-    def swp_cmd_StopAxis(self, axis, instant):
+    def SwpCmdStopAxis(self, axis, instant):
         return self.client.recv_bool()
     @command("ASCOMInterface")
-    def swp_set_AxisPosition(self, axis, value):
+    def SwpSetAxisPosition(self, axis, value):
         return self.client.recv_bool()
     @command("ASCOMInterface")
-    def swp_get_AxisPosition(self, axis):
+    def SwpGetAxisPosition(self, axis):
         return self.client.recv_uint32()
     @command("ASCOMInterface")
-    def swp_set_MotionModeDirection(self, axis, isSlew, isForward, isHighSpeed):
+    def SwpSetMotionModeDirection(self, axis, isSlew, isForward, isHighSpeed):
         return self.client.recv_bool()
     @command("ASCOMInterface")
-    def swp_set_GotoTarget(self, axis, targt):
+    def SwpSetGotoTarget(self, axis, targt):
         return self.client.recv_bool()
     @command("ASCOMInterface")
-    def swp_set_GotoTargetIncrement(self, axis, ncycles):
+    def SwpSetGotoTargetIncrement(self, axis, ncycles):
         return self.client.recv_bool()
     @command("ASCOMInterface")
-    def swp_set_StepPeriod(self, axis, isSlew, period_usec):
+    def SwpSetStepPeriod(self, axis, isSlew, period_usec):
         return self.client.recv_bool()
     @command("ASCOMInterface")
-    def swp_cmd_StartMotion(self, axis, isSlew, use_accel):
+    def SwpCmdStartMotion(self, axis, isSlew, use_accel, isGoto):
         return self.client.recv_bool()
     @command("ASCOMInterface")
-    def swp_set_HomePosition(self, axis, period_usec):
+    def SwpSetHomePosition(self, axis, period_usec):
         return self.client.recv_bool()
     @command("ASCOMInterface")
-    def swp_get_AuxEncoder(self, axis):
+    def SwpGetAuxEncoder(self, axis):
         return self.client.recv_uint32()
     @command("ASCOMInterface")
-    def swp_set_Feature(self, axis, cmd):
+    def SwpSetFeature(self, axis, cmd):
         return self.client.recv_bool()
     @command("ASCOMInterface")
-    def swp_get_Feature(self, axis):
+    def SwpGetFeature(self, axis):
         return self.client.recv_uint32()
 
     def Initialize(self):
         for i in range(0, 2):
-            print('\n\nset_min_period{0} : {1}'.format(i, self.set_min_period(i, 24)))
+            print('\n\nset_min_period{0} : {1}'.format(i, self.set_min_period(i, 25)))
             print('set_max_period{0} : {1}'.format(i, self.set_max_period(i, 268435.0)))
             print('set_backlash{0} : {1}'.format(i, self.set_backlash(i, 15.1, 127, 7)))
             print('set_steps_per_rotation{0} : {1}'.format(i, self.set_steps_per_rotation(i, 4505600)))
@@ -197,6 +198,12 @@ class SkyTrackerInterface(object):
                 print('set_motor_highspeedmode{0}-{1} : {2}'.format(i, j, self.set_motor_highspeedmode(i, j, True)))
                 print('set_motor_direction{0}-{1} : {2}'.format(i, j, self.set_motor_direction(i, j, 0)))
                 print('set_motor_period_usec{0}-{1} : {2}'.format(i, j, self.set_motor_period_usec(i, j, 19.1*2)))
+
+    def PrintSpeed(self):
+        for i in range (0, 2):
+            for j in range (0, 2):
+                print('get_motor_direction{0}-{1}: {2}'.format(i, j, self.get_motor_direction(i, j)))
+                print('get_motor_period_usec{0}-{1}: {2}'.format(i, j, self.get_motor_period_usec(i, j)))
 
     def PrintAll(self):
         print("get_version: {0}".format(self.get_version()))
@@ -232,6 +239,8 @@ if __name__ == '__main__':
     driver = SkyTrackerInterface(client)
     driver.PrintAll()
     driver.Initialize()
+    driver.cancel_raw_command(0, False)
+    driver.cancel_raw_command(1, False)
     driver.enable_backlash(0)
     driver.enable_backlash(1)
 
@@ -242,11 +251,11 @@ if __name__ == '__main__':
     time.sleep(1)
     driver.PrintAll()
     time.sleep(1)
-    print('Start Tracking0 {0}'.format(driver.swp_cmd_StartMotion(0, True, True)))
-    print('Start Tracking1 {0}'.format(driver.swp_cmd_StartMotion(1, True, True)))
+    print('Start Tracking0 {0}'.format(driver.SwpCmdStartMotion(0, True, True, False)))
+    print('Start Tracking1 {0}'.format(driver.SwpCmdStartMotion(1, True, True, False)))
     time.sleep(1)
-    print('Start Command0 {0}'.format(driver.swp_cmd_StartMotion(0, True, False)))
-    print('Start Command1 {0}'.format(driver.swp_cmd_StartMotion(1, True, False)))
+    print('Start Command0 {0}'.format(driver.SwpCmdStartMotion(0, True, False, False)))
+    print('Start Command1 {0}'.format(driver.SwpCmdStartMotion(1, True, False, False)))
     time.sleep(3)
     driver.cancel_raw_command(0, False)
     driver.cancel_raw_command(1, False)
