@@ -135,7 +135,7 @@ class ASCOMInterface {
     return sti.set_motor_period_ticks(axis, isSlew, period_ticks);
   }
   // StartMotion               = 'J', // start
-  bool swp_cmd_StartMotion(uint8_t axis, bool isSlew, bool use_accel) {
+  bool swp_cmd_StartMotion(uint8_t axis, bool isSlew, bool use_accel, bool isGoto) {
     if (!check_axis_id(axis, __func__)) return false;
 
     bool ret = false;
@@ -147,7 +147,7 @@ class ASCOMInterface {
       ret = sti.send_raw_command(axis, sti.m_params.motorDirection[isSlew][axis],
                              sti.m_params.GotoNCycles[axis],
                              sti.m_params.period_ticks[isSlew][axis],
-                             sti.m_params.motorMode[isSlew][axis], false, use_accel);
+                             sti.m_params.motorMode[isSlew][axis], isGoto, use_accel);
     return ret;
   }
   // GetHomePosition           = 'd', // Get Home position encoder count
