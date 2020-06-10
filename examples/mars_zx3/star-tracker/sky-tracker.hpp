@@ -273,6 +273,15 @@ class SkyTrackerInterface {
     // m_params.motorSpeed[isSlew][axis] = m_params.stepPerRotation[axis]*;
     ctx.log<INFO>("%s(%u): %u\n", __func__, axis,
                   m_params.period_ticks[isSlew][axis]);
+
+    if (isSlew)
+      if ((get_raw_status(axis) & 0x1) == 1)
+      {
+        ctx.log<INFO>("%s(%u): updating speed\n", __func__, axis);
+        start_raw_tracking(axis, m_params.motorDirection[isSlew][axis],
+                              m_params.period_ticks[isSlew][axis],
+                              m_params.motorMode[isSlew][axis], true);
+      }
     return true;
   }
 
@@ -324,12 +333,12 @@ class SkyTrackerInterface {
     return true;
   }
   bool start_raw_tracking(uint8_t axis, bool isForward, uint32_t periodticks,
-                          uint8_t mode) {
+                          uint8_t mode, bool update = false) {
     if (!check_axis_id(axis, __func__)) return false;
     if (axis == 0)
-      stepper.enable_tracking<0>(isForward, periodticks, mode);
+      stepper.enable_tracking<0>(isForward, periodticks, mode, update);
     else
-      stepper.enable_tracking<1>(isForward, periodticks, mode);
+      stepper.enable_tracking<1>(isForward, periodticks, mode, update);
     return true;
   }
   bool park_raw_telescope(uint8_t axis, bool isForward, uint32_t period_ticks,

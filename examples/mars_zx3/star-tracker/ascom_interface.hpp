@@ -58,7 +58,7 @@ class ASCOMInterface {
   // InstantAxisStop (L) + NotInstantAxisStop (K)
   bool SwpCmdStopAxis(uint8_t axis, bool instant) {
     if (instant || !check_axis_id(axis, __func__)) return false;
-    ctx.log<INFO>("ASCOMInteface: %s- isInstant: %u\n", __func__, instant);
+    ctx.log<INFO>("ASCOMInteface: %s(%u)- isInstant: %u\n", __func__, axis, instant);
     uint32_t status = sti.get_raw_status(axis);
     bool ret = true;
     if ((status & 0x1) == 1) ret = sti.disable_raw_tracking(axis, instant);
@@ -81,7 +81,7 @@ class ASCOMInterface {
     bool isSlew = status & 0x1;
     bool fault = (status >> 3) & 0x1;
     bool backlash = (status >> 4) & 0x1;
-    bool direction = sti.get_motor_direction(axis, isSlew);
+    bool direction = sti.get_motor_direction(axis, !isGoto);
     bool running = isGoto || isSlew;
     bool speedmode = sti.get_motor_highspeedmode(axis, isSlew);
     std::array<bool, 8> ret = { sti.m_params.initialized[axis],  running,
@@ -95,8 +95,8 @@ class ASCOMInterface {
     //[1] direction and mode, i.e. high/low speed in eqmod?
     if (!check_axis_id(axis, __func__)) return false;
     ctx.log<INFO>(
-        "ASCOMInteface: %s- isSlew: %u; isForward: %u; isHighSpeed: %u\n",
-        __func__, isForward, isSlew, isHighSpeed);
+        "ASCOMInteface: %s(%u)- isSlew: %u; isForward: %u; isHighSpeed: %u\n",
+        __func__, axis, isSlew,isForward,  isHighSpeed);
     // TODO
     sti.m_params.motorDirection[isSlew][axis] = isForward;
     sti.m_params.highSpeedMode[isSlew][axis] = isHighSpeed;
@@ -111,8 +111,8 @@ class ASCOMInterface {
   // does nothing ??
   bool SwpSetBreakPointIncrement(uint8_t axis, uint32_t ncycles) {
     if (!check_axis_id(axis, __func__)) return false;
-    ctx.log<INFO>("ASCOMInteface: %s- Command recieved: %u\n", __func__,
-                  ncycles);
+    ctx.log<INFO>("ASCOMInteface: %s(%u)- Command recieved: %u\n", __func__,
+                  axis, ncycles);
     // TODO
     bool ret = true;
     return ret;
@@ -120,8 +120,8 @@ class ASCOMInterface {
   // SetBreakStep              = 'U', // does nothing??
   bool SwpSetBreakStep(uint8_t axis, uint32_t ncycles) {
     if (!check_axis_id(axis, __func__)) return false;
-    ctx.log<INFO>("ASCOMInteface: %s- Command recieved: %u\n", __func__,
-                  ncycles);
+    ctx.log<INFO>("ASCOMInteface: %s(%u)- Command recieved: %u\n", __func__,
+                  axis, ncycles);
     bool ret = true;
     // TODO
     return ret;

@@ -64,9 +64,10 @@ class Drv8825
       ctx.log<INFO>("DRV8825-%s: %s\n", offset == 0 ? "SA" : "DC", __func__);
     }
     template<uint32_t offset>
-    void enable_tracking(bool isCCW, uint32_t period_ticks, uint8_t mode)
+    void enable_tracking(bool isCCW, uint32_t period_ticks, uint8_t mode, bool update = false)
     {
         uint32_t cmd = 0;
+        if (!update)
         if (period_ticks < 500*1000/20)
         {
           for (size_t i = (500*1000/20)/period_ticks; i > 0; i--)
