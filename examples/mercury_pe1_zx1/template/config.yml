@@ -1,6 +1,6 @@
 ---
 name: PE1_XZ1_7030
-board: boards/pe1_zx1
+board: boards/mercury_zx1_pe1
 version: 0.1.1
 
 cores:
@@ -15,6 +15,9 @@ memory:
   - name: status
     offset: '0x50000000'
     range: 4K
+  - name: SDRAM
+    offset: '0xA0000000'
+    range: 256M
 
 control_registers:
   - led
@@ -26,10 +29,11 @@ status_registers:
 
 parameters:
   fclk0: 100000000 # FPGA clock speed in Hz
+  fclk1: 100000000 # FPGA clock speed in Hz
 
 xdc:
-  - ./../../../boards/pe1_zx1/config/ports.xdc 
-  - ./../../../boards/pe1_zx1/config/pcie.xdc 
+  - ./../../../boards/mercury_zx1_pe1/config/ports.xdc 
+  - ./../../../boards/mercury_zx1_pe1/config/pcie.xdc 
   - ./constraints.xdc
 
 drivers:
