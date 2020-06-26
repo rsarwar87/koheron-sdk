@@ -24,8 +24,6 @@ control_registers:
 
 status_registers:
   - forty_two
-  - dna_high
-  - dna_low
 
 parameters:
   fclk0: 100000000 # FPGA clock speed in Hz
