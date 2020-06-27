@@ -66,7 +66,7 @@ $(VERSION_FILE): $(CONFIG)
 # Zip file that contains all the files needed to run the instrument:
 INSTRUMENT_ZIP := $(TMP_PROJECT_PATH)/$(NAME).zip
 $(INSTRUMENT_ZIP): server $(BITSTREAM) web $(VERSION_FILE) $(TMP_PROJECT_PATH)/overlay.dtb $(BITSTREAM).bin
-	zip --junk-paths $(INSTRUMENT_ZIP) $(BITSTREAM).bin  $(BITSTREAM) $(SERVER) $(WEB_ASSETS) $(VERSION_FILE)
+	zip --junk-paths $(INSTRUMENT_ZIP) $(BITSTREAM).bin $(TMP_PROJECT_PATH)/overlay.dtb $(BITSTREAM) $(SERVER) $(WEB_ASSETS) $(VERSION_FILE)
 	@echo [$@] OK
 
 # Make builds the instrument zip file by default
