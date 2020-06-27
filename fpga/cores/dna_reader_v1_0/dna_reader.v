@@ -6,7 +6,7 @@ module dna_reader
   input  wire        aclk,
   input  wire        aresetn,
 
-  output wire [56:0] dna_data
+  output wire [63:0] dna_data
 );
 
   localparam integer CNTR_WIDTH = 16;
@@ -83,6 +83,6 @@ module dna_reader
     end
   end
 
-  assign dna_data = int_data_reg;
+  assign dna_data = {int_data_reg, 7'h0};
 
 endmodule
