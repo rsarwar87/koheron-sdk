@@ -17,9 +17,8 @@
 /include/ "zynq-enclustra-qspi-parts.dtsi"
 
 / {
-	model = "Enclustra Mars ZX3 SOM - koheron sdk 750MB ram";
-
-	memory {
+	model = "Enclustra Mars ZX3 SOM";
+  	memory {
 		device_type = "memory";
 		reg = <0x0 0x30000000>;
 	};
