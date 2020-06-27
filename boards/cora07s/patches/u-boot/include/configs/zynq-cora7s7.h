@@ -1,4 +1,7 @@
 
+#ifndef __CONFIG_ZYNQ_ALPHA250_H
+#define __CONFIG_ZYNQ_ALPHA250_H
+#include <configs/zynq-common.h>
 #define CONFIG_SYS_BOOTM_LEN 0xF000000
 
 /*Required for uartless designs */
@@ -17,3 +20,5 @@
 #undef CONFIG_PREBOOT
 #define CONFIG_PREBOOT	"echo U-BOOT for Cora Z7 from koheron; setenv preboot; setenv bootenv uEnv.txt;  setenv loadbootenv_addr 0x1EE00000; if test $modeboot = sdboot && env run sd_uEnvtxt_existence_test; then if env run loadbootenv; then env run importbootenv; fi; fi; dhcp"
 #endif
+#endif /* __CONFIG_ZYNQ_ALPHA250_H */
+

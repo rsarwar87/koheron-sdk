@@ -1203,7 +1203,6 @@ dtb-$(CONFIG_ARCH_ZYNQ) += \
 	zynq-cc108.dtb \
 	zynq-cora7s7.dtb \
 	zynq-microzed.dtb \
-	zynq-mercury-zx1.dtb \
 	zynq-parallella.dtb \
 	zynq-zc702.dtb \
 	zynq-zc706.dtb \

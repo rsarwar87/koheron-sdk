@@ -21,7 +21,7 @@
 
 	memory@0 {
 		device_type = "memory";
-		reg = <0x0 0x1E0000000>;
+		reg = <0x0 0x1E000000>;
 	};
 
 	usb_phy0: phy0@e0002000 {
