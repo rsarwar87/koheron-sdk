@@ -5,7 +5,8 @@
 	};
 
 	chosen {
-		linux,stdout-path = "/amba/serial@e0000000";
+		bootargs = "console=ttyPS0,115200 root=/dev/mmcblk0p2 ro rootfstype=ext4 earlyprintk rootwait earlycon";
+		stdout-path = "serial0:115200n8";
 	};
 
 	usb_phy0: phy0 {
