@@ -190,7 +190,7 @@ connect_bd_net -net SDRAM_mmcm_locked [get_bd_pins SDRAM/mmcm_locked] [get_bd_pi
   connect_bd_net -net SDRAM_ui_clk_sync_rst [get_bd_pins SDRAM/ui_clk_sync_rst] [get_bd_pins rst_mig_7series_0_100M/ext_reset_in]
 connect_bd_net -net rst_SDRAM_100M_peripheral_aresetn [get_bd_pins SDRAM/aresetn] [get_bd_pins axi_mem_intercon_1/M00_ARESETN] [get_bd_pins rst_mig_7series_0_100M/peripheral_aresetn]
 
-  assign_bd_address -offset [get_memory_offset SDRAM] -range [get_memory_range SDRAM] -target_address_space [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs SDRAM/memmap/memaddr] -force
+  assign_bd_address -offset [get_memory_offset SDRAM] -range [get_memory_range SDRAM] -target_address_space [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs SDRAM/memmap/memaddr] 
 
 
 cell xilinx.com:ip:xadc_wiz:3.3 xadc_wiz_0 {
