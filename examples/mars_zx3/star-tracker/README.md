@@ -1,3 +1,3 @@
-# Led blinker
+# Star Tracker
 
-https://www.koheron.com/software-development-kit/documentation/examples/minimal-instrument
+also see: https://github.com/rsarwar87/de10-sky-tracker

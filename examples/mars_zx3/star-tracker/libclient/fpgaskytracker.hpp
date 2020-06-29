@@ -4,6 +4,7 @@
 #define __DRIVER_HPP__
 #include <stdint.h>
 #include <stdio.h>
+#include <array>
 
 
 class ASCOM_sky_interface {
@@ -12,55 +13,63 @@ class ASCOM_sky_interface {
   ~ASCOM_sky_interface();
 
   // SetPolarScopeLED          = 'V',
-  bool swp_set_PolarScopeLED();
-  uint32_t swp_get_Feature(uint8_t axis);
+  bool SwpSetPolarScopeLED();
+  uint32_t SwpGetFeature(uint8_t axis);
   // SetFeatureCmd             = 'W', // EQ8/AZEQ6/AZEQ5 only
-  bool swp_set_Feature(uint8_t axis, uint8_t cmd);
+  bool SwpSetFeature(uint8_t axis, uint8_t cmd);
   // GetFeatureCmd             = 'q', // EQ8/AZEQ6/AZEQ5 only
   // InquireAuxEncoder         = 'd', // EQ8/AZEQ6/AZEQ5 only
-  uint32_t swp_get_AuxEncoder(uint8_t axis);
+  uint32_t SwpGetAuxEncoder(uint8_t axis);
   // GetHomePosition           = 'd', // Get Home position encoder count
   // (default at startup)
   // not used in eqmod
-  uint32_t swp_get_HomePosition(uint8_t axis);
+  uint32_t SwpGetHomePosition(uint8_t axis);
   // StartMotion               = 'J', // start
-  bool swp_cmd_StartMotion(uint8_t axis, bool isSlew, bool use_accel);
+  bool SwpCmdStartMotion(uint8_t axis, bool isSlew, bool use_accel, bool isGoto);
   // SetStepPeriod             = 'I', //set slew speed
-  bool swp_set_StepPeriod(uint8_t axis, bool isSlew, uint32_t period_usec);
+  bool SwpSetStepPeriod(uint8_t axis, bool isSlew, uint32_t period_usec);
   // SetGotoTarget             = 'S', // does nothing??
-  bool swp_set_GotoTarget(uint8_t axis, uint32_t target);
+  bool SwpSetGotoTarget(uint8_t axis, uint32_t target);
   // SetBreakStep              = 'U', // does nothing??
-  bool swp_set_BreakStep(uint8_t axis, uint32_t ncycles);
+  bool SwpSetBreakStep(uint8_t axis, uint32_t ncycles);
   // NOT SURE SetBreakPointIncrement    = 'M',
   // does nothing ??
-  bool swp_set_BreakPointIncrement(uint8_t axis, uint32_t ncycles);
+  bool SwpSetBreakPointIncrement(uint8_t axis, uint32_t ncycles);
   // set goto target - SetGotoTargetIncrement    = 'H', // set goto position
-  bool swp_set_GotoTargetIncrement(uint8_t axis, uint32_t ncycles);
+  bool SwpSetGotoTargetIncrement(uint8_t axis, uint32_t ncycles);
   // SetMotionMode             = 'G', mode and direction
-  bool swp_set_MotionModeDirection(uint8_t axis, bool isForward, bool isSlew,
+  bool SwpSetMotionModeDirection(uint8_t axis, bool isForward, bool isSlew,
                                    bool isHighSpeed);
   // GetAxisStatus             = 'f',
-  uint32_t swp_get_AxisStatus(uint8_t axis);
+  std::array<bool, 8> SwpGetAxisStatus(uint8_t axis);
   // GetAxisPosition           = 'j', // current position
-  uint32_t swp_get_AxisPosition(uint8_t axis); 
+  uint32_t SwpGetAxisPosition(uint8_t axis); 
   // SetAxisPositionCmd        = 'E', set current position
-  bool swp_set_AxisPosition(uint8_t axis, uint32_t value);
+  bool SwpSetAxisPosition(uint8_t axis, uint32_t value);
   // InstantAxisStop (L) + NotInstantAxisStop (K)
-  bool swp_cmd_StopAxis(uint8_t axis, bool instant);
+  bool SwpCmdStopAxis(uint8_t axis, bool instant);
   // Encoder stuff (g) // speed scalar for high speed skew
   // InquireHighSpeedRatio     = 'g',
-  double swp_get_HighSpeedRatio(uint8_t axis);
+  double SwpGetHighSpeedRatio(uint8_t axis);
   // InquireTimerInterruptFreq = 'b', // sidereal rate of axis   steps per
   // worm???
-  uint32_t swp_get_TimerInterruptFreq();
+  uint32_t SwpGetTimerInterruptFreq();
   // InquireGridPerRevolution  = 'a', // steps per axis revolution
-  uint32_t swp_get_GridPerRevolution(uint8_t axis);
+  uint32_t SwpGetGridPerRevolution(uint8_t axis);
   // InquireMotorBoardVersion  = 'e',
-  uint32_t swp_get_BoardVersion();
+  uint32_t SwpGetBoardVersion();
   // Initialize                = 'F',
-  bool swp_cmd_Initialize(uint8_t axis);
+  bool SwpCmdInitialize(uint8_t axis);
+  bool cmd_enable_backlash(uint8_t axis, bool enable);
+  bool cmd_set_backlash_period(uint8_t axis, uint32_t ticks);
+  bool cmd_set_backlash_cycles(uint8_t axis, uint32_t ticks);
+  //bool set_backlash(uint8_t axis, double period_usec, uint32_t cycles);
   uint32_t get_forty_two();
   uint64_t get_dna();
+  void print_status(std::string fname, std::string str);
+  void print_error(std::string fname, std::string str);
+  uint32_t get_minimum_period(uint8_t axis);
+  uint32_t get_maximum_period(uint8_t axis);
 
  private:
 };

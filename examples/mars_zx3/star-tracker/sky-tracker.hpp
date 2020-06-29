@@ -41,8 +41,8 @@ class SkyTrackerInterface {
       m_params.motorDirection[0][i] = true;
       m_params.motorDirection[1][i] = true;
 
-      m_params.motorMode[0][i] = 0x07;  // microsteps
-      m_params.motorMode[1][i] = 0x07;  // microsteps
+      m_params.motorMode[0][i] = 0x04;  // microsteps
+      m_params.motorMode[1][i] = 0x04;  // microsteps
 
       m_params.versionNumber[i] = 0xd4444;  //_eVal: Version number
 
@@ -53,12 +53,12 @@ class SkyTrackerInterface {
           10.;  //_sVal: Steps per worm gear revolution
       m_params.backlash_ticks[i] = 0x300;    //_eVal: Version number
       m_params.backlash_ncycle[i] = 0x3000;  //_aVal: Steps per axis revolution
-      m_params.backlash_mode[i] = 0x3;  //_aVal: Steps per axis revolution
+      m_params.backlash_mode[i] = 0x7;  //_aVal: Steps per axis revolution
       m_params.initialized[i] = false;  //_aVal: Steps per axis revolution
     }
   }
 
-  bool set_speed_ratio(int8_t axis, bool isSlew, double val) {
+  bool set_speed_ratio(uint8_t axis, bool isSlew, double val) {
     if (!check_axis_id(axis, __func__)) return false;
     if (val < 0.25) {
       ctx.log<ERROR>("%s(%u) val out of range %9.5f\n", __func__, axis, val);
@@ -69,19 +69,19 @@ class SkyTrackerInterface {
                   m_params.speed_ratio[isSlew][axis]);
     return true;
   }
-  double get_speed_ratio(int8_t axis, bool isSlew) {
+  double get_speed_ratio(uint8_t axis, bool isSlew) {
     if (!check_axis_id(axis, __func__)) return -1.;
     ctx.log<INFO>("%s(%u): %9.5f\n", __func__, axis,
                   m_params.speed_ratio[isSlew][axis]);
     return m_params.speed_ratio[isSlew][axis];
   }
-  uint32_t get_steps_per_rotation(int8_t axis) {
+  uint32_t get_steps_per_rotation(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis,
                   m_params.stepPerRotation[axis]);
     return m_params.stepPerRotation[axis];
   }
-  bool set_steps_per_rotation(int8_t axis, uint32_t steps) {
+  bool set_steps_per_rotation(uint8_t axis, uint32_t steps) {
     if (!check_axis_id(axis, __func__)) return false;
     if (steps > 0x3FFFFFFF) {
       ctx.log<ERROR>("%s(%u): %u steps (Max %u ticks)\n", __func__, axis, steps,
@@ -97,28 +97,28 @@ class SkyTrackerInterface {
   }
 
   uint32_t get_version() { return (m_params.versionNumber[0]); }
-  uint32_t get_backlash_period_ticks(int8_t axis) {
+  uint32_t get_backlash_period_ticks(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis,
                   m_params.backlash_ticks[axis]);
     return m_params.backlash_ticks[axis];
   }
-  double get_backlash_period_usec(int8_t axis) {
+  double get_backlash_period_usec(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     ctx.log<INFO>("%s(%u): %9.5f us\n", __func__, axis,
                   m_params.backlash_period_usec[axis]);
     return m_params.backlash_period_usec[axis];
   }
-  uint32_t get_backlash_ncycles(int8_t axis) {
+  uint32_t get_backlash_ncycles(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     ctx.log<INFO>("%s(%u): %u cycles\n", __func__, axis,
                   m_params.backlash_ncycle[axis]);
     return m_params.backlash_ncycle[axis];
   }
-  bool set_backlash(int8_t axis, double period_usec, uint32_t cycles, uint8_t mode) {
+  bool set_backlash(uint8_t axis, double period_usec, uint32_t cycles, uint8_t mode) {
     if (!check_axis_id(axis, __func__)) return false;
     uint32_t _ticks = (uint32_t)((period_usec  / fclk0_period_us) + .5);
-    if (mode < 7) {
+    if (mode > 7) {
       ctx.log<ERROR>("%s(%u): mode out of range %u (%u max)\n",
                      __func__, axis, mode, 7);
       return false;
@@ -138,7 +138,7 @@ class SkyTrackerInterface {
         __func__, axis, period_usec, _ticks, cycles);
     return true;
   }
-  bool set_motor_mode(int8_t axis, bool isSlew, uint8_t val) {
+  bool set_motor_mode(uint8_t axis, bool isSlew, uint8_t val) {
     if (!check_axis_id(axis, __func__)) return false;
     if (val > 7) {
       ctx.log<ERROR>("%s(%u): invalid mode for %s (%u)\n", __func__, axis,
@@ -151,14 +151,14 @@ class SkyTrackerInterface {
                   isSlew ? "Slew" : "GoTo", val);
     return true;
   }
-  uint32_t get_motor_mode(int8_t axis, bool isSlew) {
+  uint32_t get_motor_mode(uint8_t axis, bool isSlew) {
     if (!check_axis_id(axis, __func__)) return false;
     uint32_t ret = m_params.motorMode[isSlew][axis];
     ctx.log<INFO>("%s(%u): %s is in %u mode\n", __func__, axis,
                   isSlew ? "Slew" : "GoTo", ret);
     return (ret);
   }
-  bool set_motor_highspeedmode(int8_t axis, bool isSlew, bool isHighSpeed) {
+  bool set_motor_highspeedmode(uint8_t axis, bool isSlew, bool isHighSpeed) {
     if (!check_axis_id(axis, __func__)) return false;
     m_params.highSpeedMode[isSlew][axis] = isHighSpeed;
     ctx.log<INFO>("%s(%u): %s high speed = %s\n", __func__, axis,
@@ -166,28 +166,28 @@ class SkyTrackerInterface {
                   isHighSpeed ? "True" : "False");
     return true;
   }
-  bool get_motor_highspeedmode(int8_t axis, bool isSlew) {
+  bool get_motor_highspeedmode(uint8_t axis, bool isSlew) {
     if (!check_axis_id(axis, __func__)) return false;
     bool ret = m_params.highSpeedMode[isSlew][axis];
     ctx.log<INFO>("%s(%u): %s highspeed: %s\n", __func__, axis,
                   isSlew ? "Slew" : "GoTo", ret ? "True" : "False");
     return (ret);
   }
-  bool set_motor_direction(int8_t axis, bool isSlew, bool isForward) {
+  bool set_motor_direction(uint8_t axis, bool isSlew, bool isForward) {
     if (!check_axis_id(axis, __func__)) return false;
     m_params.motorDirection[isSlew][axis] = isForward;
     ctx.log<INFO>("%s(%u): %s is in %s direction\n", __func__, axis,
                   isSlew ? "Slew" : "GoTo", isForward ? "Forward" : "Backward");
     return true;
   }
-  bool get_motor_direction(int8_t axis, bool isSlew) {
+  bool get_motor_direction(uint8_t axis, bool isSlew) {
     if (!check_axis_id(axis, __func__)) return false;
     bool ret = m_params.motorDirection[isSlew][axis];
     ctx.log<INFO>("%s(%u): %s is in %s direction\n", __func__, axis,
                   isSlew ? "Slew" : "GoTo", ret ? "Forward" : "Backward");
     return (ret);
   }
-  bool set_min_period(int8_t axis, double val_usec) {
+  bool set_min_period(uint8_t axis, double val_usec) {
     if (!check_axis_id(axis, __func__)) return false;
     uint32_t _ticks = (uint32_t)((val_usec / fclk0_period_us) + .5);
     if (_ticks < 2) {
@@ -201,7 +201,7 @@ class SkyTrackerInterface {
                   m_params.minPeriod[axis], val_usec);
     return true;
   }
-  bool set_max_period(int8_t axis, double val_usec) {
+  bool set_max_period(uint8_t axis, double val_usec) {
     if (!check_axis_id(axis, __func__)) return false;
     if (val_usec > 2684354.) {
       ctx.log<ERROR>("%s(%u): %9.5f usec. Max allowed is 2683454 usec \n",
@@ -213,39 +213,39 @@ class SkyTrackerInterface {
     ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.maxPeriod[axis]);
     return true;
   }
-  uint32_t get_min_period_ticks(int8_t axis) {
+  uint32_t get_min_period_ticks(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.minPeriod[axis]);
     return (m_params.minPeriod[axis]);
   }
-  double get_max_period_ticks(int8_t axis) {
+  uint32_t get_max_period_ticks(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.maxPeriod[axis]);
     return (m_params.maxPeriod[axis]);
   }
-  double get_min_period(int8_t axis) {
+  double get_min_period(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.minPeriod[axis]);
     return (((double)m_params.minPeriod[axis]) * fclk0_period_us);
   }
-  double get_max_period(int8_t axis) {
+  double get_max_period(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.maxPeriod[axis]);
     return (((double)m_params.maxPeriod[axis]) * fclk0_period_us);
   }
-  uint32_t get_motor_period_ticks(int8_t axis, bool isSlew) {
+  uint32_t get_motor_period_ticks(uint8_t axis, bool isSlew) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     ctx.log<INFO>("%s(%u-%u): %u\n", __func__, axis, isSlew,
                   m_params.period_ticks[isSlew][axis]);
     return (m_params.period_ticks[isSlew][axis]);
   }
-  double get_motor_period_usec(int8_t axis, bool isSlew) {
+  double get_motor_period_usec(uint8_t axis, bool isSlew) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     ctx.log<INFO>("%s(%u-%u): %9.5f\n", __func__, axis, isSlew,
                   m_params.period_usec[isSlew][axis]);
     return (m_params.period_usec[isSlew][axis]);
   }
-  bool set_motor_period_usec(int8_t axis, bool isSlew, double val_usec) {
+  bool set_motor_period_usec(uint8_t axis, bool isSlew, double val_usec) {
     if (!check_axis_id(axis, __func__)) return false;
     uint32_t _ticks = (uint32_t)((val_usec  / fclk0_period_us) + .5);
     if (_ticks > m_params.maxPeriod[axis] ||
@@ -261,7 +261,7 @@ class SkyTrackerInterface {
                   m_params.period_usec[isSlew][axis], _ticks);
     return true;
   }
-  bool set_motor_period_ticks(int8_t axis, bool isSlew, uint32_t val_ticks) {
+  bool set_motor_period_ticks(uint8_t axis, bool isSlew, uint32_t val_ticks) {
     if (!check_axis_id(axis, __func__)) return false;
     if (val_ticks > m_params.maxPeriod[axis] ||
         val_ticks < m_params.minPeriod[axis]) {
@@ -273,17 +273,26 @@ class SkyTrackerInterface {
     // m_params.motorSpeed[isSlew][axis] = m_params.stepPerRotation[axis]*;
     ctx.log<INFO>("%s(%u): %u\n", __func__, axis,
                   m_params.period_ticks[isSlew][axis]);
+
+    if (isSlew)
+      if ((get_raw_status(axis) & 0x1) == 1)
+      {
+        ctx.log<INFO>("%s(%u): updating speed\n", __func__, axis);
+        start_raw_tracking(axis, m_params.motorDirection[isSlew][axis],
+                              m_params.period_ticks[isSlew][axis],
+                              m_params.motorMode[isSlew][axis], true);
+      }
     return true;
   }
 
-  uint32_t get_raw_status(int8_t axis) {
+  uint32_t get_raw_status(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     if (axis == 0)
       return stepper.get_status<0>();
     else
       return stepper.get_status<1>();
   }
-  uint32_t get_raw_stepcount(int8_t axis) {
+  uint32_t get_raw_stepcount(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     if (axis == 0)
       return stepper.get_stepcount<0>();
@@ -291,7 +300,7 @@ class SkyTrackerInterface {
       return stepper.get_stepcount<1>();
   }
 
-  bool enable_backlash(int8_t axis) {
+  bool enable_backlash(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return false;
     if (axis == 0)
       stepper.set_backlash<0>(m_params.backlash_ticks[axis], m_params.backlash_ncycle[axis], m_params.backlash_mode[axis]);
@@ -299,7 +308,7 @@ class SkyTrackerInterface {
       stepper.set_backlash<1>(m_params.backlash_ticks[axis], m_params.backlash_ncycle[axis], m_params.backlash_mode[axis]);
     return true;
   }
-  bool assign_raw_backlash(int8_t axis, uint32_t ticks, uint32_t ncycles, uint8_t mode) {
+  bool assign_raw_backlash(uint8_t axis, uint32_t ticks, uint32_t ncycles, uint8_t mode) {
     if (!check_axis_id(axis, __func__)) return false;
     if (axis == 0)
       stepper.set_backlash<0>(ticks, ncycles, mode);
@@ -307,7 +316,7 @@ class SkyTrackerInterface {
       stepper.set_backlash<1>(ticks, ncycles, mode);
     return true;
   }
-  bool disable_raw_backlash(int8_t axis) {
+  bool disable_raw_backlash(uint8_t axis) {
     if (!check_axis_id(axis, __func__)) return false;
     if (axis == 0)
       stepper.disable_backlash<0>();
@@ -315,7 +324,7 @@ class SkyTrackerInterface {
       stepper.disable_backlash<1>();
     return true;
   }
-  bool disable_raw_tracking(int8_t axis, bool instant) {
+  bool disable_raw_tracking(uint8_t axis, bool instant) {
     if (!check_axis_id(axis, __func__)) return false;
     if (axis == 0)
       stepper.disable_tracking<0>(instant);
@@ -323,16 +332,16 @@ class SkyTrackerInterface {
       stepper.disable_tracking<1>(instant);
     return true;
   }
-  bool start_raw_tracking(int8_t axis, bool isForward, uint32_t periodticks,
-                          uint8_t mode) {
+  bool start_raw_tracking(uint8_t axis, bool isForward, uint32_t periodticks,
+                          uint8_t mode, bool update = false) {
     if (!check_axis_id(axis, __func__)) return false;
     if (axis == 0)
-      stepper.enable_tracking<0>(isForward, periodticks, mode);
+      stepper.enable_tracking<0>(isForward, periodticks, mode, update);
     else
-      stepper.enable_tracking<1>(isForward, periodticks, mode);
+      stepper.enable_tracking<1>(isForward, periodticks, mode, update);
     return true;
   }
-  bool park_raw_telescope(int8_t axis, bool isForward, uint32_t period_ticks,
+  bool park_raw_telescope(uint8_t axis, bool isForward, uint32_t period_ticks,
                           uint8_t mode, bool use_accel) {
     if (!check_axis_id(axis, __func__)) return false;
     if (axis == 0)
@@ -341,7 +350,7 @@ class SkyTrackerInterface {
       stepper.set_park<1>(isForward, period_ticks, mode, use_accel);
     return true;
   }
-  bool send_raw_command(int8_t axis, bool isForward, uint32_t ncycles,
+  bool send_raw_command(uint8_t axis, bool isForward, uint32_t ncycles,
                         uint32_t period_ticks, uint8_t mode, bool isGoTo, bool use_accel) {
     if (!check_axis_id(axis, __func__)) return true;
     if (axis == 0)
@@ -350,7 +359,7 @@ class SkyTrackerInterface {
       stepper.set_command<1>(isForward, ncycles, period_ticks, mode, isGoTo, use_accel);
     return true;
   }
-  bool cancel_raw_command(int8_t axis, bool instant) {
+  bool cancel_raw_command(uint8_t axis, bool instant) {
     if (!check_axis_id(axis, __func__)) return false;
     if (axis == 0)
       stepper.cancel_command<0>(instant);
@@ -442,7 +451,7 @@ class SkyTrackerInterface {
   Drv8825& stepper;
 
 
-  bool check_axis_id(int8_t axis, std::string str) {
+  bool check_axis_id(uint8_t axis, std::string str) {
     if (axis > 1) {
       ctx.log<ERROR>("ASCOMInteface: %s- Invalid axis: %u\n", str, axis);
       return false;
