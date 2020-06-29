@@ -297,8 +297,35 @@ proc get_memory_addr_width {memory_name} {
 ########################################################
 # Add AXI Master Interface to memory interconnect
 ########################################################
+proc add_slave_interface {{intercon_idx 0}} {
+  # Creates an empty M_${idx}_AXI interface in interconnect $intercon_idx
+  # Return $idx
 
-proc add_master_interface {{intercon_idx 0}} {
+  set num_mi [get_property CONFIG.NUM_SI [get_bd_cells /axi_mem_intercon_$intercon_idx]]
+
+  # Look for an already empty interface
+  set found 0
+  for {set i [expr $num_mi]} {$i > 0} {incr i -1} {
+    if { $i <= 10 } { set idx 0[expr $i-1] } { set idx [expr $i-1] }
+    set net [get_bd_intf_nets -of_objects [get_bd_intf_pins /axi_mem_intercon_${intercon_idx}/S${idx}_AXI]]
+    if {$net eq ""} {
+      puts "Found empty interface S${idx}_AXI on interconnect $intercon_idx..."
+      set found 1
+      break
+    }
+  }
+  if {$found == 0} {
+    puts "No empty interface found on interconnect $intercon_idx..."
+    incr num_mi
+    set_property -dict [list CONFIG.NUM_SI $num_mi] [get_bd_cells /axi_mem_intercon_$intercon_idx]
+    if { $num_mi <= 10 } { set idx 0[expr $num_mi-1] } { set idx [expr $num_mi-1] }
+  }
+  # connect_pins /axi_mem_intercon_$intercon_idx/S${idx}_ACLK    /[set ::ps_clk$intercon_idx]
+  # connect_pins /axi_mem_intercon_$intercon_idx/S${idx}_ARESETN /[set ::rst${intercon_idx}_name]/peripheral_aresetn
+  puts "Connect your AXI Slave to axi_mem_intercon_$intercon_idx/S${idx}_AXI"
+  return $idx
+}
+proc add_master_interface {{intercon_idx 0} {add_clk 1}} {
   # Creates an empty M_${idx}_AXI interface in interconnect $intercon_idx
   # Return $idx
 
@@ -321,8 +348,11 @@ proc add_master_interface {{intercon_idx 0}} {
     set_property -dict [list CONFIG.NUM_MI $num_mi] [get_bd_cells /axi_mem_intercon_$intercon_idx]
     if { $num_mi <= 10 } { set idx 0[expr $num_mi-1] } { set idx [expr $num_mi-1] }
   }
-  connect_pins /axi_mem_intercon_$intercon_idx/M${idx}_ACLK    /[set ::ps_clk$intercon_idx]
-  connect_pins /axi_mem_intercon_$intercon_idx/M${idx}_ARESETN /[set ::rst${intercon_idx}_name]/peripheral_aresetn
+  if {$add_clk == 1} {
+    connect_pins /axi_mem_intercon_$intercon_idx/M${idx}_ACLK    /[set ::ps_clk$intercon_idx]
+    connect_pins /axi_mem_intercon_$intercon_idx/M${idx}_ARESETN /[set ::rst${intercon_idx}_name]/peripheral_aresetn
+  }
   puts "Connect your AXI Slave to axi_mem_intercon_$intercon_idx/M${idx}_AXI"
   return $idx
 }
+
