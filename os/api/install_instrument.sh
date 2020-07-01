@@ -17,7 +17,7 @@ if [ -f "$XDEV" ]; then
     echo "Handled by koheron-server"
 elif [ -f "$FMAN" ]; then
     echo "$FMAN exist"
-    mkdir -p /config
+    mkdir -p /configfs
     mkdir -p /lib/firmware
     mount -t configfs configfs /configfs
     if [ -d "$FFULL" ]; then
