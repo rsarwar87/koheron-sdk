@@ -20,6 +20,7 @@
 		reg = <0x0 0x10000000>;
 	};
 
+
 	chosen {
  		bootargs = "console=ttyPS0,115200 root=/dev/mmcblk0p2 ro rootfstype=ext4 earlyprintk rootwait earlycon";
 		stdout-path = "serial0:115200n8";
@@ -38,6 +39,7 @@
 &gem0 {
 	status = "okay";
 	phy-mode = "rgmii-id";
+  local-mac-address = [00 0a 35 00 02 a0];
 	phy-handle = <&ethernet_phy>;
 
 	ethernet_phy: ethernet-phy@0 {
