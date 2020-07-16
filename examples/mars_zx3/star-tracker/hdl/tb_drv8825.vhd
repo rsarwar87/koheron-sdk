@@ -119,7 +119,7 @@ begin
           ctrl_cmdcontrol(1)       <= '0'; -- ctr_goto_in
           ctrl_cmdcontrol(2)       <= '1'; -- ctr_cmd_direction_in
           ctrl_cmdcontrol(3)       <= '0'; -- ctr_cmd_park
-          ctrl_cmdcontrol(6 downto 4) <= "000"; -- ctr_cmdmode_in
+          ctrl_cmdcontrol(6 downto 4) <= "100"; -- ctr_cmdmode_in
           ctrl_cmdcontrol(10 downto 7) <= "0000"; -- ctr_cmdmode_in
           ctrl_cmdduration          <= x"0000000F";
           wait for CLK_PERIOD*10;
@@ -132,7 +132,7 @@ begin
           ctrl_cmdcontrol(1)       <= '1'; -- ctr_goto_in
           ctrl_cmdcontrol(2)       <= '1'; -- ctr_cmd_direction_in
           ctrl_cmdcontrol(3)       <= '0'; -- ctr_cmd_park
-          ctrl_cmdcontrol(6 downto 4) <= "000"; -- ctr_cmdmode_in
+          ctrl_cmdcontrol(6 downto 4) <= "101"; -- ctr_cmdmode_in
           ctrl_cmdcontrol(30 downto 7) <= (others=>'0'); -- ctr_cmdduration_in
           ctrl_cmdduration          <= x"0000000F";
           wait for CLK_PERIOD*10000;         
@@ -155,11 +155,11 @@ begin
           ctrl_cmdcontrol(1)       <= '0'; -- ctr_goto_in
           ctrl_cmdcontrol(2)       <= '0'; -- ctr_cmd_direction_in
           ctrl_cmdcontrol(3)       <= '0'; -- ctr_cmd_park
-          ctrl_cmdcontrol(6 downto 4) <= "111"; -- ctr_cmdmode_in
+          ctrl_cmdcontrol(6 downto 4) <= "011"; -- ctr_cmdmode_in
           ctrl_cmdcontrol(7)       <= '1'; -- ctr_cmd_park
           ctrl_cmdcontrol(30 downto 8) <= (others=>'0'); -- ctr_cmdduration_in
           ctrl_cmdcontrol(31)      <= '0';
-          ctrl_cmdduration          <= x"0000FFFF";
+          ctrl_cmdduration          <= x"FFFFFFFF";
           wait for CLK_PERIOD*400000;
           ctrl_cmdcontrol(31)      <= '1';
           ctrl_cmdcontrol(30)      <= '0';
@@ -176,60 +176,60 @@ begin
             wait for CLK_PERIOD/2;  --for next half of clock period clk stays at '1'.
        end process;
 
--- U0 : drv8825
---    PORT MAP (
---      clk_50 => clk_50,
---      rstn_50 => rstn_50,
---      drv8825_mode => drv8825_mode,
---      drv8825_enable_n => drv8825_enable_n,
---      drv8825_sleep_n => drv8825_sleep_n,
---      drv8825_rst_n => drv8825_rst_n,
---      drv8825_step => drv8825_step,
---      drv8825_direction => drv8825_direction,
---      drv8825_fault_n => drv8825_fault_n,
---      ctrl_step_count => ctrl_step_count,
---      ctrl_status => ctrl_status,
---      ctrl_cmdcontrol => ctrl_cmdcontrol,
---      ctrl_cmdtick => ctrl_cmdtick,
---      ctrl_backlash_tick => ctrl_backlash_tick,
---      ctrl_backlash_duration => ctrl_backlash_duration,
---      ctrl_counter_load => ctrl_counter_load,
---      ctrl_counter_max => ctrl_counter_max,
---      ctrl_cmdduration => ctrl_cmdduration,
---      ctrl_trackctrl => ctrl_trackctrl
---    );
-U0: entity work.system_drv8825_dc_0_drv8825
-port map (
-    clk_50 => clk_50,
-    ctrl_backlash_duration(31 downto 30) => B"00",
-    ctrl_backlash_duration(29 downto 0) => ctrl_backlash_duration(29 downto 0),
-    ctrl_backlash_tick(31 downto 0) => ctrl_backlash_tick(31 downto 0),
-    ctrl_cmdcontrol(31 downto 30) => ctrl_cmdcontrol(31 downto 30),
-    ctrl_cmdcontrol(29 downto 8) => B"0000000000000000000000",
-    ctrl_cmdcontrol(7 downto 0) => ctrl_cmdcontrol(7 downto 0),
-    ctrl_cmdduration(31 downto 30) => B"00",
-    ctrl_cmdduration(29 downto 0) => ctrl_cmdduration(29 downto 0),
-    ctrl_cmdtick(31) => '0',
-    ctrl_cmdtick(30 downto 0) => ctrl_cmdtick(30 downto 0),
-    ctrl_counter_load(31) => ctrl_counter_load(31),
-    ctrl_counter_load(30) => '0',
-    ctrl_counter_load(29 downto 0) => ctrl_counter_load(29 downto 0),
-    ctrl_counter_max(31) => ctrl_counter_max(31),
-    ctrl_counter_max(30) => '0',
-    ctrl_counter_max(29 downto 0) => ctrl_counter_max(29 downto 0),
-    ctrl_status(31 downto 3) => ctrl_status(31 downto 3),
-    ctrl_status(2 downto 0) => ctrl_status(2 downto 0),
-    ctrl_step_count(31 downto 0) => ctrl_step_count(31 downto 0),
-    ctrl_trackctrl(31 downto 0) => ctrl_trackctrl(31 downto 0),
-    drv8825_direction => drv8825_direction,
-    drv8825_enable_n => drv8825_enable_n,
-    drv8825_fault_n => '0',
-    drv8825_mode(2 downto 0) => drv8825_mode(2 downto 0),
-    drv8825_rst_n => drv8825_rst_n,
-    drv8825_sleep_n => drv8825_sleep_n,
-    drv8825_step => drv8825_step,
-    rstn_50 => rstn_50
+ U0 : drv8825
+    PORT MAP (
+      clk_50 => clk_50,
+      rstn_50 => rstn_50,
+      drv8825_mode => drv8825_mode,
+      drv8825_enable_n => drv8825_enable_n,
+      drv8825_sleep_n => drv8825_sleep_n,
+      drv8825_rst_n => drv8825_rst_n,
+      drv8825_step => drv8825_step,
+      drv8825_direction => drv8825_direction,
+      drv8825_fault_n => drv8825_fault_n,
+      ctrl_step_count => ctrl_step_count,
+      ctrl_status => ctrl_status,
+      ctrl_cmdcontrol => ctrl_cmdcontrol,
+      ctrl_cmdtick => ctrl_cmdtick,
+      ctrl_backlash_tick => ctrl_backlash_tick,
+      ctrl_backlash_duration => ctrl_backlash_duration,
+      ctrl_counter_load => ctrl_counter_load,
+      ctrl_counter_max => ctrl_counter_max,
+      ctrl_cmdduration => ctrl_cmdduration,
+      ctrl_trackctrl => ctrl_trackctrl
+    );
+--U0: entity work.system_drv8825_dc_0_drv8825
+--port map (
+--    clk_50 => clk_50,
+--    ctrl_backlash_duration(31 downto 30) => B"00",
+--    ctrl_backlash_duration(29 downto 0) => ctrl_backlash_duration(29 downto 0),
+--    ctrl_backlash_tick(31 downto 0) => ctrl_backlash_tick(31 downto 0),
+--    ctrl_cmdcontrol(31 downto 30) => ctrl_cmdcontrol(31 downto 30),
+--    ctrl_cmdcontrol(29 downto 8) => B"0000000000000000000000",
+--    ctrl_cmdcontrol(7 downto 0) => ctrl_cmdcontrol(7 downto 0),
+--    ctrl_cmdduration(31 downto 30) => B"00",
+--    ctrl_cmdduration(29 downto 0) => ctrl_cmdduration(29 downto 0),
+--    ctrl_cmdtick(31) => '0',
+--    ctrl_cmdtick(30 downto 0) => ctrl_cmdtick(30 downto 0),
+--    ctrl_counter_load(31) => ctrl_counter_load(31),
+--    ctrl_counter_load(30) => '0',
+--    ctrl_counter_load(29 downto 0) => ctrl_counter_load(29 downto 0),
+--    ctrl_counter_max(31) => ctrl_counter_max(31),
+--    ctrl_counter_max(30) => '0',
+--    ctrl_counter_max(29 downto 0) => ctrl_counter_max(29 downto 0),
+--    ctrl_status(31 downto 3) => ctrl_status(31 downto 3),
+--    ctrl_status(2 downto 0) => ctrl_status(2 downto 0),
+--    ctrl_step_count(31 downto 0) => ctrl_step_count(31 downto 0),
+--    ctrl_trackctrl(31 downto 0) => ctrl_trackctrl(31 downto 0),
+--    drv8825_direction => drv8825_direction,
+--    drv8825_enable_n => drv8825_enable_n,
+--    drv8825_fault_n => '0',
+--    drv8825_mode(2 downto 0) => drv8825_mode(2 downto 0),
+--    drv8825_rst_n => drv8825_rst_n,
+--    drv8825_sleep_n => drv8825_sleep_n,
+--    drv8825_step => drv8825_step,
+--    rstn_50 => rstn_50
 
-);
+--);
 
 end Behavioral;

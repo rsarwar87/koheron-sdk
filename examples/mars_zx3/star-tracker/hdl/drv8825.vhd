@@ -26,13 +26,6 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 -- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
-Library UNISIM;
-use UNISIM.vcomponents.all;
-
-Library UNIMACRO;
-use UNIMACRO.vcomponents.all;
 
 entity drv8825 is
     Port ( clk_50 : in STD_LOGIC;
@@ -62,7 +55,7 @@ architecture Behavioral of drv8825 is
     
     
     signal current_direction_buf : std_logic_vector(3 downto 0) := "0000";
-    type speed_buffer is array (0 to 3) of integer range 0 to 2**31-1;
+    type speed_buffer is array (0 to 3) of integer range 0 to 2**30-1;
     signal current_speed_buf : speed_buffer := (others => 0);
     signal current_mode_buf : std_logic_vector(2 downto 0) := "000";
     signal current_mode_out : std_logic_vector(2 downto 0) := "000";
@@ -70,7 +63,7 @@ architecture Behavioral of drv8825 is
     
     signal max_counter2: std_logic_vector (29 downto 0) := (others => '0');
     
-    signal ctr_backlash_tick_buf : integer range 0 to 2**31-1 := 1;
+    signal ctr_backlash_tick_buf : integer range 0 to 2**30-1 := 1;
     signal ctr_backlash_duration_buf : unsigned (29 downto 0) := (others => '0');
     TYPE state_machine_backlash IS (seek, processing, done, disabled);  -- Define the states
     signal state_backlash : state_machine_backlash := seek;
@@ -88,6 +81,7 @@ architecture Behavioral of drv8825 is
     ATTRIBUTE MARK_DEBUG of state_backlash, ctr_backlash_tick_buf, ctr_backlash_duration_buf: SIGNAL IS "TRUE";
     
     signal max_counter : std_logic_vector (30 downto 0) := (others => '1');
+	 signal delta_counter : unsigned (5 downto 0) := "000001";
 begin
     
     
@@ -95,6 +89,27 @@ begin
     
     ctrl_step_count(31 downto 30) <= "00";
     ctrl_step_count(29 downto 0) <= current_stepper_counter;
+	 delta_counter_proc : process (clk_50, rstn_50)
+    begin
+        if (rstn_50 = '0') then
+            delta_counter <= "000001";
+        elsif(rising_edge(clk_50)) then
+            case current_mode_out is
+					when "000" =>
+						delta_counter <= "100000";
+					when "001" =>
+						delta_counter <= "010000";
+					when "010" =>
+						delta_counter <= "001000";
+					when "011" =>
+						delta_counter <= "000100";
+					when "100" =>
+						delta_counter <= "000010";
+					when others =>
+						delta_counter <= "000001";
+				end case;
+        end if;
+    end process; 
     trigger_changes : process (clk_50, rstn_50)
     begin
         if (rstn_50 = '0') then
@@ -182,8 +197,8 @@ begin
 clock_block: block
     signal ctr_backlash_cnt : unsigned (29 downto 0) := (others => '0');
     
-     signal counter_buf :integer range 0 to 2**31-1 := 1;
-     signal count :integer range 0 to 2**31-1 := 1;
+     signal counter_buf :integer range 0 to 2**30-1 := 1;
+     signal count :integer range 0 to 2**30-1 := 1;
      
      ATTRIBUTE MARK_DEBUG of counter_buf, count, ctr_backlash_cnt: SIGNAL IS "TRUE";
 begin
@@ -255,7 +270,7 @@ begin
  end block clock_block;
 
 command_block: block
-    signal ctr_cmdtick_in : integer range 0 to 2**31-1 := 1;
+    signal ctr_cmdtick_in : integer range 0 to 2**30-1 := 1;
     signal ctr_cmdduration_in : std_logic_vector(29 downto 0) := (others => '0');
     signal ctr_cmd_direction_in  : std_logic := '0';
     signal ctr_cmd_in : std_logic := '0';
@@ -265,12 +280,12 @@ command_block: block
     signal ctr_park_in : std_logic := '0';
     signal ctr_cmdmode_in : std_logic_vector(2 downto 0) := "000";
     
-    signal ctr_backlash_tick_in  : integer range 0 to 2**31-1 := 1;
+    signal ctr_backlash_tick_in  : integer range 0 to 2**30-1 := 1;
     signal ctr_backlash_duration_in  : unsigned (29 downto 0) := (others => '0');
     
     signal ctr_track_enabled_in : std_logic := '0';
     signal ctr_track_direction_in : std_logic := '0';
-    signal ctr_tracktick_in : integer range 0 to 2**31-1 := 1;
+    signal ctr_tracktick_in : integer range 0 to 2**30-1 := 1;
     signal ctr_trackmode_in : std_logic_vector(2 downto 0) := "000";
     
     --signal stepper_counter_int : integer range 0 to 2**31-1 := 1;
@@ -283,7 +298,7 @@ command_block: block
     
     
     signal issue_direction, issue_stop : std_logic := '1';
-    signal issue_speed     : integer range 0 to 2**31-1;
+    signal issue_speed     : integer range 0 to 2**30-1;
     signal issue_mode : std_logic_vector(2 downto 0) := "000";
     signal state_motor_buf : state_machine_motor := idle;
     
@@ -291,7 +306,7 @@ command_block: block
     signal current_speed_buffer  : std_logic_vector (31 downto 0) := (others => '1');
     signal current_scaled_buffer  : std_logic_vector (31 downto 0) := (others => '1');
     signal init_count, cutoff_count  : std_logic_vector (29 downto 0) := (others => '0');
-    signal current_scaled_buffer2     : integer range 0 to 2**31-1;
+    signal current_scaled_buffer2     : integer range 0 to 2**30-1;
     constant aceel_steps : integer := 7;
     signal divider : integer range 0 to 7 := aceel_steps;
     type array_30 is array (0 to 7) of std_logic_vector (29 downto 0);
@@ -300,7 +315,7 @@ command_block: block
     signal decceleration_map, acceleration_map : array_30 := (others => (others => '0'));
     signal decceleration_map_buf : array_i32 := (others => 0);
     signal speedmap_map : array_i30 := (others => 1100000);
-    constant total_accel_count : integer := 12500000;
+    constant total_accel_count : integer := 12500;
     signal cuttoff_special : std_logic := '0';
     
     signal cutoff_signed : integer := 0;
@@ -755,20 +770,20 @@ begin
     end if;
    end process;
 
-   --cnt_enable <= '1' when ((state_motor /= idle) and (state_backlash /= processing)) else '0';
-   stepping_counter: COUNTER_LOAD_MACRO
-   generic map (
-      COUNT_BY => X"000000000001", -- Count by value
-      DEVICE => "7SERIES",         -- Target Device: "VIRTEX5", "7SERIES", "SPARTAN6" 
-      WIDTH_DATA => 30)            -- Counter output bus width, 1-48
-   port map (
-      Q => current_stepper_counter,                 -- Counter ouput, width determined by WIDTH_DATA generic 
-      CLK => counter_clk,             -- 1-bit clock input
-      CE => cnt_enable,               -- 1-bit clock enable input
-      DIRECTION => current_direction_buf(0), -- 1-bit up/down count direction input, high is count up
-      LOAD => load_count,           -- 1-bit active high load input
-      LOAD_DATA => load_counter, -- Counter load data, width determined by WIDTH_DATA generic 
-      RST => '0'              -- 1-bit active high synchronous reset
-   );
+	
+	process (counter_clk)
+	begin
+	if (rising_edge(counter_clk)) then
+		if (cnt_enable = '1') then
+			if (load_count = '1') then
+				current_stepper_counter <= load_counter;
+			elsif (current_direction_buf(0) = '1') then
+				current_stepper_counter <= std_logic_vector(unsigned(current_stepper_counter) + delta_counter);
+			else
+				current_stepper_counter <= std_logic_vector(unsigned(current_stepper_counter) - delta_counter);
+			end if;
+		end if;
+	end if;
+	end process;
 end block stepper_count;
 end Behavioral;

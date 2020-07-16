@@ -12,14 +12,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="38711966030355fs"></ZoomEndTime>
-      <Cursor1Time time="2200024299000fs"></Cursor1Time>
+      <ZoomEndTime time="12460000000001fs"></ZoomEndTime>
+      <Cursor1Time time="9040000000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="190"></NameColumnWidth>
-      <ValueColumnWidth column_width="111"></ValueColumnWidth>
+      <NameColumnWidth column_width="237"></NameColumnWidth>
+      <ValueColumnWidth column_width="107"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="61" />
+   <WVObjectSize size="64" />
    <wvobject type="logic" fp_name="/tb_drv8825/clk_50">
       <obj_property name="ElementShortName">clk_50</obj_property>
       <obj_property name="ObjectShortName">clk_50</obj_property>
@@ -106,11 +106,9 @@
       <obj_property name="CustomSignalColor">#FF0000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="other" fp_name="/tb_drv8825/U0/clock_block/ctr_backlash_cnt">
-      <obj_property name="ElementShortName">ctr_backlash_cnt</obj_property>
-      <obj_property name="ObjectShortName">ctr_backlash_cnt</obj_property>
-      <obj_property name="CustomSignalColor">#FF0000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
+   <wvobject type="array" fp_name="/tb_drv8825/U0/clock_block/ctr_backlash_cnt">
+      <obj_property name="ElementShortName">ctr_backlash_cnt[29:0]</obj_property>
+      <obj_property name="ObjectShortName">ctr_backlash_cnt[29:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_drv8825/ctrl_step_count">
       <obj_property name="ElementShortName">ctrl_step_count[31:0]</obj_property>
@@ -341,6 +339,7 @@
    <wvobject type="array" fp_name="/tb_drv8825/U0/current_stepper_counter">
       <obj_property name="ElementShortName">current_stepper_counter[29:0]</obj_property>
       <obj_property name="ObjectShortName">current_stepper_counter[29:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_drv8825/U0/command_block/cutoff_count">
       <obj_property name="ElementShortName">cutoff_count[29:0]</obj_property>
@@ -361,39 +360,6 @@
       <obj_property name="ElementShortName">decceleration_map_buf[0:7]</obj_property>
       <obj_property name="ObjectShortName">decceleration_map_buf[0:7]</obj_property>
       <obj_property name="isExpanded"></obj_property>
-      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[0]">
-         <obj_property name="ElementShortName">[0]</obj_property>
-         <obj_property name="ObjectShortName">[0]</obj_property>
-      </wvobject>
-      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[1]">
-         <obj_property name="ElementShortName">[1]</obj_property>
-         <obj_property name="ObjectShortName">[1]</obj_property>
-      </wvobject>
-      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[2]">
-         <obj_property name="ElementShortName">[2]</obj_property>
-         <obj_property name="ObjectShortName">[2]</obj_property>
-      </wvobject>
-      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[3]">
-         <obj_property name="ElementShortName">[3]</obj_property>
-         <obj_property name="ObjectShortName">[3]</obj_property>
-      </wvobject>
-      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[4]">
-         <obj_property name="ElementShortName">[4]</obj_property>
-         <obj_property name="ObjectShortName">[4]</obj_property>
-      </wvobject>
-      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[5]">
-         <obj_property name="ElementShortName">[5]</obj_property>
-         <obj_property name="ObjectShortName">[5]</obj_property>
-      </wvobject>
-      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[6]">
-         <obj_property name="ElementShortName">[6]</obj_property>
-         <obj_property name="ObjectShortName">[6]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="other" fp_name="/tb_drv8825/U0/command_block/decceleration_map_buf[7]">
-         <obj_property name="ElementShortName">[7]</obj_property>
-         <obj_property name="ObjectShortName">[7]</obj_property>
-      </wvobject>
    </wvobject>
    <wvobject type="array" fp_name="/tb_drv8825/U0/command_block/acceleration_map">
       <obj_property name="ElementShortName">acceleration_map[0:7][29:0]</obj_property>
@@ -407,5 +373,18 @@
       <obj_property name="ObjectShortName">speedmap_map[0:7]</obj_property>
       <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_drv8825/U0/drv8825_mode">
+      <obj_property name="ElementShortName">drv8825_mode[2:0]</obj_property>
+      <obj_property name="ObjectShortName">drv8825_mode[2:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_drv8825/U0/current_mode_out">
+      <obj_property name="ElementShortName">current_mode_out[2:0]</obj_property>
+      <obj_property name="ObjectShortName">current_mode_out[2:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_drv8825/U0/delta_counter">
+      <obj_property name="ElementShortName">delta_counter[5:0]</obj_property>
+      <obj_property name="ObjectShortName">delta_counter[5:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
 </wave_config>
