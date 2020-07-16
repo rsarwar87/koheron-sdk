@@ -315,7 +315,7 @@ command_block: block
     signal decceleration_map, acceleration_map : array_30 := (others => (others => '0'));
     signal decceleration_map_buf : array_i32 := (others => 0);
     signal speedmap_map : array_i30 := (others => 1100000);
-    constant total_accel_count : integer := 12500;
+    constant total_accel_count : integer := 12500000;
     signal cuttoff_special : std_logic := '0';
     
     signal cutoff_signed : integer := 0;
