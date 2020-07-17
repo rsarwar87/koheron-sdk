@@ -33,21 +33,21 @@ class SkyTrackerInterface {
       m_params.GotoTarget[i] = 0;
       m_params.GotoNCycles[i] = 0;
 
-      m_params.minPeriod[i] = 0x1;  // slowest speed allowed
+      m_params.minPeriod[i] = (uint32_t)((15 / fclk0_period_us) + .5);  // slowest speed allowed
       m_params.maxPeriod[i] =
-          0x30000;  // Speed at which mount should stop. May be lower than
+          (uint32_t)((268435.0 / fclk0_period_us) + .5);  // Speed at which mount should stop. May be lower than
                     // minSpeed if doing a very slow IVal.
 
       m_params.motorDirection[0][i] = true;
       m_params.motorDirection[1][i] = true;
 
-      m_params.motorMode[0][i] = 0x04;  // microsteps
-      m_params.motorMode[1][i] = 0x04;  // microsteps
+      m_params.motorMode[0][i] = 0x07;  // microsteps 16 => 4
+      m_params.motorMode[1][i] = 0x07;  // microsteps
 
       m_params.versionNumber[i] = 0xd4444;  //_eVal: Version number
 
       m_params.stepPerRotation[i] =
-          0x3FFFFFFF;  //_aVal: Steps per axis revolution
+          200*32*144*5;  //_aVal: Steps per axis revolution
 
       m_params.backlash_period_usec[i] =
           10.;  //_sVal: Steps per worm gear revolution
@@ -56,6 +56,8 @@ class SkyTrackerInterface {
       m_params.backlash_mode[i] = 0x7;  //_aVal: Steps per axis revolution
       m_params.initialized[i] = false;  //_aVal: Steps per axis revolution
     }
+    set_backlash(1, 15.1, 127, 7);
+    set_backlash(0, 15.1, 127, 7);
   }
 
   bool set_speed_ratio(uint8_t axis, bool isSlew, double val) {
@@ -222,16 +224,6 @@ class SkyTrackerInterface {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
     ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.maxPeriod[axis]);
     return (m_params.maxPeriod[axis]);
-  }
-  double get_min_period(uint8_t axis) {
-    if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
-    ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.minPeriod[axis]);
-    return (((double)m_params.minPeriod[axis]) * fclk0_period_us);
-  }
-  double get_max_period(uint8_t axis) {
-    if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;
-    ctx.log<INFO>("%s(%u): %u ticks\n", __func__, axis, m_params.maxPeriod[axis]);
-    return (((double)m_params.maxPeriod[axis]) * fclk0_period_us);
   }
   uint32_t get_motor_period_ticks(uint8_t axis, bool isSlew) {
     if (!check_axis_id(axis, __func__)) return 0xFFFFFFFF;

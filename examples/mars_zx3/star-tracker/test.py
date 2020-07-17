@@ -78,11 +78,11 @@ class SkyTrackerInterface(object):
     def get_motor_direction(self, axis, isSlew):
         return self.client.recv_bool()
     @command()
-    def get_min_period(self, axis):
-        return self.client.recv_double()
+    def get_min_period_ticks(self, axis):
+        return self.client.recv_uint32()
     @command()
-    def get_max_period(self, axis):
-        return self.client.recv_double()
+    def get_max_period_ticks(self, axis):
+        return self.client.recv_uint32()
     @command()
     def get_motor_period_usec(self, axis, isSlew):
         return self.client.recv_double()
@@ -184,20 +184,20 @@ class SkyTrackerInterface(object):
 
     def Initialize(self):
         for i in range(0, 2):
-            print('\n\nset_min_period{0} : {1}'.format(i, self.set_min_period(i, 25)))
+            print('\n\nset_min_period{0} : {1}'.format(i, self.set_min_period(i, 15)))
             print('set_max_period{0} : {1}'.format(i, self.set_max_period(i, 268435.0)))
             print('set_backlash{0} : {1}'.format(i, self.set_backlash(i, 15.1, 127, 7)))
-            print('set_steps_per_rotation{0} : {1}'.format(i, self.set_steps_per_rotation(i, 4505600)))
+            print('set_steps_per_rotation{0} : {1}'.format(i, self.set_steps_per_rotation(i, 200*32*144*5)))
             print('set_current_position{0} : {1}'.format(i, self.set_current_position(i, 0x0)))
-            print('set_goto_target{0} : {1}'.format(i, self.set_goto_target(i, 0xff)))
-            print('set_goto_increment{0} : {1}'.format(i, self.set_goto_increment(i, 0xff)))
+            print('set_goto_target{0} : {1}'.format(i, self.set_goto_target(i, 200*32)))
+            print('set_goto_increment{0} : {1}'.format(i, self.set_goto_increment(i, 200*32)))
             print('==========================================')
             for j in range (0, 2):
 #                print('set_motor_mode{0}-{1} : {2}'.format(i, j, self.set_motor_mode(i, j, 7)))
                 print('set_speed_ratio{0}-{1} : {2}'.format(i, j, self.set_speed_ratio(i, j, 1)))
                 print('set_motor_highspeedmode{0}-{1} : {2}'.format(i, j, self.set_motor_highspeedmode(i, j, True)))
                 print('set_motor_direction{0}-{1} : {2}'.format(i, j, self.set_motor_direction(i, j, 0)))
-                print('set_motor_period_usec{0}-{1} : {2}'.format(i, j, self.set_motor_period_usec(i, j, 19.1*2)))
+                print('set_motor_period_usec{0}-{1} : {2}'.format(i, j, self.set_motor_period_usec(i, j, 15)))
 
     def PrintSpeed(self):
         for i in range (0, 2):
@@ -212,8 +212,8 @@ class SkyTrackerInterface(object):
             print('get_backlash_period_usec{0}: {1}'.format(i, self.get_backlash_period_usec(i)))
             print('get_backlash_ncycles{0}: {1}'.format(i, self.get_backlash_ncycles(i)))
             print('get_steps_per_rotation{0}: {1}'.format(i, self.get_steps_per_rotation(i)))
-            print('get_max_period{0}: {1}'.format(i, self.get_max_period(i)))
-            print('get_min_period{0}: {1}'.format(i, self.get_min_period(i)))
+            print('get_max_period{0}: {1}'.format(i, self.get_max_period_ticks(i)))
+            print('get_min_period{0}: {1}'.format(i, self.get_min_period_ticks(i)))
             print('get_raw_status{0}: {1}'.format(i, self.get_raw_status(i)))
             print('get_raw_stepcount{0}: {1}'.format(i, self.get_raw_stepcount(i)))
             print('get_goto_increment{0}: {1}'.format(i, self.get_goto_increment(i)))
@@ -237,8 +237,8 @@ if __name__ == '__main__':
     host = os.getenv('HOST','192.168.1.122')
     client = connect(host, name='mars_star_tracker')
     driver = SkyTrackerInterface(client)
-    driver.PrintAll()
     driver.Initialize()
+    driver.PrintAll()
     driver.cancel_raw_command(0, False)
     driver.cancel_raw_command(1, False)
     driver.enable_backlash(0)
@@ -251,14 +251,9 @@ if __name__ == '__main__':
     time.sleep(1)
     driver.PrintAll()
     time.sleep(1)
-    print('Start Tracking0 {0}'.format(driver.SwpCmdStartMotion(0, True, True, False)))
-    print('Start Tracking1 {0}'.format(driver.SwpCmdStartMotion(1, True, True, False)))
-    time.sleep(1)
-    print('Start Command0 {0}'.format(driver.SwpCmdStartMotion(0, True, False, False)))
-    print('Start Command1 {0}'.format(driver.SwpCmdStartMotion(1, True, False, False)))
+    print('Start Command0 {0}'.format(driver.SwpCmdStartMotion(0, True, True, True)))
+    print('Start Command1 {0}'.format(driver.SwpCmdStartMotion(1, True, True, True)))
     time.sleep(3)
-    driver.cancel_raw_command(0, False)
-    driver.cancel_raw_command(1, False)
     driver.PrintAll()
 
 
