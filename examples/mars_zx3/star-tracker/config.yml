@@ -26,6 +26,7 @@ control_registers:
   - backlash_tick[2]
   - backlash_duration[2]
   - led
+  - led_pwm
 
 status_registers:
   - step_count[2]

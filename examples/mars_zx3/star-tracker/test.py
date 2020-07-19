@@ -11,6 +11,9 @@ class SkyTrackerInterface(object):
 
     # setter
     @command()
+    def set_led_pwm(self, value):
+        return self.client.recv_bool()
+    @command()
     def set_backlash(self, axis, period_usec, ncycles, mode):
         return self.client.recv_bool()
     @command()
@@ -185,6 +188,7 @@ class SkyTrackerInterface(object):
     def Initialize(self):
         for i in range(0, 2):
             print('\n\nset_min_period{0} : {1}'.format(i, self.set_min_period(i, 15)))
+            print('set_led_pwm{0} : {1}'.format(i, self.set_led_pwm(100)))
             print('set_max_period{0} : {1}'.format(i, self.set_max_period(i, 268435.0)))
             print('set_backlash{0} : {1}'.format(i, self.set_backlash(i, 15.1, 127, 7)))
             print('set_steps_per_rotation{0} : {1}'.format(i, self.set_steps_per_rotation(i, 200*32*144*5)))

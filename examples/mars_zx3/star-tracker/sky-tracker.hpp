@@ -60,6 +60,11 @@ class SkyTrackerInterface {
     set_backlash(0, 15.1, 127, 7);
   }
 
+  bool set_led_pwm(uint8_t val) {
+    ctl.write<reg::led_pwm>(val);
+    ctx.log<INFO>("%s(): %d\n", __func__, val);
+    return true;
+  }
   bool set_speed_ratio(uint8_t axis, bool isSlew, double val) {
     if (!check_axis_id(axis, __func__)) return false;
     if (val < 0.25) {

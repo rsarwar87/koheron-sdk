@@ -19,8 +19,8 @@ ASCOM_sky_interface::~ASCOM_sky_interface(){
   client.reset();
 }
 // SetPolarScopeLED          = 'V',
-bool ASCOM_sky_interface::SwpSetPolarScopeLED() {
-  client->call<op::ASCOMInterface::SwpSetPolarScopeLED>();
+bool ASCOM_sky_interface::SwpSetPolarScopeLED(uint8_t value) {
+  client->call<op::ASCOMInterface::SwpSetPolarScopeLED>(value);
   auto buffer = client->recv<op::ASCOMInterface::SwpSetPolarScopeLED, bool>();
   return buffer;
 }

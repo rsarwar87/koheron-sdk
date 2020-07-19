@@ -173,12 +173,12 @@ class ASCOMInterface {
   // GetFeatureCmd             = 'q', // EQ8/AZEQ6/AZEQ5 only
   uint32_t SwpGetFeature(uint8_t axis) {
     // return the gear change settings
-    if (!check_axis_id(axis, __func__)) return 0x0;
+    if (!check_axis_id(axis, __func__)) return 0x1000;
     ctx.log<INFO>("ASCOMInteface: %s- Command recieved:\n", __func__);
     return 1;
   }
   // SetPolarScopeLED          = 'V',
-  bool SwpSetPolarScopeLED() { return true; }
+  bool SwpSetPolarScopeLED(uint8_t value) { return sti.set_led_pwm(value); }
 
 
   bool enable_backlash(uint8_t axis, bool enable) {
