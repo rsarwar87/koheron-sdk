@@ -13,7 +13,7 @@ class ASCOM_sky_interface {
   ~ASCOM_sky_interface();
 
   // SetPolarScopeLED          = 'V',
-  bool SwpSetPolarScopeLED();
+  bool SwpSetPolarScopeLED(uint8_t val);
   uint32_t SwpGetFeature(uint8_t axis);
   // SetFeatureCmd             = 'W', // EQ8/AZEQ6/AZEQ5 only
   bool SwpSetFeature(uint8_t axis, uint8_t cmd);
