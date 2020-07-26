@@ -22,11 +22,12 @@ class ASCOMInterface {
     bool ret = true;
     size_t i = axis;
     if (!check_axis_id(axis, __func__)) return false;
-    // for (i = 0; i < 2; i++)
+    for (i = 0; i < 2; i++)
     {
       ret &= sti.disable_raw_tracking(i, false);
       ret &= sti.disable_raw_backlash(i);
       ret &= sti.cancel_raw_command(i, false);
+      ret &= sti.set_current_position(i, sti.get_steps_per_rotation(i)/2);
     }
     if (ret)
       ctx.log<INFO>("ASCOMInteface: %s Successful\n", __func__);
