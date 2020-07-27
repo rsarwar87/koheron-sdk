@@ -27,6 +27,7 @@ control_registers:
   - backlash_duration[2]
   - led
   - led_pwm
+  - camera_trigger
 
 status_registers:
   - step_count[2]
@@ -45,6 +46,7 @@ drivers:
   - ./drv8825.hpp
   - ./sky-tracker.hpp
   - ./ascom_interface.hpp
+  - ./camera.hpp
 
 web:
   - ./web/index.html
