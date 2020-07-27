@@ -10,9 +10,9 @@
 using namespace std::chrono_literals;
 class CameraInterface {
  public:
-  SkyTrackerInterface(Context& ctx_)
+  CameraInterface(Context& ctx_)
       : ctx(ctx_),
-        ctl(ctx.mm.get<mem::control>()),
+        ctl(ctx.mm.get<mem::control>())
   {
   }
 
