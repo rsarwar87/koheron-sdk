@@ -15,7 +15,7 @@ KOHERON_VERSION_FILE := $(SDK_PATH)/version
 KOHERON_VERSION := $(shell cat $(KOHERON_VERSION_FILE))
 VIVADO_VERSION := 2019.1
 VIVADO_PATH := /opt/Xilinx/Vivado
-PYTHON := python
+PYTHON := python3
 
 .PHONY: help
 help:
@@ -143,15 +143,15 @@ setup: setup_fpga setup_server setup_web setup_os
 
 .PHONY: setup_base
 setup_base:
-	sudo apt-get install -y g++-5-arm-linux-gnueabihf
-	sudo apt install -y g++-aarch64-linux-gnu
+	sudo sudo apt-get install -y g++8-arm-linux-gnueabihf
+	sudo apt install -y g++8-aarch64-linux-gnu
 	# On Ubuntu 18.04 you may have to link:	
 	# sudo ln -s /usr/bin/arm-linux-gnueabihf-gcc-5 /usr/bin/arm-linux-gnueabihf-gcc
 	# sudo ln -s /usr/bin/arm-linux-gnueabihf-g++-5 /usr/bin/arm-linux-gnueabihf-g++	
-	sudo apt-get install -y python-pip
+#	sudo apt-get install -y python3-pip
 	sudo apt-get install -y curl
-	$(PIP) install -r $(SDK_PATH)/requirements.txt
-	$(PIP) install $(SDK_PATH)/python
+	pip3 install -r $(SDK_PATH)/requirements.txt
+	pip3 install $(SDK_PATH)/python
 
 .PHONY: setup_fpga
 setup_fpga: setup_base
@@ -166,8 +166,8 @@ setup_web: setup_base
 	sudo apt-get install -y node-typescript
 	sudo apt-get install -y npm # npm installed with nodejs
 	#sudo rm -f /usr/bin/node && sudo ln -s /usr/bin/nodejs /usr/bin/node
-	npm install typescript
-	npm install @types/jquery@2.0.46 @types/jquery-mousewheel@3.1.5 websocket @types/node
+	sudo npm install typescript
+	sudo npm install @types/jquery@2.0.46 @types/jquery-mousewheel@3.1.5 websocket @types/node
 
 .PHONY: setup_os
 setup_os: setup_base
