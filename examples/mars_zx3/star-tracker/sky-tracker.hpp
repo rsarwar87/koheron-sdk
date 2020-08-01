@@ -55,9 +55,12 @@ class SkyTrackerInterface {
       m_params.backlash_ncycle[i] = 0x3000;  //_aVal: Steps per axis revolution
       m_params.backlash_mode[i] = 0x7;  //_aVal: Steps per axis revolution
       m_params.initialized[i] = false;  //_aVal: Steps per axis revolution
+
+      set_backlash(i, 15.1, 127, 7);
+      set_steps_per_rotation(i, get_steps_per_rotation(i));
+      set_current_position(i, get_steps_per_rotation(i)/2);
+
     }
-    set_backlash(1, 15.1, 127, 7);
-    set_backlash(0, 15.1, 127, 7);
   }
 
   bool set_led_pwm(uint8_t val) {

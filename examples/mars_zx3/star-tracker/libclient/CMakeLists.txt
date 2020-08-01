@@ -15,6 +15,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wlogical-op -Wdouble-promotion -Wformat
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wcast-align -Wpacked -Wredundant-decls -Wvarargs -Wvector-operation-performance -Wswitch-default ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wuninitialized -Wshadow -Wmissing-declarations ")
  
+if (tARM)
+  message(STATUS "Compiling for ARM")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=armv7-a -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=hard ")
+elseif (tARM64)
+  message(STATUS "Compiling for ARM64")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=armv8-a -mcpu=cortex-a53 ")
+endif()
 include_directories(../../../../server/client)
 include_directories(../../../../server/context)
 include_directories(../../../../server/core)
