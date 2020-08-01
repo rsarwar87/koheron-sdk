@@ -22,7 +22,7 @@ class ASCOMInterface {
     bool ret = true;
     size_t i = axis;
     if (!check_axis_id(axis, __func__)) return false;
-    for (i = 0; i < 2; i++)
+    //for (i = 0; i < 2; i++)
     {
       ret &= sti.disable_raw_tracking(i, false);
       ret &= sti.disable_raw_backlash(i);
@@ -99,7 +99,7 @@ class ASCOMInterface {
         "ASCOMInteface: %s(%u)- isSlew: %u; isForward: %u; isHighSpeed: %u\n",
         __func__, axis, isSlew,isForward,  isHighSpeed);
     // TODO
-    sti.m_params.motorDirection[isSlew][axis] = isForward;
+    sti.set_motor_direction(axis, isSlew, isForward);
     sti.m_params.highSpeedMode[isSlew][axis] = isHighSpeed;
     bool ret = true;
     return ret;
