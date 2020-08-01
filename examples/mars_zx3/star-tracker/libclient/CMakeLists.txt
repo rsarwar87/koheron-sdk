@@ -31,15 +31,24 @@ include_directories(../)
 include_directories(/usr/include)
 include_directories(../../../../tmp/examples/mars_zx3/star-tracker/server/) # update this line to compile for different device
 
-# create static library
+# create shared library
 add_library(fpgaskytracker SHARED driver.cpp)
 set_target_properties(fpgaskytracker  PROPERTIES PUBLIC_HEADER "fpgaskytracker.hpp")
+install(TARGETS fpgaskytracker LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include)
 
-# create shared library
+add_library(fpgacameratrigger SHARED driver_camera.cpp)
+set_target_properties(fpgacameratrigger  PROPERTIES PUBLIC_HEADER "fpgacameratrigger.hpp")
+install(TARGETS fpgacameratrigger LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include)
+
+# create static library
 add_library(fpgaskytrackerStatic STATIC driver.cpp)
 set_target_properties(fpgaskytrackerStatic PROPERTIES OUTPUT_NAME fpgaskytracker)
 set_target_properties(fpgaskytrackerStatic  PROPERTIES PUBLIC_HEADER "fpgaskytracker.hpp")
-install(TARGETS fpgaskytracker LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include)
 install(TARGETS fpgaskytrackerStatic ARCHIVE DESTINATION lib PUBLIC_HEADER DESTINATION include)
+
+add_library(fpgacameratriggerStatic STATIC driver_camera.cpp)
+set_target_properties(fpgacameratriggerStatic PROPERTIES OUTPUT_NAME fpgacameratrigger)
+set_target_properties(fpgacameratriggerStatic  PROPERTIES PUBLIC_HEADER "fpgacameratrigger.hpp")
+install(TARGETS fpgacameratriggerStatic ARCHIVE DESTINATION lib PUBLIC_HEADER DESTINATION include)
 #set_target_properties(kdriverStatic PROPERTIES COMPILE_OPTIONS "-m32" LINK_FLAGS "-m32")
 
