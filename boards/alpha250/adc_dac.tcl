@@ -64,12 +64,12 @@ create_bd_pin -dir O spi_cfg_cs_rf_adc
 # Input clocks
 create_bd_intf_pin -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 clk_in1
 create_bd_intf_pin -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 clk_in2
+create_bd_pin -dir I ps_clk
 
 # Output clocks
 create_bd_pin -dir O adc_clk
 create_bd_pin -dir O clk_gen_out_p
 create_bd_pin -dir O clk_gen_out_n
-
 
 set adc_clk_mhz [expr [get_parameter adc_clk] / 1000000]
 
@@ -88,11 +88,11 @@ cell xilinx.com:ip:clk_wiz:5.4 mmcm {
     USE_RESET false
     USE_DYN_PHASE_SHIFT true
 } {
-    CLK_IN1_D clk_in1
-    CLK_IN2_D clk_in2
+    CLK_IN1_D clk_in2
+    CLK_IN2_D clk_in1
     locked pll_locked
     clk_out1 adc_clk
-    clk_in_sel [get_slice_pin ctl 0 0]
+    clk_in_sel [get_not_pin [get_slice_pin ctl 0 0]]
     reset [get_slice_pin ctl 1 1]
     psclk mmcm/clk_out1
     psen [get_edge_detector_pin [get_slice_pin ctl 2 2] mmcm/clk_out1]
@@ -165,7 +165,7 @@ cell koheron:user:spi_cfg:1.0 spi_cfg_0 {
   cmd [get_slice_pin cfg_cmd 7 0]
   sclk spi_cfg_sck
   sdi spi_cfg_sdi
-  aclk mmcm/clk_out1
+  aclk ps_clk
 }
 
 connect_pins cfg_sts [get_concat_pin [list spi_cfg_0/s_axis_tready [get_constant_pin 0 31]]] 
@@ -187,6 +187,7 @@ cell xilinx.com:ip:proc_sys_reset:5.0 rst_adc_clk {} {
 connect_cell adc_dac {
     clk_in1 adc_clk_in
     clk_in2 clk_gen_in
+    ps_clk ps_0/FCLK_CLK0
     adc_0_p adc_0_p
     adc_0_n adc_0_n
     adc_1_p adc_1_p

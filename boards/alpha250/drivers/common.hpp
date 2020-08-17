@@ -28,7 +28,6 @@ class Common
   public:
     Common(Context& ctx_)
     : ctx(ctx_)
-    , sts(ctx.mm.get<mem::status>())
     , clkgen(ctx.get<ClockGenerator>())
     , gpio(ctx.get<GpioExpander>())
     , ltc2157(ctx.get<Ltc2157>())
@@ -36,10 +35,6 @@ class Common
     , precisiondac(ctx.get<PrecisionDac>())
     , precisionadc(ctx.get<PrecisionAdc>())
     {}
-
-    uint64_t get_dna() {
-        return sts.read<reg::dna, uint64_t>();
-    }
 
     void set_led(uint32_t value) {
         gpio.set_led(value);
@@ -98,7 +93,6 @@ class Common
 
   private:
     Context& ctx;
-    Memory<mem::status>& sts;
     ClockGenerator& clkgen;
     GpioExpander& gpio;
     Ltc2157& ltc2157;

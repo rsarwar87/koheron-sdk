@@ -5,9 +5,6 @@
 # - Linux kernel
 include $(OS_PATH)/toolchain.mk
 
-clean_:
-	rm /tmp/var_* 22 /dev/null || true
-
 BOARD := $(shell basename $(BOARD_PATH))
 
 TMP_OS_PATH := $(TMP_PROJECT_PATH)/os
@@ -25,25 +22,15 @@ TMP_OS_VERSION_FILE := $(TMP_OS_PATH)/version.json
 $(TMP_OS_VERSION_FILE): $(KOHERON_VERSION_FILE)
 	echo '{ "version": "$(KOHERON_VERSION)" }' > $@
 
-
-BOOTCALL := $(TMP_OS_PATH)/boot.bin
-ifeq ($(ZYNQ_TYPE), zynqmp)
-	ARMTRUST_URL := https://github.com/Xilinx/arm-trusted-firmware/archive/xilinx-v$(VIVADO_VERSION).tar.gz
-	ATRUST_TAG := arm-trust-v$(VIVADO_VERSION)
-	BOOTCALL := $(TMP_OS_PATH)/bootmp.bin
-	ATRUST_PATH := $(TMP_OS_PATH)/a-trust-xlnx-$(ATRUST_TAG)
-	ATRUST_TAR := $(TMP)/arm-trust-xlnx-$(ATRUST_TAG).tar.gz
-endif
-
-
-
 DTREE_SWITCH = $(TMP_OS_PATH)/devicetree.dtb
 ifdef DTREE_OVERRIDE
 DTREE_SWITCH = $(TMP_OS_PATH)/devicetree_$(DTREE_LOC) 
 endif
+
 BOOT_MEDIUM ?= mmcblk0
+
 .PHONY: os
-os: $(INSTRUMENT_ZIP) www api $(BOOTCALL) $(TMP_OS_PATH)/$(LINUX_IMAGE) $(DTREE_SWITCH)  $(TMP_OS_VERSION_FILE)
+os: $(INSTRUMENT_ZIP) www api $(TMP_OS_PATH)/$(BOOTCALL) $(TMP_OS_PATH)/$(LINUX_IMAGE) $(DTREE_SWITCH) $(TMP_OS_VERSION_FILE)
 
 # Build image (run as root)
 .PHONY: image
@@ -66,13 +53,7 @@ fsbl: $(TMP_OS_PATH)/fsbl/executable.elf
 
 $(TMP_OS_PATH)/fsbl/Makefile:  $(TMP_FPGA_PATH)/$(NAME).xsa
 	mkdir -p $(@D)
-	echo "set project_name \"$(NAME)\"" > /tmp/var_fsbl.tcl
-	echo "set proc_name \"$(PROC)\"" >> /tmp/var_fsbl.tcl
-	echo "set hard_path \"$(TMP_OS_PATH)/hard\"" >> /tmp/var_fsbl.tcl
-	echo "set fsbl_path \"$(@D)\"" >> /tmp/var_fsbl.tcl
-	echo "set hwdef_filename \"$<\"" >> /tmp/var_fsbl.tcl
-	echo "set zynq_type \"$(ZYNQ_TYPE)\"" >> /tmp/var_fsbl.tcl
-	$(HSI) $(FPGA_PATH)/hsi/fsbl.tcl 
+	$(HSI) $(FPGA_PATH)/hsi/fsbl.tcl $(NAME) $(PROC) $(TMP_OS_PATH)/hard $(@D) $< $(ZYNQ_TYPE)
 	@echo [$@] OK
 
 $(TMP_OS_PATH)/fsbl/executable.elf: $(TMP_OS_PATH)/fsbl/Makefile $(FSBL_FILES)
@@ -101,7 +82,7 @@ ifeq ("$(UBOOT_CONFIG)","")
 UBOOT_CONFIG = zynq_$(BOARD)_defconfig
 endif
 
-$(TMP_OS_PATH)/u-boot.elf: $(UBOOT_PATH) $(shell find $(PATCHES) -type f)
+$(TMP_OS_PATH)/u-boot.elf: $(UBOOT_PATH) $(shell find $(PATCHES)/u-boot -type f)
 	cp -a $(PATCHES)/${UBOOT_CONFIG} $(UBOOT_PATH)/ 2>/dev/null || true
 	cp -a $(PATCHES)/u-boot/. $(UBOOT_PATH)/ 2>/dev/null || true
 	mkdir -p $(@D)
@@ -121,13 +102,9 @@ $(TMP_OS_PATH)/u-boot.elf: $(UBOOT_PATH) $(shell find $(PATCHES) -type f)
 .PHONY: pmufw
 pmufw: $(TMP_OS_PATH)/pmu/pmufw.elf
 
-$(TMP_OS_PATH)/pmu/Makefile:  $(TMP_FPGA_PATH)/$(NAME).xsa
+$(TMP_OS_PATH)/pmu/Makefile: $(TMP_FPGA_PATH)/$(NAME).xsa
 	mkdir -p $(@D)
-	echo "set project_name \"$(NAME)\"" > /tmp/var_pmufw.tcl
-	echo "set hard_path \"$(TMP_OS_PATH)/hard\"" >> /tmp/var_pmufw.tcl
-	echo "set pmufw_path \"$(@D)\"" >> /tmp/var_pmufw.tcl
-	echo "set hwdef_filename \"$<\"" >> /tmp/var_pmufw.tcl
-	$(HSI) $(FPGA_PATH)/hsi/pmufw.tcl 
+	$(HSI) $(FPGA_PATH)/hsi/pmufw.tcl $(NAME) $(TMP_OS_PATH)/hard $(@D) $<
 	@echo [$@] OK
 
 $(TMP_OS_PATH)/pmu/executable.elf: $(TMP_OS_PATH)/pmu/Makefile 
@@ -194,8 +171,8 @@ $(DTREE_PATH): $(DTREE_TAR)
 	tar -zxf $< --strip-components=1 --directory=$@
 	@echo [$@] OK
 
-.PHONY: overlay_dtree
-overlay_dtree: $(TMP_OS_PATH)/overlay/system-top.dts clean_
+.PHONY: overlay
+overlay: $(TMP_OS_PATH)/pl.dtbo
 
 .PHONY: devicetree
 devicetree: $(TMP_OS_PATH)/devicetree/system-top.dts clean_
@@ -210,30 +187,16 @@ devicetree: $(TMP_OS_PATH)/devicetree/system-top.dts clean_
 	echo "set hwdef_filename \"$(TMP_FPGA_PATH)/$(NAME).xsa\"" >> /tmp/var_dt.tcl
 	echo "set partition \"$(BOOT_MEDIUM)\"" >> /tmp/var_dt.tcl
 
-
-$(TMP_OS_PATH)/overlay/system-top.dts: $(TMP_FPGA_PATH)/$(NAME).xsa $(DTREE_PATH) $(PATCHES)/overlay.patch /tmp/var_dt.tcl
+$(TMP_OS_PATH)/overlay/pl.dtsi: $(TMP_FPGA_PATH)/$(NAME).xsa $(DTREE_PATH) $(PATCHES)/overlay.patch
 	mkdir -p $(@D)
-	echo "set en_overlay true" >> /tmp/var_dt.tcl
-	$(HSI) $(FPGA_PATH)/hsi/devicetree.tcl 
-	rm /tmp/var_dt.tcl
+	$(HSI) $(FPGA_PATH)/hsi/devicetree.tcl $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VER) $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/overlay $(TMP_FPGA_PATH)/$(NAME).xsa $(BOOT_MEDIUM)
 	cp -R $(TMP_OS_PATH)/overlay $(TMP_OS_PATH)/overlay.orig
 	patch -d $(TMP_OS_PATH) -p -0 < $(PATCHES)/overlay.patch 
 	@echo [$@] OK
 
-$(TMP_OS_PATH)/devicetree/system-top.dts: $(TMP_FPGA_PATH)/$(NAME).xsa $(DTREE_PATH) $(PATCHES)/devicetree.patch /tmp/var_dt.tcl
+$(TMP_OS_PATH)/devicetree/system-top.dts: $(TMP_FPGA_PATH)/$(NAME).xsa $(DTREE_PATH) $(PATCHES)/devicetree.patch
 	mkdir -p $(@D)
-	echo "set project_name \"$(NAME)\"" > /tmp/var_dt.tcl
-	echo "set proc_name \"$(PROC)\"" >> /tmp/var_dt.tcl
-	echo "set dtree_path \"$(DTREE_PATH)\"" >> /tmp/var_dt.tcl
-	echo "set vivado_version \"$(VIVADO_VER)\"" >> /tmp/var_dt.tcl
-	echo "set hard_path \"$(TMP_OS_PATH)/hard\"" >> /tmp/var_dt.tcl
-	echo "set tree_path \"$(TMP_OS_PATH)/devicetree\"" >> /tmp/var_dt.tcl
-	echo "set hwdef_filename \"$(TMP_FPGA_PATH)/$(NAME).xsa\"" >> /tmp/var_dt.tcl
-	echo "set partition \"$(BOOT_MEDIUM)\"" >> /tmp/var_dt.tcl
-	echo "set en_overlay true" >> /tmp/var_dt.tcl
-	$(HSI) $(FPGA_PATH)/hsi/devicetree.tcl 
-	rm /tmp/var_dt.tcl
-	rm -r $(TMP_OS_PATH)/devicetree.orig || true
+	$(HSI) $(FPGA_PATH)/hsi/devicetree.tcl $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VER) $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/devicetree $(TMP_FPGA_PATH)/$(NAME).xsa $(BOOT_MEDIUM)
 	cp -r $(TMP_OS_PATH)/devicetree $(TMP_OS_PATH)/devicetree.orig
 	patch -d $(TMP_OS_PATH) -p -0 < $(PATCHES)/devicetree.patch 
 	@echo [$@] OK
@@ -245,6 +208,16 @@ clean_devicetree:
 .PHONY: patch_devicetree
 patch_devicetree:
 	bash os/scripts/patch_devicetree.sh $(TMP_OS_PATH) $(BOARD_PATH)
+
+.PHONY: patch_overlay
+patch_overlay:
+	bash os/scripts/patch_overlay.sh $(TMP_OS_PATH) $(BOARD_PATH)
+
+.PHONY: clean_overlay
+clean_overlay:
+	rm -rf $(TMP_OS_PATH)/overlay $(TMP_OS_PATH)/overlay.orig
+
+
 
 ###############################################################################
 # LINUX
@@ -260,7 +233,8 @@ $(LINUX_PATH): $(LINUX_TAR)
 	tar -zxf $< --strip-components=1 --directory=$@
 	@echo [$@] OK
 
-$(TMP_OS_PATH)/$(LINUX_IMAGE): $(LINUX_PATH) $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_defconfig
+$(TMP_OS_PATH)/$(LINUX_IMAGE): $(LINUX_PATH) $(shell find $(PATCHES)/linux -type f) $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_defconfig
+	cp $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_defconfig $(LINUX_PATH)/arch/$(ARCH)/configs
 	cp -a $(PATCHES)/linux/. $(LINUX_PATH)/ 2>/dev/null || true
 	make -C $< mrproper
 	make -C $< ARCH=$(ARCH) xilinx_$(ZYNQ_TYPE)_defconfig
@@ -270,22 +244,24 @@ $(TMP_OS_PATH)/$(LINUX_IMAGE): $(LINUX_PATH) $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_defc
 	cp $</arch/$(ARCH)/boot/$(LINUX_IMAGE) $@
 	@echo [$@] OK
 
-$(TMP_PROJECT_PATH)/overlay.dtb: $(TMP_OS_PATH)/overlay.dtb
-	cp $(TMP_OS_PATH)/overlay.dtb  $(TMP_PROJECT_PATH)/overlay.dtb
 
-$(TMP_OS_PATH)/overlay.dtb: $(TMP_OS_PATH)/overlay/system-top.dts
-	# sed -i 's/.bin/$(NAME).bit.bin/g' $(TMP_OS_PATH)/overlay/pl.dtsi
-	$(OS_PATH)/dtc-1.5.0/dtc -O dtb -o $@ \
+$(TMP_PROJECT_PATH)/pl.dtbo: $(TMP_OS_PATH)/pl.dtbo
+	cp $(TMP_OS_PATH)/pl.dtbo  $(TMP_PROJECT_PATH)/pl.dtbo
+
+$(TMP_OS_PATH)/pl.dtbo: $(TMP_OS_PATH)/overlay/pl.dtsi
+	sed -i 's/".bin"/"$(NAME).bit.bin"/g' $(TMP_OS_PATH)/overlay/pl.dtsi
+	dtc -O dtb -o $@ \
 	  -i $(TMP_OS_PATH)/overlay -b 0 -@ $(TMP_OS_PATH)/overlay/pl.dtsi
 	@echo [$@] OK
 
-$(TMP_OS_PATH)/devicetree.dtb: $(TMP_OS_PATH)/devicetree/system-top.dts
+$(TMP_OS_PATH)/devicetree.dtb: $(TMP_OS_PATH)/$(LINUX_IMAGE) $(TMP_OS_PATH)/devicetree/system-top.dts
 	gcc -I $(TMP_OS_PATH)/devicetree/ -E -nostdinc -undef -D__DTS__ -x assembler-with-cpp -o \
 		$(TMP_OS_PATH)/devicetree/system-top.dts.tmp $(TMP_OS_PATH)/devicetree/system-top.dts
-	$(OS_PATH)/dtc-1.5.0/dtc -I dts -O dtb -o $@ \
+	$(LINUX_PATH)/scripts/dtc/dtc -I dts -O dtb -o $@ \
 	  -i $(TMP_OS_PATH)/devicetree -b 0 -@ $(TMP_OS_PATH)/devicetree/system-top.dts.tmp
 	@echo [$@] OK
 
+.PHONY: $(TMP_OS_PATH)/devicetree_linux
 $(TMP_OS_PATH)/devicetree_linux: $(TMP_OS_PATH)/$(LINUX_IMAGE)
 	echo ${DTREE_OVERRIDE}
 	cp -a $(PATCHES)/linux/. $(LINUX_PATH)/ 2>/dev/null || true
@@ -293,6 +269,7 @@ $(TMP_OS_PATH)/devicetree_linux: $(TMP_OS_PATH)/$(LINUX_IMAGE)
 	cp $(LINUX_PATH)/${DTREE_OVERRIDE} $(TMP_OS_PATH)/devicetree.dtb
 	@echo [$(TMP_OS_PATH)/devicetree.dtb] OK
 
+.PHONY: $(TMP_OS_PATH)/devicetree_uboot
 $(TMP_OS_PATH)/devicetree_uboot: $(TMP_OS_PATH)/u-boot.elf
 	echo ${DTREE_OVERRIDE}
 	cp $(UBOOT_PATH)/${DTREE_OVERRIDE} $(TMP_OS_PATH)/devicetree.dtb

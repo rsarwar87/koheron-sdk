@@ -40,7 +40,7 @@ MAKE_PY := SDK_PATH=$(SDK_PATH) $(PYTHON) $(SDK_PATH)/make.py
 MEMORY_YML := $(TMP_PROJECT_PATH)/memory.yml
 
 # Number of CPU cores available for parallel execution
-N_CPUS := $(shell nproc 2> /dev/null || echo 1)
+N_CPUS ?= $(shell nproc 2> /dev/null || echo 1)
 
 NAME := $(shell $(MAKE_PY) --name $(CONFIG) $(TMP_PROJECT_PATH)/name && cat $(TMP_PROJECT_PATH)/name)
 
@@ -65,8 +65,8 @@ $(VERSION_FILE): $(CONFIG)
 
 # Zip file that contains all the files needed to run the instrument:
 INSTRUMENT_ZIP := $(TMP_PROJECT_PATH)/$(NAME).zip
-$(INSTRUMENT_ZIP): server $(BITSTREAM) web $(VERSION_FILE) $(TMP_PROJECT_PATH)/overlay.dtb $(BITSTREAM).bin
-	zip --junk-paths $(INSTRUMENT_ZIP) $(BITSTREAM).bin $(TMP_PROJECT_PATH)/overlay.dtb $(BITSTREAM) $(SERVER) $(WEB_ASSETS) $(VERSION_FILE)
+$(INSTRUMENT_ZIP): server $(BITSTREAM) web $(VERSION_FILE) $(TMP_PROJECT_PATH)/pl.dtbo $(BITSTREAM).bin
+	zip --junk-paths $(INSTRUMENT_ZIP) $(BITSTREAM).bin $(TMP_PROJECT_PATH)/pl.dtbo $(BITSTREAM) $(SERVER) $(WEB_ASSETS) $(VERSION_FILE)
 	@echo [$@] OK
 
 # Make builds the instrument zip file by default
@@ -156,6 +156,7 @@ setup_base:
 
 .PHONY: setup_fpga
 setup_fpga: setup_base
+	sudo apt-get install device-tree-compiler
 	sudo rm -f /usr/bin/gmake && sudo ln -s make /usr/bin/gmake
 
 .PHONY: setup_server
@@ -172,7 +173,7 @@ setup_web: setup_base
 
 .PHONY: setup_os
 setup_os: setup_base
-	sudo apt-get install -y libssl-dev bc device-tree-compiler qemu-user-static zerofree
+	sudo apt-get install -y libssl-dev bc qemu-user-static zerofree
 	sudo apt-get install -y lib32stdc++6 lib32z1 u-boot-tools
 
 ###############################################################################
