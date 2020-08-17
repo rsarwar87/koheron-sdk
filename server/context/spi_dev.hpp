@@ -21,6 +21,7 @@
 #include <memory>
 #include <vector>
 #include <array>
+#include <mutex>
 
 #include <context_base.hpp>
 
@@ -78,14 +79,21 @@ class SpiDev
       return bytes_read;
     }
 
-    int transfer(uint8_t* tx_buff, uint8_t* rx_buff, size_t len) {
+    template <size_t len>
+    int transfer(uint8_t* tx_buff, uint8_t* rx_buff) {
       if (!is_ok()) return -1;
 
+      static std::mutex spi_mutex;
       struct spi_ioc_transfer tr {};
       tr.tx_buf = reinterpret_cast<unsigned long>(tx_buff);
       tr.rx_buf = reinterpret_cast<unsigned long>(rx_buff);
+      tr.cs_change = 0;
       tr.len = len;
-      return ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
+
+      spi_mutex.lock();
+      int ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
+      spi_mutex.unlock();
+      return ret;
     }
 
     template<typename T>
@@ -100,7 +108,64 @@ class SpiDev
                     N * sizeof(T));
     }
 
-  private:
+    // hold off is a set of dont, care bits put at the end of the data stream
+    // in order to allow enough clocks to pass for proper clock domain crossover
+    // Not critical during write calls
+    // cmd flag gives the option of adding custom flag to indicate that it is a write
+    // command, or any other custom command.
+    template <size_t addr, uint32_t offset, size_t holdoff = 0,
+              typename Twrite = uint32_t, typename Taddr = uint8_t, uint8_t cmd = 0x80>
+    int write_at_addr(Twrite* pData) {
+      std::array<uint8_t, sizeof(Twrite) + holdoff + sizeof(Taddr)> tx_buff = {};
+      tx_buff.at(0) =
+          static_cast<uint8_t>(((addr >> (sizeof(Taddr) - 1) * 8) & 0xFF) | cmd);
+      for (size_t i = 1; i < sizeof(Taddr); i++) {
+        tx_buff.at(i) = ((addr + offset) >> (sizeof(Taddr) - i - 1) * 8) & 0xFF;
+      }
+      for (size_t i = 0; i < sizeof(Twrite); i++) {
+        tx_buff.at(sizeof(Taddr) + i) = ((*pData) >> i * 8) & 0xFF;
+      }
+      std::array<uint8_t, sizeof(Twrite) + holdoff + sizeof(Taddr)> rx_buff = {{0}};
+      return transfer<sizeof(Twrite) + holdoff + sizeof(Taddr)>(tx_buff.data(),
+                                                         rx_buff.data());
+    }
+    template <typename Twrite = uint32_t, uint8_t cmd = 0x80>
+    int write_(Twrite* pData) {
+      uint8_t* tx_buff = reinterpret_cast<uint8_t*>(pData);
+      tx_buff[0] |= cmd;
+      std::array<uint8_t, 32> rx_buff = {{0}};
+      return transfer<sizeof(Twrite)>(tx_buff, rx_buff.data());
+    }
+    template <typename Tread = uint32_t>
+    int read_(Tread* pData) {
+      if (pData == NULL) return -1;
+      std::array<uint8_t, sizeof(Tread)> tx_buff = {};
+      std::array<uint8_t, 32> rx_buff = {{0}};
+      int ret = transfer<sizeof(Tread)>(tx_buff.data(), rx_buff.data());
+      Tread* var = reinterpret_cast<Tread*>(rx_buff.data());
+      *pData = *var;
+      return ret;
+    }
+
+    // hold off is a set of dont, care bits put between the address and the datadrame
+    // in order to allow enough clocks to pass for proper clock domain crossover
+    // May be critical during read calls
+    template <size_t addr, uint32_t offset, size_t holdoff = 0,
+              typename Tread = uint32_t, typename Taddr = uint8_t>
+    int read_at(Tread* pData) {
+      if (pData == nullptr) return -1;
+      std::array<uint8_t, sizeof(Tread) + holdoff + sizeof(Taddr)> tx_buff = {};
+      for (size_t i = 0; i < sizeof(Taddr); i++) {
+        tx_buff.at(i) = ((addr + offset) >> (sizeof(Taddr) - i - 1) * 8) & 0xFF;
+      }
+      std::array<uint8_t, sizeof(Tread) + holdoff + sizeof(Taddr)> rx_buff = {{0}};
+      int ret = transfer<sizeof(Tread) + holdoff + sizeof(Taddr)>(tx_buff.data(),
+                                                            rx_buff.data());
+      memcpy(pData, rx_buff.data() + holdoff + sizeof(Taddr), sizeof(Tread));
+      return ret;
+    }
+
+   private:
     ContextBase& ctx;
     std::string devname;
 
@@ -120,6 +185,7 @@ class SpiManager
     int init();
 
     bool has_device(const std::string& devname);
+
 
     SpiDev& get(const std::string& devname,
                 uint8_t mode = SPI_MODE_0,
