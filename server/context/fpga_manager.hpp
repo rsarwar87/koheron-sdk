@@ -97,6 +97,30 @@ class FpgaManager {
         
     }
 
+    int unload_bitstream()
+    {
+      namespace fs = std::experimental::filesystem;
+      if (!useOverlay) return 0;
+
+      // remove any previous overlay
+      if (exists_fs(overlay_path)) 
+      {
+          fs::remove_all(overlay_path);
+      }
+      if (exists_fs(overlay_path))
+      {
+         ctx.log<PANIC>("Failed to remove previous overlay ...\n");
+         return -1;
+      }
+      fs::create_directories(overlay_path);
+
+      if (exists_fs(overlay_path)) {
+          return 0;
+      }
+       
+      return -1;
+    }
+
     int load_bitstream(const char* name) {
         ctx.log<INFO>("Start loading bitstream...");
         FILE *xdevcfg = fopen(fhandle_path.c_str(), "w");
