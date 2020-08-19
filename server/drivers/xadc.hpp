@@ -69,7 +69,6 @@ class Xadc
 
   float get_temperature() {
     float ret = (xadc.read<Xadc_regs::TEMP>() * 503.975) / 65356 - 273.15;
-    ctx.log<INFO>("%s(): %lf \n", __func__, (double)ret);
     return ret;
   }
   // return FPGA PL Vccint voltage
