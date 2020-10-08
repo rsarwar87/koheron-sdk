@@ -125,7 +125,12 @@ begin
 					tick_counter_low <= 0;
 				ELSIF(radio_cppm_in = signal_active_high and s_previous_cppm_in = signal_active_high) THEN
 					--pwm is high
-					tick_counter_high <= tick_counter_high + 1;
+					--tick_counter_high <= tick_counter_high + 1;
+					if tick_counter_high  = max_sleep_pulse *16 then
+			             s_sync<= '0';
+			         else
+			             tick_counter_high <= tick_counter_high + 1;
+			         end if;
 					tick_counter_low <= 0;
 				ELSIF(radio_cppm_in = not signal_active_high and s_previous_cppm_in = signal_active_high) THEN
 					--pwm goto low
@@ -141,7 +146,11 @@ begin
 					   end if;
 					end if;
 			    ELSIF(radio_cppm_in = NOT signal_active_high and s_previous_cppm_in = NOT signal_active_high) THEN
-			         tick_counter_low <= tick_counter_low + 1;
+			         if tick_counter_low  = max_sleep_pulse *16 then
+			             s_sync<= '0';
+			         else
+			             tick_counter_low <= tick_counter_low + 1;
+			         end if;
 				END IF;
 				if (ch_counter = no_channels + 1) then
 				    s_sync<= '0';
