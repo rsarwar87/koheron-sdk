@@ -32,9 +32,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity radio_sbus is
+  generic (is_inverted : std_logic := '1');
   Port ( 
     clk_100, rstn_100 : in std_logic;
-    enable, is_inverted : in std_logic;
+    enable : in std_logic;
     
     channel_out00 : out std_logic_vector(15 downto 0);
     channel_out01 : out std_logic_vector(15 downto 0);
@@ -83,17 +84,21 @@ component uart IS
 END component;
 signal rx_busy, radio_sbus_in_buf	:		STD_LOGIC;										--data reception in progress
 signal rx_error	:		STD_LOGIC;										--start, parity, or stop bit error detected
-signal rx_data	:		STD_LOGIC_VECTOR(7 DOWNTO 0);	--data received
+signal rx_data, rx_data_rev	:		STD_LOGIC_VECTOR(7 DOWNTO 0);	--data received
 signal tx_busy	:		STD_LOGIC;  									--transmission in progress
 signal rx_valid	:		STD_LOGIC;
-signal synced : std_logic;
+signal synced, rx_valid_delayed : std_logic;
 type channel_array is array (0 to 15) of std_logic_vector(15 downto 0) ;
 signal channels : channel_array := (others => (others => '0'));
 signal channels_buffer : channel_array := (others => (others => '0'));
-signal rx_count, in_sync_counter : integer := 0;
+signal rx_count, in_sync_counter, activity_counter : integer := 0;
 
 signal in_sync_pin : std_logic;
 signal in_synced : std_logic;
+
+ATTRIBUTE MARK_DEBUG : string;
+ATTRIBUTE MARK_DEBUG of rx_busy, rx_error, rx_data, synced, channels, rx_count, in_sync_pin, in_synced: SIGNAL IS "TRUE";
+ATTRIBUTE MARK_DEBUG of rx_valid, radio_sbus_in, activity_counter: SIGNAL IS "TRUE";
 begin
 
     process (clk_100, rstn_100)
@@ -103,201 +108,40 @@ begin
             channels_buffer <= (others => (others => '0'));
             synced <= '0';
             rx_count <= 0;
+            rx_valid_delayed <= '0';
+            activity_counter <= 0;
         elsif (rising_edge(clk_100)) then
-            if rx_valid = '1' then
+        
+            --if (synced = '1') then
+                if activity_counter = 100000000 then
+                    synced <= '0'; 
+                --elsif rx_busy = '1' then
+                --    activity_counter <= 0;
+                
+                else
+                    activity_counter <= activity_counter + 1;
+                end if;
+                if activity_counter = 481073 then
+                    rx_count <= 0;
+                end if;
+             --end if;
+            rx_valid_delayed <= rx_valid;
+            if rx_valid = '1' and rx_valid_delayed = '0' then
+                activity_counter <= 0;
                 if (synced = '0') then -- find sync
                     rx_count <= rx_count + 1;
-                    if rx_data = x"f0" then
+                    if rx_data = x"0f" then
+                        activity_counter <= 0;
                         synced <= '1';
                         rx_count <= 1;
                     end if;
                 else    -- check for sync // start and end byte
                     rx_count <= rx_count + 1;
+                    
                     case rx_count is
-                        when 0 =>
-                            if (rx_data = x"f0") then
-                                channels <= channels_buffer;
-                                CLEAR : for J in 0 to 15  loop
-                                    channels_buffer(J)(0) <= '0';
-                                end loop;
-                            else
-                                synced <= '0';
-                            end if;
-                        when 1 =>
-                            if (rx_error /= '1') then
-                                channels_buffer(0)(7 downto 0) <= rx_data(7 downto 0);
-                            else
-                                channels_buffer(0)(15) <= '1';
-                            end if;
-                        when 2 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(0)(10 downto 8) <= rx_data(2 downto 0);
-                            channels_buffer(1)(4 downto 0) <= rx_data(7 downto 3);
-                            else
-                                channels_buffer(0)(15) <= '1';
-                                channels_buffer(1)(15) <= '1';
-                            end if;
-                        when 3 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(1)(10 downto 5) <= rx_data(5 downto 0);
-                            channels_buffer(2)(1 downto 0) <= rx_data(7 downto 6);
-                            else
-                                channels_buffer(1)(15) <= '1';
-                                channels_buffer(2)(15) <= '1';
-                            end if;
-                        when 4 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(2)(9 downto 2) <= rx_data(7 downto 0);
-                            --channels_buffer(3)(1 downto 0) <= rx_data(7 downto 6);
-                            else
-                                channels_buffer(2)(15) <= '1';
-                            end if;
-                        when 5 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(2)(10) <= rx_data(0);
-                            channels_buffer(3)(6 downto 0) <= rx_data(7 downto 1);
-                            else
-                                channels_buffer(2)(15) <= '1';
-                                channels_buffer(3)(15) <= '1';
-                            end if;
-                        when 6 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(3)(10 downto 7) <= rx_data(3 downto 0);
-                            channels_buffer(4)(3 downto 0) <= rx_data(7 downto 4);
-                            else
-                                channels_buffer(3)(15) <= '1';
-                                channels_buffer(4)(15) <= '1';
-                            end if;
-                        when 7 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(4)(10 downto 4) <= rx_data(6 downto 0);
-                            channels_buffer(5)(0) <= rx_data(0);
-                            else
-                                channels_buffer(0)(15) <= '1';
-                            end if;
-                        when 8 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(5)(8 downto 1) <= rx_data(7 downto 0);
-                            --channels_buffer(7)(3 downto 0) <= rx_data(7 downto 4);
-                            else
-                                channels_buffer(0)(15) <= '1';
-                            end if;
-                        when 9 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(5)(10 downto 9) <= rx_data(1 downto 0);
-                            channels_buffer(6)(5 downto 0) <= rx_data(7 downto 2);
-                            else
-                                channels_buffer(5)(15) <= '1';
-                                channels_buffer(6)(15) <= '1';
-                            end if;
-                        when 10 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(6)(10 downto 6) <= rx_data(4 downto 0);
-                            channels_buffer(7)(2 downto 0) <= rx_data(7 downto 5);
-                            else
-                                channels_buffer(6)(15) <= '1';
-                                channels_buffer(7)(15) <= '1';
-                            end if;
-                        when 11 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(7)(10 downto 3) <= rx_data(7 downto 0);
-                            --channels_buffer(7)(2 downto 0) <= rx_data(7 downto 5);
-                            else
-                                channels_buffer(7)(15) <= '1';
-                            end if;
-                        when 12 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(8)(7 downto 0) <= rx_data(7 downto 0);
-                            --channels_buffer(7)(2 downto 0) <= rx_data(7 downto 5);
-                            else
-                                channels_buffer(8)(15) <= '1';
-                            end if;
-                        when 13 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(8)(10 downto 8) <= rx_data(2 downto 0);
-                            channels_buffer(9)(4 downto 0) <= rx_data(7 downto 3);
-                            else
-                                channels_buffer(8)(15) <= '1';
-                                channels_buffer(9)(15) <= '1';
-                            end if;
-                        when 14 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(9)(10 downto 5) <= rx_data(5 downto 0);
-                            channels_buffer(10)(1 downto 0) <= rx_data(7 downto 6);
-                            else
-                                channels_buffer(9)(15) <= '1';
-                                channels_buffer(10)(15) <= '1';
-                            end if;
-                        when 15 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(10)(9 downto 2) <= rx_data(7 downto 0);
-                            --channels_buffer(10)(1 downto 0) <= rx_data(7 downto 6);
-                            else
-                                
-                                channels_buffer(10)(15) <= '1';
-                            end if;
-                        when 16 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(10)(10) <= rx_data(0);
-                            channels_buffer(11)(6 downto 0) <= rx_data(7 downto 1);
-                            else
-                                channels_buffer(10)(15) <= '1';
-                                channels_buffer(11)(15) <= '1';
-                            end if;
-                        when 17 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(11)(10 downto 7) <= rx_data(3 downto 0);
-                            channels_buffer(12)(3 downto 0) <= rx_data(7 downto 4);
-                            else
-                                channels_buffer(11)(15) <= '1';
-                                channels_buffer(12)(15) <= '1';
-                            end if;
-                        when 18 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(12)(10 downto 4) <= rx_data(6 downto 0);
-                            channels_buffer(13)(0) <= rx_data(7);
-                            else
-                                channels_buffer(12)(15) <= '1';
-                                channels_buffer(13)(15) <= '1';
-                            end if;
-                        when 19 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(13)(8 downto 1) <= rx_data(7 downto 0);
-                            --channels_buffer(12)(3 downto 0) <= rx_data(7 downto 4);
-                            else
-                                channels_buffer(13)(15) <= '1';
-                            end if;
-                        when 20 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(13)(10 downto 9) <= rx_data(1 downto 0);
-                            channels_buffer(14)(5 downto 0) <= rx_data(7 downto 2);
-                            else
-                                channels_buffer(13)(15) <= '1';
-                                channels_buffer(14)(15) <= '1';
-                            end if;
-                        when 21 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(14)(10 downto 6) <= rx_data(4 downto 0);
-                            channels_buffer(15)(2 downto 0) <= rx_data(7 downto 5);
-                            else
-                                channels_buffer(14)(15) <= '1';
-                                channels_buffer(15)(15) <= '1';
-                            end if;
-                        when 22 =>
-                            if (rx_error /= '1') then
-                            channels_buffer(15)(10 downto 3) <= rx_data(7 downto 0);
-                            else
-                                channels_buffer(15)(15) <= '1';
-                            end if;
-                        when 23 => -- control flag
-                            
-                        when 24 => -- end flag
-                            if (rx_data /= x"00" and rx_error /= '1') then 
-                                synced <= '0';
-                             end if;
-                        when 25 => -- end flag
-                            if (rx_data = x"f0") then 
-                                rx_count <= 1;
+                        when 0 => -- end flag
+                            if (rx_data = x"0f") then 
+                                --rx_count <= 1;
                                 channels <= channels_buffer;
                                 CLEAR_VAL : for K in 0 to 15  loop
                                     channels_buffer(K)(0) <= '0';
@@ -305,8 +149,190 @@ begin
                              else 
                                 synced <= '0';
                              end if;
-                        when others =>
-                            synced <= '0';
+                        when 1 =>
+                            --if (rx_error /= '1') then
+                                channels_buffer(0)(7 downto 0) <= rx_data(7 downto 0);
+                            --else
+                            if (rx_error = '1') then
+                                channels_buffer(0)(15) <= '1';
+                            end if;
+                        when 2 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(0)(10 downto 8) <= rx_data(2 downto 0);
+                            channels_buffer(1)(4 downto 0) <= rx_data(7 downto 3);
+                            if (rx_error = '1') then
+                                channels_buffer(0)(15) <= '1';
+                                channels_buffer(1)(15) <= '1';
+                            end if;
+                        when 3 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(1)(10 downto 5) <= rx_data(5 downto 0);
+                            channels_buffer(2)(1 downto 0) <= rx_data(7 downto 6);
+                            if (rx_error = '1') then
+                                channels_buffer(1)(15) <= '1';
+                                channels_buffer(2)(15) <= '1';
+                            end if;
+                        when 4 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(2)(9 downto 2) <= rx_data(7 downto 0);
+                            --channels_buffer(3)(1 downto 0) <= rx_data(7 downto 6);
+                            if (rx_error = '1') then
+                                channels_buffer(2)(15) <= '1';
+                            end if;
+                        when 5 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(2)(10) <= rx_data(0);
+                            channels_buffer(3)(6 downto 0) <= rx_data(7 downto 1);
+                            if (rx_error = '1') then
+                                channels_buffer(2)(15) <= '1';
+                                channels_buffer(3)(15) <= '1';
+                            end if;
+                        when 6 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(3)(10 downto 7) <= rx_data(3 downto 0);
+                            channels_buffer(4)(3 downto 0) <= rx_data(7 downto 4);
+                            if (rx_error = '1') then
+                              channels_buffer(3)(15) <= '1';
+                              channels_buffer(4)(15) <= '1';
+                            end if;
+                        when 7 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(4)(10 downto 4) <= rx_data(6 downto 0);
+                            channels_buffer(5)(0) <= rx_data(0);
+                            if (rx_error = '1') then
+                                channels_buffer(0)(15) <= '1';
+                            end if;
+                        when 8 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(5)(8 downto 1) <= rx_data(7 downto 0);
+                            --channels_buffer(7)(3 downto 0) <= rx_data(7 downto 4);
+                            if (rx_error = '1') then
+                                channels_buffer(0)(15) <= '1';
+                            end if;
+                        when 9 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(5)(10 downto 9) <= rx_data(1 downto 0);
+                            channels_buffer(6)(5 downto 0) <= rx_data(7 downto 2);
+                            if (rx_error = '1') then
+                                channels_buffer(5)(15) <= '1';
+                                channels_buffer(6)(15) <= '1';
+                            end if;
+                        when 10 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(6)(10 downto 6) <= rx_data(4 downto 0);
+                            channels_buffer(7)(2 downto 0) <= rx_data(7 downto 5);
+                            if (rx_error = '1') then
+                                channels_buffer(6)(15) <= '1';
+                                channels_buffer(7)(15) <= '1';
+                            end if;
+                        when 11 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(7)(10 downto 3) <= rx_data(7 downto 0);
+                            --channels_buffer(7)(2 downto 0) <= rx_data(7 downto 5);
+                            if (rx_error = '1') then
+                                channels_buffer(7)(15) <= '1';
+                            end if;
+                        when 12 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(8)(7 downto 0) <= rx_data(7 downto 0);
+                            --channels_buffer(7)(2 downto 0) <= rx_data(7 downto 5);
+                            if (rx_error = '1') then
+                                channels_buffer(8)(15) <= '1';
+                            end if;
+                        when 13 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(8)(10 downto 8) <= rx_data(2 downto 0);
+                            channels_buffer(9)(4 downto 0) <= rx_data(7 downto 3);
+                            if (rx_error = '1') then
+                                channels_buffer(8)(15) <= '1';
+                                channels_buffer(9)(15) <= '1';
+                            end if;
+                        when 14 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(9)(10 downto 5) <= rx_data(5 downto 0);
+                            channels_buffer(10)(1 downto 0) <= rx_data(7 downto 6);
+                            if (rx_error = '1') then
+                                channels_buffer(9)(15) <= '1';
+                                channels_buffer(10)(15) <= '1';
+                            end if;
+                        when 15 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(10)(9 downto 2) <= rx_data(7 downto 0);
+                            --channels_buffer(10)(1 downto 0) <= rx_data(7 downto 6);
+                            if (rx_error = '1') then
+                                channels_buffer(10)(15) <= '1';
+                            end if;
+                        when 16 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(10)(10) <= rx_data(0);
+                            channels_buffer(11)(6 downto 0) <= rx_data(7 downto 1);
+                            if (rx_error = '1') then
+                                channels_buffer(10)(15) <= '1';
+                                channels_buffer(11)(15) <= '1';
+                            end if;
+                        when 17 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(11)(10 downto 7) <= rx_data(3 downto 0);
+                            channels_buffer(12)(3 downto 0) <= rx_data(7 downto 4);
+                            if (rx_error = '1') then
+                                channels_buffer(11)(15) <= '1';
+                                channels_buffer(12)(15) <= '1';
+                            end if;
+                        when 18 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(12)(10 downto 4) <= rx_data(6 downto 0);
+                            channels_buffer(13)(0) <= rx_data(7);
+                            if (rx_error = '1') then
+                                channels_buffer(12)(15) <= '1';
+                                channels_buffer(13)(15) <= '1';
+                            end if;
+                        when 19 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(13)(8 downto 1) <= rx_data(7 downto 0);
+                            if (rx_error = '1') then
+                                channels_buffer(13)(15) <= '1';
+                            end if;
+                        when 20 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(13)(10 downto 9) <= rx_data(1 downto 0);
+                            channels_buffer(14)(5 downto 0) <= rx_data(7 downto 2);
+                            if (rx_error = '1') then
+                                channels_buffer(13)(15) <= '1';
+                                channels_buffer(14)(15) <= '1';
+                            end if;
+                        when 21 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(14)(10 downto 6) <= rx_data(4 downto 0);
+                            channels_buffer(15)(2 downto 0) <= rx_data(7 downto 5);
+                            if (rx_error = '1') then
+                                channels_buffer(14)(15) <= '1';
+                                channels_buffer(15)(15) <= '1';
+                            end if;
+                        when 22 =>
+                            --if (rx_error /= '1') then
+                            channels_buffer(15)(10 downto 3) <= rx_data(7 downto 0);
+                            if (rx_error = '1') then
+                                channels_buffer(15)(15) <= '1';
+                            end if;
+                        when 23 => -- control flag
+                            
+                        when 24 => -- end flag
+                            --if (rx_data /= x"00" and rx_error /= '1') then 
+                             --   synced <= '0';
+                             --end if;
+                        
+                        when others => -- end flag
+                            if (rx_data = x"0f") then 
+                                --rx_count <= 1;
+                                channels <= channels_buffer;
+                                CLEAR_VAL2 : for K in 0 to 15  loop
+                                    channels_buffer(K)(0) <= '0';
+                                end loop;
+                             else 
+                                synced <= '0';
+                             end if;
+                        
+                        
                     end case;
                     
                 end if;
@@ -399,7 +425,7 @@ begin
         rx_valid    => rx_valid,
         rx          => in_sync_pin
     );
-
+    --rx_data(0 downto 7) <= rx_data_rev(7 downto 0);
     radio_sbus_in_buf <= radio_sbus_in when is_inverted = '0' else not radio_sbus_in;
     in_sync_pin <= radio_sbus_in_buf when in_synced = '1' else '1';
     process (clk_100, rstn_100)

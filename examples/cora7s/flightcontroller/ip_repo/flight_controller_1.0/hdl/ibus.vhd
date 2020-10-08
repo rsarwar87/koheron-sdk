@@ -95,7 +95,7 @@ signal odd_even : std_logic := '0';
 type channel_array is array (0 to 15) of std_logic_vector(15 downto 0) ;
 signal channels : channel_array := (others => (others => '0'));
 signal channels_buffer : channel_array := (others => (others => '0'));
-signal rx_count, rx_expected, in_sync_counter : integer := 0;
+signal rx_count, rx_expected, in_sync_counter, activity_counter : integer := 0;
 
 signal data_rx, checksum, data_rx_buf :std_logic_vector(15 downto 0) ;
 signal error_check :std_logic_vector(1 downto 0) ;
@@ -104,8 +104,8 @@ constant ccr_high :std_logic_vector(15 downto 0) := x"FFFF";
 signal in_sync_pin : std_logic;
 signal in_synced : std_logic;
 
-ATTRIBUTE MARK_DEBUG of rx_busy, rx_error, rx_data, synced, channels, rx_count, in_sync_counter, in_sync_pin, in_synced: SIGNAL IS "TRUE";
-ATTRIBUTE MARK_DEBUG of odd_even, rx_expected, data_rx, rx_valid, checksum, error_check, radio_ibus_in: SIGNAL IS "TRUE";
+ATTRIBUTE MARK_DEBUG of rx_busy, rx_error, rx_data, synced, channels, rx_count, in_sync_pin, in_synced: SIGNAL IS "TRUE";
+ATTRIBUTE MARK_DEBUG of odd_even, rx_expected, data_rx, rx_valid, checksum, error_check, radio_ibus_in, activity_counter: SIGNAL IS "TRUE";
 
 
 begin
@@ -123,6 +123,7 @@ begin
             error_check <= "00";
             rx_valid_delayed <= rx_valid_delayed;
             data_rx_buf <= (others => '0');
+            activity_counter <= 0;
         elsif (rising_edge(clk_100)) then
             rx_valid_buf <= '0';
             rx_valid_delayed <= rx_valid;
@@ -136,17 +137,27 @@ begin
                 rx_valid_buf <= odd_even;
             end if;
             
-            
+            if (synced = '1') then
+                if activity_counter = 100000000 then
+                    synced <= '0'; 
+                elsif rx_busy = '1' then
+                    activity_counter <= 0;
+                else
+                    activity_counter <= activity_counter + 1;
+                end if;
+            end if;
             if rx_valid_buf = '1' then
                 if (synced = '0') then -- find sync
-                    rx_count <= -1;
+                    
                     if data_rx(7 downto 0) = x"20" then
+                        activity_counter <= 0;
                         synced <= '1';
                         rx_count <= 0;
                         rx_expected <= to_integer(unsigned(rx_data(7 downto 2)))-2;
                         checksum <= std_logic_vector(unsigned(ccr_high) - unsigned(data_rx(15 downto 8)) - unsigned(data_rx(7 downto 0))); --- unsigned(rx_data));
                     end if;
                 else    -- check for sync // start and end byte
+                    
                     rx_count <= rx_count + 1;
                     data_rx_buf <= data_rx;
                     if (data_rx(15 downto 0) = x"4020") then
@@ -168,7 +179,7 @@ begin
                         channels <= channels_buffer;
                         --rx_count <= 0;
                         if checksum = data_rx then
-                            channels(15) <= (others => '1');
+                            channels(14) <= (others => '1');
                         end if;
                     else
                         synced <= '0';
