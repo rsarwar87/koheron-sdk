@@ -34,9 +34,9 @@ use IEEE.NUMERIC_STD.ALL;
 entity radio_cppm is   
     GENERIC(
    		component_period		: INTEGER := 10;    --Hz
-    	sampling_period		: INTEGER := 50;		   --Hz
-    	max_pulse_duration		: INTEGER := 20000;		   --Hz
-    	max_sleep_pulse		: INTEGER := 2000;		   --Hz
+    	sampling_period		: INTEGER := 50*6;		   --Hz
+    	no_channels		: INTEGER := 8;		   --Hz
+    	max_sleep_pulse		: INTEGER := 40000/6;		   --Hz
     	output_width		: INTEGER := 13;   			   --Bits
     	signal_active_high  : std_logic := '1'
     );
@@ -61,18 +61,19 @@ entity radio_cppm is
     channel_out14 : out std_logic_vector(15 downto 0);
     channel_out15 : out std_logic_vector(15 downto 0);
     
+    synce_locked : out std_logic;
     radio_cppm_in   : in std_logic
   );
 end radio_cppm;
 
 architecture Behavioral of radio_cppm is
 type channel_array is array (0 to 15) of std_logic_vector(15 downto 0) ;
-signal channels : channel_array := (others => (others => '0'));
+signal channels, channel_buffer : channel_array := (others => (others => '0'));
     
     CONSTANT clock_div : INTEGER := sampling_period / component_period;
     CONSTANT half_samples_to_count : INTEGER := (clock_div / 2) + 1;
     SIGNAL s_sample_clock_tick_counter : INTEGER range 0 to clock_div + 1 := 0;
-    SIGNAL s_sample_clock : STD_LOGIC := '0';
+    SIGNAL s_sample_clock, s_sync : STD_LOGIC := '0';
     
     SIGNAL s_previous_cppm_in : STD_LOGIC := '0';
     
@@ -81,6 +82,10 @@ signal channels : channel_array := (others => (others => '0'));
     SIGNAL ch_counter : INTEGER range 0 to 15 := 0;
     SIGNAL tick_cal1, tick_cal2 : INTEGER := 0;
     SIGNAL bool_cal1, bool_cal2 : boolean := false;
+    
+    
+ATTRIBUTE MARK_DEBUG : string;
+ATTRIBUTE MARK_DEBUG of radio_cppm_in, tick_counter_high, tick_counter_low, ch_counter, s_previous_cppm_in, s_sample_clock, channel_buffer, s_sample_clock_tick_counter: SIGNAL IS "TRUE";
 begin
 
     sample_clocking : process(clk_100)
@@ -99,7 +104,7 @@ begin
         sampling : process(s_sample_clock, rstn_100)
 		BEGIN
 		
-			IF(rstn_100 = '0' or enable = '1') THEN
+			IF(rstn_100 = '0' ) THEN
 				s_previous_cppm_in <= '0';
 				tick_counter_high <= 0;
 				ch_counter <= 0;
@@ -108,31 +113,57 @@ begin
 				bool_cal1 <= false;
 				tick_cal2 <= 0;
 				bool_cal2 <= false;
+				s_sync <= '0';
+				synce_locked <= '0';
+				channel_buffer <= (others => (others => '0'));
+				tick_counter_low <= 0;
 			ELSIF(rising_edge(s_sample_clock)) THEN
 			    
 				IF(radio_cppm_in = signal_active_high and s_previous_cppm_in = not signal_active_high) THEN
 					--rising edge on pwm
 					tick_counter_high <= 1;
-					
+					tick_counter_low <= 0;
 				ELSIF(radio_cppm_in = signal_active_high and s_previous_cppm_in = signal_active_high) THEN
 					--pwm is high
 					tick_counter_high <= tick_counter_high + 1;
+					tick_counter_low <= 0;
 				ELSIF(radio_cppm_in = not signal_active_high and s_previous_cppm_in = signal_active_high) THEN
 					--pwm goto low
+					tick_counter_low <= 0;
 					if (tick_counter_high > max_sleep_pulse) then
 					   ch_counter <= 0;
+					   s_sync <= '1';
 					else 
+					   
 					   ch_counter <= ch_counter + 1;
-					   channels(ch_counter)  <= STD_LOGIC_VECTOR(to_unsigned(tick_counter_high - tick_cal1 + tick_cal2, 15));
+					   if (s_sync = '1') then
+					   channel_buffer(ch_counter)  <= STD_LOGIC_VECTOR(to_unsigned(tick_counter_high - tick_cal1 + tick_cal2, 15));
+					   end if;
 					end if;
+			    ELSIF(radio_cppm_in = NOT signal_active_high and s_previous_cppm_in = NOT signal_active_high) THEN
+			         tick_counter_low <= tick_counter_low + 1;
 				END IF;
+				if (ch_counter = no_channels + 1) then
+				    s_sync<= '0';
+				end if;
 				
 			    s_previous_cppm_in <= radio_cppm_in;
-			    
+			    synce_locked <= s_sync;
 			END IF;
 		END PROCESS;
 
-
+        process (s_sample_clock, rstn_100) 
+        begin
+        if (rstn_100 = '0') THEN
+            channels <=  (others => (others => '0'));
+        elsif (rising_edge(clk_100)) then
+            if (enable = '1' and s_sync ='1') then
+                channels <= channel_buffer;
+            else
+                channels <=  (others => (others => '0'));
+            end if;
+        end if;
+        end process;
     channel_out00 <= channels(0);
     channel_out01 <= channels(1);
     channel_out02 <= channels(2);
