@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_spimaster_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="tb_spimaster" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="3855257fs"></ZoomStartTime>
+      <ZoomEndTime time="7628949fs"></ZoomEndTime>
+      <Cursor1Time time="4715000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="167"></NameColumnWidth>
+      <ValueColumnWidth column_width="113"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="30" />
+   <wvobject type="other" fp_name="/tb_spimaster/nbytes_i">
+      <obj_property name="ElementShortName">nbytes_i</obj_property>
+      <obj_property name="ObjectShortName">nbytes_i</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_spimaster/data_in">
+      <obj_property name="ElementShortName">data_in[263:0]</obj_property>
+      <obj_property name="ObjectShortName">data_in[263:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_spimaster/data_out">
+      <obj_property name="ElementShortName">data_out[263:0]</obj_property>
+      <obj_property name="ObjectShortName">data_out[263:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/x_valid">
+      <obj_property name="ElementShortName">x_valid</obj_property>
+      <obj_property name="ObjectShortName">x_valid</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/bus_ready">
+      <obj_property name="ElementShortName">bus_ready</obj_property>
+      <obj_property name="ObjectShortName">bus_ready</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/x_done">
+      <obj_property name="ElementShortName">x_done</obj_property>
+      <obj_property name="ObjectShortName">x_done</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_mosi">
+      <obj_property name="ElementShortName">spi_mosi</obj_property>
+      <obj_property name="ObjectShortName">spi_mosi</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_miso">
+      <obj_property name="ElementShortName">spi_miso</obj_property>
+      <obj_property name="ObjectShortName">spi_miso</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_spimaster/spi_nsel">
+      <obj_property name="ElementShortName">spi_nsel[0:0]</obj_property>
+      <obj_property name="ObjectShortName">spi_nsel[0:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_sclk">
+      <obj_property name="ElementShortName">spi_sclk</obj_property>
+      <obj_property name="ObjectShortName">spi_sclk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/clk100">
+      <obj_property name="ElementShortName">clk100</obj_property>
+      <obj_property name="ObjectShortName">clk100</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/rstn_50">
+      <obj_property name="ElementShortName">rstn_50</obj_property>
+      <obj_property name="ObjectShortName">rstn_50</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/tb_spimaster/CLK_PERIOD">
+      <obj_property name="ElementShortName">CLK_PERIOD</obj_property>
+      <obj_property name="ObjectShortName">CLK_PERIOD</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/tb_spimaster/MAX_DATA_SIZE_BYTES">
+      <obj_property name="ElementShortName">MAX_DATA_SIZE_BYTES</obj_property>
+      <obj_property name="ObjectShortName">MAX_DATA_SIZE_BYTES</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_spimaster/spi_t/UI_SPI/DIN">
+      <obj_property name="ElementShortName">DIN[7:0]</obj_property>
+      <obj_property name="ObjectShortName">DIN[7:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_t/UI_SPI/DIN_LAST">
+      <obj_property name="ElementShortName">DIN_LAST</obj_property>
+      <obj_property name="ObjectShortName">DIN_LAST</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_t/UI_SPI/DIN_VLD">
+      <obj_property name="ElementShortName">DIN_VLD</obj_property>
+      <obj_property name="ObjectShortName">DIN_VLD</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/tb_spimaster/spi_t/state">
+      <obj_property name="ElementShortName">state</obj_property>
+      <obj_property name="ObjectShortName">state</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_t/UI_SPI/RST">
+      <obj_property name="ElementShortName">RST</obj_property>
+      <obj_property name="ObjectShortName">RST</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_t/UI_SPI/READY">
+      <obj_property name="ElementShortName">READY</obj_property>
+      <obj_property name="ObjectShortName">READY</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/tb_spimaster/spi_t/UI_SPI/next_state">
+      <obj_property name="ElementShortName">next_state</obj_property>
+      <obj_property name="ObjectShortName">next_state</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/tb_spimaster/spi_t/UI_SPI/present_state">
+      <obj_property name="ElementShortName">present_state</obj_property>
+      <obj_property name="ObjectShortName">present_state</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/tb_spimaster/spi_t/reg_nbyte">
+      <obj_property name="ElementShortName">reg_nbyte</obj_property>
+      <obj_property name="ObjectShortName">reg_nbyte</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/tb_spimaster/spi_t/cnt_nbyte">
+      <obj_property name="ElementShortName">cnt_nbyte</obj_property>
+      <obj_property name="ObjectShortName">cnt_nbyte</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_spimaster/spi_t/UI_SPI/sys_clk_cnt">
+      <obj_property name="ElementShortName">sys_clk_cnt[2:0]</obj_property>
+      <obj_property name="ObjectShortName">sys_clk_cnt[2:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_t/UI_SPI/spi_clk">
+      <obj_property name="ElementShortName">spi_clk</obj_property>
+      <obj_property name="ObjectShortName">spi_clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_t/UI_SPI/spi_clk_en">
+      <obj_property name="ElementShortName">spi_clk_en</obj_property>
+      <obj_property name="ObjectShortName">spi_clk_en</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_t/UI_SPI/sys_clk_cnt_max">
+      <obj_property name="ElementShortName">sys_clk_cnt_max</obj_property>
+      <obj_property name="ObjectShortName">sys_clk_cnt_max</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_t/UI_SPI/sys_clk_cnt_rst">
+      <obj_property name="ElementShortName">sys_clk_cnt_rst</obj_property>
+      <obj_property name="ObjectShortName">sys_clk_cnt_rst</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_spimaster/spi_t/UI_SPI/CLK">
+      <obj_property name="ElementShortName">CLK</obj_property>
+      <obj_property name="ObjectShortName">CLK</obj_property>
+   </wvobject>
+</wave_config>
