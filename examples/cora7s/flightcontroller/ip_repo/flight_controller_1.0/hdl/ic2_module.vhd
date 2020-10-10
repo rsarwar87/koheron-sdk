@@ -66,6 +66,9 @@ ARCHITECTURE logic OF i2c_master IS
   SIGNAL data_rx       : STD_LOGIC_VECTOR(7 DOWNTO 0);   --data received from slave
   SIGNAL bit_cnt       : INTEGER RANGE 0 TO 7 := 7;      --tracks bit number in transaction
   SIGNAL stretch       : STD_LOGIC := '0';               --identifies if slave is stretching scl
+  
+  ATTRIBUTE MARK_DEBUG : string;
+  ATTRIBUTE MARK_DEBUG of state, data_clk, scl_clk, scl_ena, sda_int, sda_ena_n, addr_rw, data_tx, data_rx, bit_cnt, stretch: SIGNAL IS "TRUE";
 BEGIN
 
   --generate the timing for the bus clock (scl_clk) and the data clock (data_clk)

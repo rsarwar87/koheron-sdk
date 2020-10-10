@@ -24,7 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -33,13 +33,13 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity i2c_top is
  generic (
-    MAX_DATA_SIZE_BYTES  : natural := 33
+    MAX_DATA_SIZE_BYTES  : natural := 6
  );
  Port (
     clk100, rstn_100 : std_logic;
     
     
-    nbytes_i   : in  integer range 1 to MAX_DATA_SIZE_BYTES + 1;
+    nbytes_i   : in  integer range 1 to MAX_DATA_SIZE_BYTES;
     addr      : IN     STD_LOGIC_VECTOR(6 DOWNTO 0);
     data_in    : in  std_logic_vector((8*MAX_DATA_SIZE_BYTES - 1) downto 0);
     data_out   : out std_logic_vector((8*MAX_DATA_SIZE_BYTES - 1) downto 0);
@@ -86,8 +86,13 @@ TYPE STATE_TYPE IS (IDLE, PREPARE, POLL, COMPLETED);
     signal cnt_nbyte    : integer range 0 to MAX_DATA_SIZE_BYTES + 1 := 0;
     signal data_in_buf  : std_logic_vector((8*MAX_DATA_SIZE_BYTES - 1) downto 0) := (others => '0');
     signal data_out_buf : std_logic_vector((8*MAX_DATA_SIZE_BYTES - 1) downto 0) := (others => '0');
+    
+                                                                                                                                                 
+ATTRIBUTE MARK_DEBUG : string;                                                                                                               
+ATTRIBUTE MARK_DEBUG of x_err, x_done, x_valid, data_out, ack_error, reg_nbyte, cnt_nbyte, data_in_buf, data_out_buf, x_valid_buf, iic_addr, state: SIGNAL IS "TRUE";
 begin
     iic_ready <= not busy;
+    x_err <= ack_error;
     process (clk100, rstn_100)
     begin
         if (rstn_100 = '0') then
@@ -128,11 +133,13 @@ begin
                     
                     iic_addr <= addr;
                     ena <= '1';
-                    if (reg_nbyte = 1 or has_reg = '0') then
+                    
+                    ena <= '1';
+                    if (reg_nbyte = 1 or has_reg = '0') then          -- if transaction size is 1 or has not register map, just follow command
                         rw <= read_write;
                         data_wr <= data_in_buf(7 downto 0);
                         cnt_nbyte <= 1;
-                    else
+                    else                                               ---- if it has register
                         data_wr <= reg_addr;
                     end if;
                     state <= POLL;
@@ -148,7 +155,7 @@ begin
                         state <= COMPLETED;
                     end if;
                     
-                    if (iic_ready = '1' and rw = '1') then
+                    if (iic_ready = '1' and rw = '1' and iic_ready_delayed = '0') then
                         data_out_buf(cnt_nbyte*8 - 1 downto ((cnt_nbyte - 1)*8)) <= data_rd;
                     end if;
                 when COMPLETED =>
