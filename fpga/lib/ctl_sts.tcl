@@ -1,24 +1,15 @@
 proc add_ctl_sts {{mclk "None"}  {mrstn "None"}} {
-  add_config_register ctl control $mclk $mrstn config::ctl_register $config::control_size
-  add_status_register sts status $mclk $mrstn config::sts_register $config::status_size
-
-  if {$config::ps_control_size > 0} {
-    add_config_register ps_ctl ps_control "None" "None" config::ps_ctl_register $config::ps_control_size
-  }
-
-  if {$config::ps_status_size > 0} {
-    add_status_register ps_sts ps_status "None" "None" config::ps_sts_register $config::ps_status_size 0 0
-  }
+  add_config_register ctl control $mclk $mrstn $config::control_size
+  add_status_register sts status $mclk $mrstn $config::status_size
 }
 
-proc add_config_register {module_name memory_name mclk mrstn reg_names {num_ports 32} {intercon_idx 0}} {
-  upvar 1 $reg_names register
+proc add_config_register {module_name memory_name mclk mrstn {num_ports 32} {intercon_idx 0}} {
 
   set bd [current_bd_instance .]
   current_bd_instance [create_bd_cell -type hier $module_name]
 
   for {set i 0} {$i < $num_ports} {incr i} {
-    create_bd_pin -dir O -from 31 -to 0 $register($i)
+    create_bd_pin -dir O -from 31 -to 0 $config::ctl_register($i)
   }
 
   # Add a new Master Interface to AXI Interconnect
@@ -48,8 +39,8 @@ proc add_config_register {module_name memory_name mclk mrstn reg_names {num_port
     set M_AXI /axi_mem_intercon_$intercon_idx/M${idx}_AXI
   }
 
-    # Cfg register
-  cell pavel-demin:user:axi_ctl_register:1.0 axi_${module_name}_register {
+  # Cfg register
+  cell pavel-demin:user:axi_ctl_register:1.0 axi_ctl_register_0 {
     CTL_DATA_WIDTH [expr $num_ports*32]
   } {
     aclk $m_axi_aclk
@@ -57,8 +48,8 @@ proc add_config_register {module_name memory_name mclk mrstn reg_names {num_port
     S_AXI $M_AXI
   }
 
-  assign_bd_address [get_bd_addr_segs {axi_${module_name}_register/s_axi/reg0 }]
-  set memory_segment [get_bd_addr_segs /${::ps_name}/Data/SEG_axi_${module_name}_register_reg0]
+  assign_bd_address [get_bd_addr_segs {axi_ctl_register_0/s_axi/reg0 }]
+  set memory_segment [get_bd_addr_segs /${::ps_name}/Data/SEG_axi_ctl_register_0_reg0]
   set_property range  [get_memory_range $memory_name]  $memory_segment
   set_property offset [get_memory_offset $memory_name] $memory_segment
 
@@ -66,20 +57,20 @@ proc add_config_register {module_name memory_name mclk mrstn reg_names {num_port
     set wid  [expr $num_ports*32]
     set from [expr 31+$i*32]
     set to   [expr $i*32]
-    connect_pins $register($i) [get_slice_pin axi_${module_name}_register/ctl_data $from $to]
+    connect_pins $config::ctl_register($i) [get_slice_pin axi_ctl_register_0/ctl_data $from $to]
   }
 
   current_bd_instance $bd
+
 }
 
-proc add_status_register {module_name memory_name mclk mrstn reg_names {num_ports 32} {intercon_idx 0} {has_dna 1}} {
-  upvar 1 $reg_names register
+proc add_status_register {module_name memory_name mclk mrstn {num_ports 32} {intercon_idx 0}}  {
 
   set bd [current_bd_instance .]
   current_bd_instance [create_bd_cell -type hier $module_name]
 
   for {set i 0} {$i < $num_ports} {incr i} {
-    create_bd_pin -dir I -from 31 -to 0 $register($i)
+    create_bd_pin -dir I -from 31 -to 0 $config::sts_register($i)
   }
 
   # Add a new Master Interface to AXI Interconnect
@@ -110,7 +101,7 @@ proc add_status_register {module_name memory_name mclk mrstn reg_names {num_port
   }
 
   # Sts register
-  cell pavel-demin:user:axi_sts_register:1.0 axi_${module_name}_register_0 {
+  cell pavel-demin:user:axi_sts_register:1.0 axi_sts_register_0 {
     STS_DATA_WIDTH [expr $num_ports*32]
   } {
     aclk $m_axi_aclk
@@ -118,19 +109,10 @@ proc add_status_register {module_name memory_name mclk mrstn reg_names {num_port
     S_AXI $M_AXI
   }
 
-  assign_bd_address [get_bd_addr_segs {axi_${module_name}_register_0/s_axi/reg0 }]
-  set memory_segment [get_bd_addr_segs /${::ps_name}/Data/SEG_axi_${module_name}_register_0_reg0]
+  assign_bd_address [get_bd_addr_segs {axi_sts_register_0/s_axi/reg0 }]
+  set memory_segment [get_bd_addr_segs /${::ps_name}/Data/SEG_axi_sts_register_0_reg0]
   set_property range  [get_memory_range $memory_name]  $memory_segment
   set_property offset [get_memory_offset $memory_name] $memory_segment
-
-  global isZynqMP
-  # DNA (hidden ports)
-  if {$isZynqMP == 0} {
-    cell pavel-demin:user:dna_reader:1.0 dna {} {
-      aclk /$mclk
-      aresetn /$mrstn
-    }
-  }
 
   set left_ports $num_ports
   set concat_idx 0
@@ -141,7 +123,7 @@ proc add_status_register {module_name memory_name mclk mrstn reg_names {num_port
   cell xilinx.com:ip:xlconcat:2.1 concat_concat {
     NUM_PORTS $concat_num
   } {
-    dout axi_${module_name}_register_0/sts_data
+    dout axi_sts_register_0/sts_data
   }
 
   while {$left_ports > 0} {
@@ -160,20 +142,13 @@ proc add_status_register {module_name memory_name mclk mrstn reg_names {num_port
     incr concat_idx
   }
 
-  if {$isZynqMP == 0} {
-    connect_pins concat_0/In0 [get_slice_pin dna/dna_data 31 0]
-    connect_pins concat_0/In1 [get_slice_pin dna/dna_data 63 32]
-  } else {
-    connect_pins concat_0/In0 [get_constant_pin 4222 32]
-    connect_pins concat_0/In1 [get_constant_pin 78661 32]
-  }
-
   # Other ports
   for {set i 0} {$i < $num_ports} {incr i} {
     set iidx [expr $i % 32]
     set cidx [expr $i / 32]
-    connect_pins concat_$cidx/In$iidx $register($i)
+    connect_pins concat_$cidx/In$iidx $config::sts_register($i)
   }
 
   current_bd_instance $bd
+
 }
