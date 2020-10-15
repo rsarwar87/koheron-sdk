@@ -40,8 +40,8 @@ namespace Sclr_regs {
     constexpr uint32_t ocm_cfg = 0x910;         // FPGA Software Reset Control
 }
 
-constexpr uint32_t n_pts = 128 * 1024; // Number of words in one descriptor
-constexpr uint32_t n_desc = 256; // Number of descriptors
+constexpr uint32_t n_pts = 64 * 1024; // Number of words in one descriptor
+constexpr uint32_t n_desc = 64; // Number of descriptors
 
 class AdcDacDma
 {
