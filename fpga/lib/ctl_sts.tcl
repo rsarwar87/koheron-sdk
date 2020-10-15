@@ -2,7 +2,6 @@ proc add_ctl_sts {{mclk "None"}  {mrstn "None"}} {
   add_config_register ctl control $mclk $mrstn $config::control_size
   add_status_register sts status $mclk $mrstn $config::status_size
 }
-
 proc add_config_register {module_name memory_name mclk mrstn {num_ports 32} {intercon_idx 0}} {
 
   set bd [current_bd_instance .]
@@ -69,6 +68,9 @@ proc add_status_register {module_name memory_name mclk mrstn {num_ports 32} {int
   set bd [current_bd_instance .]
   current_bd_instance [create_bd_cell -type hier $module_name]
 
+  set n_hidden_ports 2
+   
+
   for {set i 0} {$i < $num_ports} {incr i} {
     create_bd_pin -dir I -from 31 -to 0 $config::sts_register($i)
   }
@@ -102,7 +104,7 @@ proc add_status_register {module_name memory_name mclk mrstn {num_ports 32} {int
 
   # Sts register
   cell pavel-demin:user:axi_sts_register:1.0 axi_sts_register_0 {
-    STS_DATA_WIDTH [expr $num_ports*32]
+    STS_DATA_WIDTH [expr [expr $n_hidden_ports +$num_ports]*32]
   } {
     aclk $m_axi_aclk
     aresetn /$mrstn
@@ -114,11 +116,20 @@ proc add_status_register {module_name memory_name mclk mrstn {num_ports 32} {int
   set_property range  [get_memory_range $memory_name]  $memory_segment
   set_property offset [get_memory_offset $memory_name] $memory_segment
 
-  set left_ports $num_ports
+  global isZynqMP
+  # DNA (hidden ports)
+  if {$isZynqMP == 0} {
+    cell pavel-demin:user:dna_reader:1.0 dna {} {
+      aclk /$mclk
+      aresetn /$mrstn
+    }
+  }
+
+  set left_ports [expr $n_hidden_ports +$num_ports]
   set concat_idx 0
 
   # Use multiple concats because Xilinx IP does not allow num_ports > 32
-  set concat_num [expr $num_ports / 32 + 1]
+  set concat_num [expr [expr $n_hidden_ports +$num_ports] / 32 + 1]
   # Concat the multiple concat blocks
   cell xilinx.com:ip:xlconcat:2.1 concat_concat {
     NUM_PORTS $concat_num
@@ -135,17 +146,28 @@ proc add_status_register {module_name memory_name mclk mrstn {num_ports 32} {int
       dout concat_concat/In$concat_idx
     }
     set_property -dict [list CONFIG.IN${concat_idx}_WIDTH [expr $concat_num_ports * 32]] [get_bd_cells concat_concat]
-    for {set i 0} {$i < $num_ports} {incr i} {
+    for {set i 0} {$i < [expr $n_hidden_ports +$num_ports]} {incr i} {
       set_property -dict [list CONFIG.IN${i}_WIDTH 32] [get_bd_cells concat_$concat_idx]
     }
     set left_ports [expr $left_ports - $concat_num_ports]
     incr concat_idx
   }
 
+  if {$isZynqMP == 0} {
+    connect_pins concat_0/In0 [get_slice_pin dna/dna_data 31 0]
+    connect_pins concat_0/In1 [get_slice_pin dna/dna_data 56 32]
+  } else {
+    connect_pins concat_0/In0 [get_constant_pin 4222 32]
+    connect_pins concat_0/In1 [get_constant_pin 78661 32]
+  }
+
   # Other ports
   for {set i 0} {$i < $num_ports} {incr i} {
     set iidx [expr $i % 32]
     set cidx [expr $i / 32]
+    if {$cidx == 0} {
+      set iidx [expr $iidx + $n_hidden_ports] 
+    } 
     connect_pins concat_$cidx/In$iidx $config::sts_register($i)
   }
 
