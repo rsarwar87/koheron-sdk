@@ -16,7 +16,8 @@ KOHERON_VERSION := $(shell cat $(KOHERON_VERSION_FILE))
 VIVADO_VERSION := 2020.1
 VIVADO_PATH := /opt/Xilinx/Vivado
 VITIS_PATH := /opt/Xilinx/Vitis
-PYTHON := python
+PYTHON := python3
+PIP:= pip
 
 .PHONY: help
 help:
@@ -149,7 +150,7 @@ setup_base:
 	# On Ubuntu 18.04 you may have to link:	
 	# sudo ln -s /usr/bin/arm-linux-gnueabihf-gcc-5 /usr/bin/arm-linux-gnueabihf-gcc
 	# sudo ln -s /usr/bin/arm-linux-gnueabihf-g++-5 /usr/bin/arm-linux-gnueabihf-g++	
-	sudo apt-get install -y python-pip
+	sudo apt-get install -y $(PYTHON)-pip
 	sudo apt-get install -y curl
 	$(PIP) install -r $(SDK_PATH)/requirements.txt
 	$(PIP) install $(SDK_PATH)/python
