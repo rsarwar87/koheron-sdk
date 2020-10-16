@@ -14,6 +14,7 @@ cores:
   - fpga/cores/bus_multiplexer_v1_0
   - boards/alpha250/cores/precision_dac_v1_0
   - boards/alpha250/cores/spi_cfg_v1_0
+  - fpga/cores/dna_reader_v1_0
 
 memory:
   - name: control
