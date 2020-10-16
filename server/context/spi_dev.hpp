@@ -79,6 +79,17 @@ class SpiDev
       return bytes_read;
     }
 
+    int transfer(uint8_t *tx_buff, uint8_t *rx_buff, size_t len)
+    {
+        if (! is_ok())
+            return -1;
+    
+        struct spi_ioc_transfer tr{};
+        tr.tx_buf = reinterpret_cast<unsigned long>(tx_buff);
+        tr.rx_buf = reinterpret_cast<unsigned long>(rx_buff);
+        tr.len = len;
+        return ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
+    }
     template <size_t len>
     int transfer(uint8_t* tx_buff, uint8_t* rx_buff) {
       if (!is_ok()) return -1;
