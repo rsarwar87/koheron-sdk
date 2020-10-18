@@ -143,3 +143,9 @@ connect_pins [sts_pin digital_inputs] [get_concat_pin [list exp_io_0_p exp_io_1_
 for {set i 0} {$i < 8} {incr i} {
     connect_pins  [get_slice_pin [ctl_pin digital_outputs] $i $i] exp_io_${i}_n
 }
+
+set_property -dict [list CONFIG.PCW_USE_FABRIC_INTERRUPT {1} CONFIG.PCW_IRQ_F2P_INTR {1}] [get_bd_cells ps_0]
+create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_0
+connect_bd_net [get_bd_pins xlconcat_0/dout] [get_bd_pins ps_0/IRQ_F2P]
+connect_bd_net [get_bd_pins xadc_wiz_0/ip2intc_irpt] [get_bd_pins xlconcat_0/In0]
+set_property -dict [list CONFIG.NUM_PORTS {1}] [get_bd_cells xlconcat_0]

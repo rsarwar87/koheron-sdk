@@ -52,6 +52,8 @@ set_cell_props ps_0 {
   PCW_USE_S_AXI_HP0 1
   PCW_S_AXI_HP0_DATA_WIDTH 64
   PCW_USE_HIGH_OCM 1
+  PCW_USE_FABRIC_INTERRUPT 1
+  PCW_IRQ_F2P_INTR {1}
   PCW_USE_S_AXI_GP0 1
 }
 
@@ -211,4 +213,12 @@ connect_bd_intf_net [get_bd_intf_pins trigger_module_0/s_axis] [get_bd_intf_pins
 connect_bd_net [get_bd_pins ctl/channel_trigger] [get_bd_pins trigger_module_0/config_in]
 connect_bd_net [get_bd_ports exp_io_7_n] [get_bd_pins trigger_module_0/led_out]
 
+cell xilinx.com:ip:xlconcat:2.1 f2a_interrupt {
+  NUM_PORTS 3
+} {
+  dout ps_0/IRQ_F2P
+  In0 xadc_wiz_0/ip2intc_irpt
+  In1 axi_dma_0/s2mm_introut
+  In2 axi_dma_0/mm2s_introut
+}
 validate_bd_design
