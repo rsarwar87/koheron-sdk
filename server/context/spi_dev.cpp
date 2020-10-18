@@ -93,6 +93,43 @@ int SpiDev::set_word_length(uint8_t word_length_)
     return 0;
 }
 
+int SpiDev::recv(uint8_t *buffer, size_t n_bytes)
+{
+    if (! is_ok())
+        return -1;
+
+    int bytes_rcv = 0;
+    int64_t bytes_read = 0;
+
+    while (bytes_read < n_bytes) {
+        bytes_rcv = read(fd, buffer + bytes_read, n_bytes - bytes_read);
+
+        if (bytes_rcv == 0) {
+            return 0;
+        }
+
+        if (bytes_rcv < 0) {
+            return -1;
+        }
+
+        bytes_read += bytes_rcv;
+    }
+
+    assert(bytes_read == n_bytes);
+    return bytes_read;
+}
+
+int SpiDev::transfer(uint8_t *tx_buff, uint8_t *rx_buff, size_t len)
+{
+    if (! is_ok())
+        return -1;
+
+    struct spi_ioc_transfer tr{};
+    tr.tx_buf = reinterpret_cast<unsigned long>(tx_buff);
+    tr.rx_buf = reinterpret_cast<unsigned long>(rx_buff);
+    tr.len = len;
+    return ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
+}
 
 // ---------------------------------------------------------------------
 // SpiManager
