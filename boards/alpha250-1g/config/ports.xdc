@@ -77,10 +77,10 @@ set_property PACKAGE_PIN P16 [get_ports spi_cfg_cs_clk_gen]
 # I2C0 (Bank 34)
 # ----------------------------------------------------------------------------------
 
-set_property IOSTANDARD LVCMOS18 [get_ports iic_0_*]
+set_property IOSTANDARD LVCMOS18 [get_ports IIC_0_*]
 
-set_property PACKAGE_PIN H15 [get_ports iic_0_sda_io]
-set_property PACKAGE_PIN R15 [get_ports iic_0_scl_io]
+set_property PACKAGE_PIN H15 [get_ports IIC_0_0_sda_io]
+set_property PACKAGE_PIN R15 [get_ports IIC_0_0_scl_io]
 
 # ----------------------------------------------------------------------------------
 # Precision DAC (Bank 34)
