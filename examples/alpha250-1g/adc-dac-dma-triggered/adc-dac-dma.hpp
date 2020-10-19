@@ -103,7 +103,7 @@ class AdcDacDma
 
     void set_descriptors() {
         for (uint32_t i = 0; i < n_desc; i++) {
-            //set_descriptor_mm2s(i, mem::ram_mm2s_addr + i * 4 * n_pts, 4 * n_pts);
+            set_descriptor_mm2s(i, mem::ram_mm2s_addr + i * 4 * n_pts, 4 * n_pts);
             set_descriptor_s2mm(i, mem::ram_s2mm_addr + i * 4 * n_pts, 4 * n_pts);
         }
     }
@@ -120,16 +120,16 @@ class AdcDacDma
     void start_dma() {
         set_descriptors();
         // Write address of the starting descriptor
-        //dma.write<Dma_regs::mm2s_curdesc>(mem::ocm_mm2s_addr + 0x0);
+        dma.write<Dma_regs::mm2s_curdesc>(mem::ocm_mm2s_addr + 0x0);
         dma.write<Dma_regs::s2mm_curdesc>(mem::ocm_s2mm_addr + 0x0);
         // Set DMA to cyclic mode
         //dma.set_bit<Dma_regs::s2mm_dmacr, 4>();
         // Start S2MM channel
-        //dma.set_bit<Dma_regs::mm2s_dmacr, 0>();
+        dma.set_bit<Dma_regs::mm2s_dmacr, 0>();
         dma.set_bit<Dma_regs::s2mm_dmacr, 0>();
         // Write address of the tail descriptor
         //dma.write<Dma_regs::s2mm_taildesc>(0x50);
-        //dma.write<Dma_regs::mm2s_taildesc>(mem::ocm_mm2s_addr + (n_desc-1) * 0x40);
+        dma.write<Dma_regs::mm2s_taildesc>(mem::ocm_mm2s_addr + (n_desc-1) * 0x40);
         dma.write<Dma_regs::s2mm_taildesc>(mem::ocm_s2mm_addr + (n_desc-1) * 0x40);
 
         //log_dma();

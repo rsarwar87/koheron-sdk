@@ -131,7 +131,7 @@ cell xilinx.com:ip:axi_dma:7.1 axi_dma_0 {
   c_m_axi_mm2s_data_width 64
   c_m_axis_mm2s_tdata_width 64
   c_mm2s_burst_size 16
-  c_sg_length_width 26
+  c_sg_length_width 23
 } {
   S_AXI_LITE axi_mem_intercon_0/M[add_master_interface]_AXI
   s_axi_lite_aclk ps_0/FCLK_CLK0
