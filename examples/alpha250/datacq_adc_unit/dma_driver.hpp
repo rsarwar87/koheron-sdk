@@ -40,8 +40,8 @@ namespace Sclr_regs {
     constexpr uint32_t ocm_cfg = 0x910;         // FPGA Software Reset Control
 }
 
-constexpr uint32_t n_pts = 64 * 1024 * 8 * 8; // Number of words in one descriptor
-constexpr uint32_t n_desc = 32; // Number of descriptors
+constexpr uint32_t n_pts = 64 * 1024 * 8 * 4; // Number of words in one descriptor
+constexpr uint32_t n_desc = 64; // Number of descriptors
 constexpr uint32_t n_desc_udp = 64; // Number of descriptors
 
 class DmaUnit
@@ -130,7 +130,7 @@ class DmaUnit
 
     auto& get_data(uint32_t offset) {
         ctx.log<INFO>("%s: Get DMA: %d\n", __func__, offset);
-        data = ram_s2mm.read_reg_array<uint32_t, n_pts>(offset * n_pts * 4 );
+        data = ram_s2mm.read_reg_array<uint32_t, n_pts * 2>(offset * n_pts * 4 * 2 );
         return data;
     }
 
@@ -196,7 +196,7 @@ class DmaUnit
     Memory<mem::ocm_s2mm>& ocm_s2mm;
     Memory<mem::sclr>& sclr;
 
-    std::array<uint32_t, n_pts> data;
+    std::array<uint32_t, n_pts * 2> data;
 
 
 

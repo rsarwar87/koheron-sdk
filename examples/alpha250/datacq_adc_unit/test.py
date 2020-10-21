@@ -12,7 +12,7 @@ client = connect(host, name='dataqc-unit-dma')
 driver = DatAcqUnit(client)
 
 driver.set_trigger_delay(20)  # in microsecond
-driver.set_trigger_duration(2000) # in microsecond
+driver.set_trigger_duration(500000) # in microsecond
 driver.set_ip_reset()
 driver.set_simulation_flag(True)
 driver.reset_s2mm()
@@ -45,6 +45,7 @@ print 'get_trigger_delay:', driver.get_trigger_delay()
 print 'get_trigger_duration:', driver.get_trigger_duration()
 print 'get_adc_freq:', driver.get_adc_freq()
 print 'get_up_time:', driver.get_up_time()
+print 'get_tick_target:', driver.get_tick_target()
 print 'get_tick_escaped:', driver.get_tick_escaped()
 print 'get_bus_error_duration:', driver.get_bus_error_duration()
 print 'get_bus_error_count:', driver.get_bus_error_count()
@@ -58,7 +59,7 @@ print 'get_number_of_samples_detected:', driver.get_number_of_samples_detected()
 #Should return the number 42 from hardware constant
 
 
-for i in range(3):
+for i in range(30):
     vals = driver.get_data(i)
     print 'get_data[{}]: ', i, vals, type(vals)
     text = ("file_%d.txt" % (i))
