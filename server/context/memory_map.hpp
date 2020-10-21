@@ -234,6 +234,15 @@ class Memory
     ////////////////////////////////////////
     // Bit manipulation
     ////////////////////////////////////////
+    // Get a bit (offset and index defined at compile-time)
+    template<uint32_t offset, uint32_t index>
+    bool get_bit() {
+        static_assert(offset < mem::get_range(id), "Invalid offset");
+        static_assert(mem::is_writable(id), "Not writable");
+
+        uintptr_t addr = base_address + offset;
+        return ((*((volatile uintptr_t *) addr) >> index ) & 1U );
+    }
 
     // Set a bit (offset and index defined at compile-time)
     template<uint32_t offset, uint32_t index>
@@ -245,6 +254,13 @@ class Memory
         *(volatile uintptr_t *) addr = *((volatile uintptr_t *) addr) | (1U << index);
     }
 
+    // Get a bit (offset and index defined at run-time)
+    bool get_bit_reg(uint32_t offset, uint32_t index) {
+        static_assert(mem::is_writable(id), "Not writable");
+
+        uintptr_t addr = base_address + offset;
+        return ((*((volatile uintptr_t *) addr) >> index ) & 1U );
+    }
     // Set a bit (offset and index defined at run-time)
     void set_bit_reg(uint32_t offset, uint32_t index) {
         static_assert(mem::is_writable(id), "Not writable");
