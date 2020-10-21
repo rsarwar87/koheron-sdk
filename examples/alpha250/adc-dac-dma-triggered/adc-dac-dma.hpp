@@ -107,11 +107,15 @@ class AdcDacDma
             set_descriptor_s2mm(i, mem::ram_s2mm_addr + i * 4 * n_pts, 4 * n_pts);
         }
     }
-    void reset_triggermodule() {
+    bool reset_triggermodule() {
         using namespace std::chrono_literals;
         ctl.set_bit<reg::channel_trigger, 31>();
         std::this_thread::sleep_for(5ms);
         ctl.clear_bit<reg::channel_trigger, 31>();
+        for (uint32_t i = 0; i < n_pts * n_desc; i++) {
+            ram_s2mm.write_reg(4*i, 0);
+        }
+        return dma.read_bit<Dma_regs::mm2s_dmasr, 4>();
     }
     void set_acquisitionwindow_ms(uint32_t val) {
         ctl.write<reg::channel_trigger>((250000*val) & 0xFFFFFFF);

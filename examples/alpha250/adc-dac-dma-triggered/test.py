@@ -31,7 +31,7 @@ class AdcDacDma(object):
 
     @command()
     def reset_triggermodule(self):
-        pass
+        return self.client.recv_bool()
     @command()
     def set_acquisitionwindow_ms(self, val):
         pass
@@ -75,11 +75,12 @@ if __name__=="__main__":
 
     adc = np.zeros(driver.n)
 
-    driver.select_adc_channel(adc_channel)
     driver.reset_triggermodule()
+    driver.select_adc_channel(adc_channel)
     driver.set_acquisitionwindow_ms(250)
     print("Get ADC{} data ({} points)".format(adc_channel, driver.n))
     driver.start_dma()
+    time.sleep(5)
     driver.get_adc()
     driver.stop_dma()
 
