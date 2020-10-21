@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_ip_func_impl.wdb" id="1">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="tb_ip" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="246626520710fs"></ZoomStartTime>
+      <ZoomEndTime time="1761928295859fs"></ZoomEndTime>
+      <Cursor1Time time="1509378000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="254"></NameColumnWidth>
+      <ValueColumnWidth column_width="99"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="34" />
+   <wvobject type="array" fp_name="/tb_ip/unit_status_in">
+      <obj_property name="ElementShortName">unit_status_in[31:0]</obj_property>
+      <obj_property name="ObjectShortName">unit_status_in[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/bus_error_count">
+      <obj_property name="ElementShortName">bus_error_count[31:0]</obj_property>
+      <obj_property name="ObjectShortName">bus_error_count[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/bus_error_integrator">
+      <obj_property name="ElementShortName">bus_error_integrator[31:0]</obj_property>
+      <obj_property name="ObjectShortName">bus_error_integrator[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/unit_control">
+      <obj_property name="ElementShortName">unit_control[31:0]</obj_property>
+      <obj_property name="ObjectShortName">unit_control[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/datac_delay">
+      <obj_property name="ElementShortName">datac_delay[31:0]</obj_property>
+      <obj_property name="ObjectShortName">datac_delay[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/datac_window">
+      <obj_property name="ElementShortName">datac_window[31:0]</obj_property>
+      <obj_property name="ObjectShortName">datac_window[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/datac_processed">
+      <obj_property name="ElementShortName">datac_processed[31:0]</obj_property>
+      <obj_property name="ObjectShortName">datac_processed[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/tick_counter">
+      <obj_property name="ElementShortName">tick_counter[31:0]</obj_property>
+      <obj_property name="ObjectShortName">tick_counter[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/adc_freq">
+      <obj_property name="ElementShortName">adc_freq[31:0]</obj_property>
+      <obj_property name="ObjectShortName">adc_freq[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/up_time">
+      <obj_property name="ElementShortName">up_time[31:0]</obj_property>
+      <obj_property name="ObjectShortName">up_time[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/DUT/U0/U_SIMPLE_TRIGGER/U_FIFO/empty">
+      <obj_property name="ElementShortName">empty</obj_property>
+      <obj_property name="ObjectShortName">empty</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/m00_axis_tvalid">
+      <obj_property name="ElementShortName">m00_axis_tvalid</obj_property>
+      <obj_property name="ObjectShortName">m00_axis_tvalid</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/DUT/U0/U_SIMPLE_TRIGGER/U_FIFO/rd_en">
+      <obj_property name="ElementShortName">rd_en</obj_property>
+      <obj_property name="ObjectShortName">rd_en</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/DUT/U0/U_SIMPLE_TRIGGER/U_FIFO/wr_en">
+      <obj_property name="ElementShortName">wr_en</obj_property>
+      <obj_property name="ObjectShortName">wr_en</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/m00_axis_tdata">
+      <obj_property name="ElementShortName">m00_axis_tdata[15:0]</obj_property>
+      <obj_property name="ObjectShortName">m00_axis_tdata[15:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/m00_axis_tready">
+      <obj_property name="ElementShortName">m00_axis_tready</obj_property>
+      <obj_property name="ObjectShortName">m00_axis_tready</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/clk_adc">
+      <obj_property name="ElementShortName">clk_adc</obj_property>
+      <obj_property name="ObjectShortName">clk_adc</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/clk_adc_rst_n">
+      <obj_property name="ElementShortName">clk_adc_rst_n</obj_property>
+      <obj_property name="ObjectShortName">clk_adc_rst_n</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/clk_ip">
+      <obj_property name="ElementShortName">clk_ip</obj_property>
+      <obj_property name="ObjectShortName">clk_ip</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/ext_trigger">
+      <obj_property name="ElementShortName">ext_trigger</obj_property>
+      <obj_property name="ObjectShortName">ext_trigger</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/clk_ip_rst_n">
+      <obj_property name="ElementShortName">clk_ip_rst_n</obj_property>
+      <obj_property name="ObjectShortName">clk_ip_rst_n</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/adc_ch0">
+      <obj_property name="ElementShortName">adc_ch0[15:0]</obj_property>
+      <obj_property name="ObjectShortName">adc_ch0[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/adc_ch1">
+      <obj_property name="ElementShortName">adc_ch1[15:0]</obj_property>
+      <obj_property name="ObjectShortName">adc_ch1[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/adc_ch2">
+      <obj_property name="ElementShortName">adc_ch2[15:0]</obj_property>
+      <obj_property name="ObjectShortName">adc_ch2[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/adc_ch3">
+      <obj_property name="ElementShortName">adc_ch3[15:0]</obj_property>
+      <obj_property name="ObjectShortName">adc_ch3[15:0]</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/tb_ip/CLK_PERIOD1">
+      <obj_property name="ElementShortName">CLK_PERIOD1</obj_property>
+      <obj_property name="ObjectShortName">CLK_PERIOD1</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/tb_ip/CLK_PERIOD2">
+      <obj_property name="ElementShortName">CLK_PERIOD2</obj_property>
+      <obj_property name="ObjectShortName">CLK_PERIOD2</obj_property>
+   </wvobject>
+   <wvobject type="other" fp_name="/tb_ip/C_M00_AXIS_TDATA_WIDTH">
+      <obj_property name="ElementShortName">C_M00_AXIS_TDATA_WIDTH</obj_property>
+      <obj_property name="ObjectShortName">C_M00_AXIS_TDATA_WIDTH</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/DUT/U0/U_SIMPLE_TRIGGER/tick_counter">
+      <obj_property name="ElementShortName">tick_counter[31:0]</obj_property>
+      <obj_property name="ObjectShortName">tick_counter[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/DUT/U0/U_SIMPLE_TRIGGER/do_prepare">
+      <obj_property name="ElementShortName">do_prepare</obj_property>
+      <obj_property name="ObjectShortName">do_prepare</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/DUT/U0/U_SIMPLE_TRIGGER/do_arm">
+      <obj_property name="ElementShortName">do_arm</obj_property>
+      <obj_property name="ObjectShortName">do_arm</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/DUT/U0/U_SIMPLE_TRIGGER/iprst">
+      <obj_property name="ElementShortName">iprst</obj_property>
+      <obj_property name="ObjectShortName">iprst</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_ip/DUT/U0/U_SIMPLE_TRIGGER/Q">
+      <obj_property name="ElementShortName">Q[31:0]</obj_property>
+      <obj_property name="ObjectShortName">Q[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_ip/DUT/U0/U_SIMPLE_TRIGGER/is_simulation">
+      <obj_property name="ElementShortName">is_simulation</obj_property>
+      <obj_property name="ObjectShortName">is_simulation</obj_property>
+   </wvobject>
+</wave_config>
