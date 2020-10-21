@@ -41,7 +41,7 @@ namespace Sclr_regs {
 }
 
 constexpr uint32_t n_pts = 64 * 1024 * 8 * 4; // Number of words in one descriptor
-constexpr uint32_t n_desc = 64; // Number of descriptors
+constexpr uint32_t n_desc = 64; // Number of descriptors ==== change to 2 when using standard alpha250 kernel
 constexpr uint32_t n_desc_udp = 64; // Number of descriptors
 
 class DmaUnit
