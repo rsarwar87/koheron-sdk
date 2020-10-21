@@ -84,8 +84,8 @@ component trigger_module is
            sim_trigger_in    : in STD_LOGIC;
            ext_trigger_in    : in STD_LOGIC;
            
-           delay_window  : in std_logic_vector(19 downto 0);
-           acq_window    : in std_logic_vector(19 downto 0);
+           delay_window  : in std_logic_vector(31 downto 0);
+           acq_window    : in std_logic_vector(31 downto 0);
            
            is_simulation : in std_logic;
            do_prepare    : in std_logic;

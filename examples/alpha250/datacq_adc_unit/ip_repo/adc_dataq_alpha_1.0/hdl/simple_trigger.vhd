@@ -230,7 +230,7 @@ begin
                   is_triggered <= '1';
                   ext_en_cntr <= '0';
                   tdata_buf <= x"FFFF";
-                  --tvalid <= m_axis_tready;
+                  tvalid <= m_axis_tready;
                   if iprst = '1' then
                      state <= s_idle;
                   end if;
