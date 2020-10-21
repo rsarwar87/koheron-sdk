@@ -190,13 +190,18 @@ class DatAcqUnit {
     log_message(__func__, value);
     acq_param_duration = value;
     //if (value+acq_param_delay > 7000000) acq_param_duration = 7000000 - acq_param_delay;
-    ctl.write<reg::datac_window>((acq_param_duration+acq_param_delay)*250); 
+    //already handled in the hardware
+    ctl.write<reg::datac_window>((acq_param_duration/*+acq_param_delay*/)*250); 
+    log_message(__func__, (acq_param_duration/*+acq_param_delay*/)*250);
   }
   void set_trigger_delay(uint32_t value) { 
     log_message(__func__, value);
     acq_param_delay = value;
     ctl.write<reg::datac_delay>(value*250); 
-    set_trigger_duration(acq_param_duration);
+    log_message(__func__, value);
+    //
+    //already handled in the hardware
+    //set_trigger_duration(acq_param_duration);
   }
   uint32_t get_trigger_duration() { 
     uint32_t value = ctl.read<reg::datac_window>()/250 - get_trigger_delay(); 
