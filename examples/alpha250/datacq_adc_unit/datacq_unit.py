@@ -103,6 +103,9 @@ class DatAcqUnit(object):
     def get_bus_error_count(self):
     	return self.client.recv_uint32()
     @command()
+    def get_tick_target(self):
+    	return self.client.recv_uint32()
+    @command()
     def get_raw_status(self):
     	return self.client.recv_uint32()
     @command()

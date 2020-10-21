@@ -204,7 +204,7 @@ class DatAcqUnit {
     //set_trigger_duration(acq_param_duration);
   }
   uint32_t get_trigger_duration() { 
-    uint32_t value = ctl.read<reg::datac_window>()/250 - get_trigger_delay(); 
+    uint32_t value = ctl.read<reg::datac_window>()/250 /*- get_trigger_delay()*/; 
     log_message(__func__, value);
     return value;
   }
@@ -228,6 +228,9 @@ class DatAcqUnit {
   }
   uint32_t get_bus_error_count() {
     return sts.read<reg::bus_error_count>();
+  }
+  uint32_t get_tick_target() {
+    return sts.read<reg::datac_processed>();
   }
   uint32_t get_ext_io() {
     return sts.read<reg::io_in>() & 0xFF;

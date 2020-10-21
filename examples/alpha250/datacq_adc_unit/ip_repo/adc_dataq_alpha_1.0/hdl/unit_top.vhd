@@ -104,7 +104,7 @@ component trigger_module is
            tick_counter  : out std_logic_vector(31 downto 0);
            n_seq_error   : out std_logic_vector(31 downto 0);
            n_seq_lost    : out std_logic_vector(31 downto 0);
-           
+           tick_target    : out std_logic_vector(31 downto 0);
            
            
            m_axis_tready : in STD_LOGIC;
@@ -279,8 +279,8 @@ U_CLK_DOMAINS : clk_domain_crossover
            ext_trigger_in    => trigger_buf,
            sim_trigger_in    => trigger_sim_buf,
            
-           delay_window  => datac_delay_buffer(19 downto 0),
-           acq_window    => datac_window_buffer(19 downto 0),
+           delay_window  => datac_delay_buffer,
+           acq_window    => datac_window_buffer,
            
            is_simulation => is_simulation ,
            do_prepare    => do_prepare    ,
@@ -299,7 +299,7 @@ U_CLK_DOMAINS : clk_domain_crossover
            tick_counter  => tick_counter_buffer,
            n_seq_error   => bus_error_count_buffer,
            n_seq_lost    => bus_error_integrator_buffer,
-           
+           tick_target   => datac_processed_buffer,
            
            
            m_axis_tready => m00_axis_tready,

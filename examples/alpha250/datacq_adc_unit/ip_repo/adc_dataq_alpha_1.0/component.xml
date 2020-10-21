@@ -153,7 +153,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>f21a1fe2</spirit:value>
+            <spirit:value>874e5a0b</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -169,7 +169,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>f21a1fe2</spirit:value>
+            <spirit:value>874e5a0b</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -619,7 +619,7 @@
       <spirit:file>
         <spirit:name>hdl/unit_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_06760a58</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_507c93ca</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -698,8 +698,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>adc_dataq_alpha_v1.0</xilinx:displayName>
-      <xilinx:coreRevision>8</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2020-10-20T15:14:07Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>10</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2020-10-21T19:11:14Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@230b4dca_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@4dd864ee_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
@@ -828,12 +828,47 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@13c8db60_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@7ddddd84_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@3e7152a_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1a7dc85b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39269874_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@c8bb1c9_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7c367c79_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@32614d5a_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@24d59b8e_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@a816680_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@204abd58_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4983b7d5_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6dd3f625_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@49decc0d_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3e37ac79_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@47d30519_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1c66d854_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2eda751b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@56cead63_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@537b4818_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6aa6a27_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f086612_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@366c68b7_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@ae4ed71_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6b4c5149_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@48c3d6c5_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6467087a_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@fa49f94_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e462474_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@82d7dc2_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@b3afa7d_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2687d574_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@56da6a8e_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@716906c7_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f96c46f_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6777f38a_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@43a1c2ba_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@22e0cde2_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_dataq_alpha_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="2bcda0ff"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="6c53526c"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="38c51b7d"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="9b572df2"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="a8d7e5eb"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="fd998926"/>

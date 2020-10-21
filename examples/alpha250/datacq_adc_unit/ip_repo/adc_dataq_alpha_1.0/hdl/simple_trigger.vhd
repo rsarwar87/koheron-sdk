@@ -47,8 +47,8 @@ entity trigger_module is
            sim_trigger_in    : in STD_LOGIC;
            ext_trigger_in    : in STD_LOGIC;
            
-           delay_window  : in std_logic_vector(19 downto 0);
-           acq_window    : in std_logic_vector(19 downto 0);
+           delay_window  : in std_logic_vector(31 downto 0);
+           acq_window    : in std_logic_vector(31 downto 0);
            
            is_simulation : in std_logic;
            do_prepare    : in std_logic;
@@ -67,6 +67,7 @@ entity trigger_module is
            tick_counter  : out std_logic_vector(31 downto 0);
            n_seq_error   : out std_logic_vector(31 downto 0);
            n_seq_lost    : out std_logic_vector(31 downto 0);
+           tick_target    : out std_logic_vector(31 downto 0);
            
            
            
@@ -107,6 +108,7 @@ SIGNAL state : state_machine := s_idle;   -- Create a signal that uses
 begin
 --    m_axis_tvalid <= tvalid;
 --    m_axis_tdata <= tdata_buf;
+    tick_target <= trigger_duration_latched;
     state_control : process (clk, nrst)
     begin
        if nrst = '0' then
@@ -129,7 +131,7 @@ begin
            in_delay     <= '0';
            state_out <= "0000";
            simulation <= '0';
-           --count <= (others => '0');
+           count <= (others => '0');
            tick_counter <= (others => '0');
        elsif rising_edge(clk) then
             tvalid <= '0';
@@ -158,8 +160,8 @@ begin
            is_triggered <= '0';
            in_delay     <= '0';
            
-           trigger_duration(19 downto 0) <= std_logic_vector(unsigned(acq_window) + unsigned(delay_window));
-           trigger_delay(19 downto 0) <= delay_window;
+           trigger_duration <= std_logic_vector(unsigned(acq_window) + unsigned(delay_window));
+           trigger_delay <= delay_window;
            trigger_duration_latched <= trigger_duration_latched;
            trigger_delay_latched <= trigger_delay_latched;
            tdata_buf <= x"F000";
@@ -177,7 +179,8 @@ begin
               when s_prepare => 
                   rst_cnter <= '1';
                   ext_en_cntr<= '0';
-                  --count <= (others => '0');
+                  count <= (others => '0');
+                  trigger_duration_latched <= (others => '0');
                   if (do_arm_delay = '0' and do_arm = '1') then
                      state  <= s_arm;
                   end if;
@@ -206,7 +209,7 @@ begin
                   is_triggered <= '1';
                   in_delay     <= '1';
                   tdata_buf <= x"FFF0";
-                  --count <= std_logic_vector(unsigned(count)  + 1);
+                  count <= std_logic_vector(unsigned(count)  + 1);
                   if count = trigger_delay_latched then
                      state <= s_triggered;
                      tvalid <= '1';
@@ -217,7 +220,7 @@ begin
                   is_triggered <= '1';
                   tdata_buf <= tdata;
                   tvalid <= '1';
-                  --count <= std_logic_vector(unsigned(count)  + 1); 
+                  count <= std_logic_vector(unsigned(count)  + 1); 
                   if count = trigger_duration_latched then
                      state <= s_finished;
                   end if;
@@ -299,20 +302,20 @@ begin
            DATA_IN => tdata_buf,
            DATA_OUT => m_axis_tdata
            );
-   COUNTER_TC_MACRO_inst : COUNTER_TC_MACRO
-   generic map (
-      COUNT_BY => X"000000000001",   -- Count by value
-      DEVICE => "7SERIES",           -- Target Device: "VIRTEX5", "7SERIES" 
-      DIRECTION => "UP",             -- Counter direction "UP" or "DOWN" 
-      RESET_UPON_TC => "FALSE",      -- Reset counter upon terminal count, TRUE or FALSE
-      TC_VALUE => X"000000000000",   -- Terminal count value
-      WIDTH_DATA => 32)              -- Counter output bus width, 1-48
-   port map (
-      Q   => count,          -- Counter ouput, width determined by WIDTH_DATA generic 
-      TC  => open,           -- 1-bit terminal count output, high = terminal count is reached
-      CLK => clk,         -- 1-bit clock input
-      CE  => ext_en_cntr,      -- 1-bit clock enable input
-      RST => rst_cnter       -- 1-bit active high synchronous reset
-   );
+--   COUNTER_TC_MACRO_inst : COUNTER_TC_MACRO
+--   generic map (
+--      COUNT_BY => X"000000000001",   -- Count by value
+--      DEVICE => "7SERIES",           -- Target Device: "VIRTEX5", "7SERIES" 
+--      DIRECTION => "UP",             -- Counter direction "UP" or "DOWN" 
+--      RESET_UPON_TC => "FALSE",      -- Reset counter upon terminal count, TRUE or FALSE
+--      TC_VALUE => X"000000000000",   -- Terminal count value
+--      WIDTH_DATA => 32)              -- Counter output bus width, 1-48
+--   port map (
+--      Q   => count,          -- Counter ouput, width determined by WIDTH_DATA generic 
+--      TC  => open,           -- 1-bit terminal count output, high = terminal count is reached
+--      CLK => clk,         -- 1-bit clock input
+--      CE  => ext_en_cntr,      -- 1-bit clock enable input
+--      RST => rst_cnter       -- 1-bit active high synchronous reset
+--   );
 
 end Behavioral;
