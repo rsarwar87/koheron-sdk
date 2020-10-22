@@ -1,0 +1,59 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Copyright (C) 2011 - 2014 Xilinx
+ * Copyright (C) 2016 Jagan Teki <jteki@openedev.com>
+ */
+/dts-v1/;
+/include/ "zynq-7000.dtsi"
+
+/ {
+  model = "Zynq Cora Z7 Development Board - built using koheron";
+  compatible = "digilent,zynq-coraz7", "xlnx,zynq-7000";
+
+  chosen {
+		bootargs = "console=ttyPS0,115200 earlyprintk root=/dev/mmcblk0p2 rw rootwait";
+	};
+
+	aliases {
+		ethernet0 = &gem0;
+		serial0 = &uart1;
+	};
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x0 0x1E000000>;
+	};
+
+	usb_phy0: phy0@e0002000 {
+		compatible = "ulpi-phy";
+		#phy-cells = <0>;
+		reg = <0xe0002000 0x1000>;
+		view-port = <0x0170>;
+		drv-vbus;
+	};
+};
+
+&gem0 {
+	phy-handle = <&ethernet_phy>;
+/*	phy-reset-gpio = <&gpio0 GPIO_ACTIVE_LOW>;
+	phy-reset-active-low;
+	phy-reset-duration = <10>;  */
+	ethernet_phy: ethernet-phy@1 { /* rtl8211e-vl */
+		reg = <1>;
+		device_type = "ethernet-phy";
+	};
+};
+
+&sdhci0 {
+	status = "okay";
+};
+&uart0 {
+	status = "okay";
+};
+
+
+&usb0 {
+	status = "okay";
+	usb-phy = <&usb_phy0>;
+};
+
