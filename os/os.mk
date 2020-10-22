@@ -77,13 +77,59 @@ $(UBOOT_PATH): $(UBOOT_TAR)
 	tar -zxf $< --strip-components=1 --directory=$@
 	@echo [$@] OK
 
-$(TMP_OS_PATH)/u-boot.elf: $(UBOOT_PATH)
+ifeq ("$(UBOOT_CONFIG)","")
+UBOOT_CONFIG = zynq_$(BOARD)_defconfig
+endif
+
+$(TMP_OS_PATH)/u-boot.elf: $(UBOOT_PATH) $(shell find $(PATCHES)/u-boot -type f)
+	cp -a $(PATCHES)/${UBOOT_CONFIG} $(UBOOT_PATH)/ 2>/dev/null || true
+	cp -a $(PATCHES)/u-boot/. $(UBOOT_PATH)/ 2>/dev/null || true
 	mkdir -p $(@D)
 	make -C $< mrproper
-	make -C $< arch=arm `find $(PATCHES) -name '*_defconfig' -exec basename {} \;`
-	make -C $< arch=arm CFLAGS=$(UBOOT_CFLAGS) \
-	  CROSS_COMPILE=arm-linux-gnueabihf- all
+	make -C $< arch=arm $(UBOOT_CONFIG)
+	make -C $< arch=arm CFLAGS="-O2 $(GCC_FLAGS)" \
+	  CROSS_COMPILE=$(GCC_ARCH)- all
 	cp $</u-boot $@
+	cp $</u-boot.elf $@ || true
+	@echo [$@] OK
+
+
+###############################################################################
+# pmufw
+###############################################################################
+
+.PHONY: pmufw
+pmufw: $(TMP_OS_PATH)/pmu/pmufw.elf
+
+$(TMP_OS_PATH)/pmu/Makefile: $(TMP_FPGA_PATH)/$(NAME).xsa
+	mkdir -p $(@D)
+	$(HSI) $(FPGA_PATH)/hsi/pmufw.tcl $(NAME) $(TMP_OS_PATH)/hard $(@D) $<
+	@echo [$@] OK
+
+$(TMP_OS_PATH)/pmu/executable.elf: $(TMP_OS_PATH)/pmu/Makefile 
+	source $(VITIS_PATH)/$(VIVADO_VER)/settings64.sh && make -C $(@D) all
+
+.PHONY: clean_pmufw
+clean_pmufw:
+	rm -rf $(TMP_OS_PATH)/pmu
+
+###############################################################################
+# arm_trusted_firmware
+###############################################################################
+
+$(ATRUST_TAR):
+	mkdir -p $(@D)
+	curl -L $(ARMTRUST_URL) -o $@
+	@echo [$@] OK
+
+$(ATRUST_PATH): $(ATRUST_TAR)
+	mkdir -p $@
+	tar -zxf $< --strip-components=1 --directory=$@
+	@echo [$@] OK
+
+$(TMP_OS_PATH)/bl31.elf: $(ATRUST_PATH)
+	make CROSS_COMPILE=$(GCC_ARCH)- PLAT=zynqmp bl31 ZYNQMP_ATF_MEM_BASE=0x10000 ZYNQMP_ATF_MEM_SIZE=0x40000 -C $(ATRUST_PATH)
+	cp $</build/zynqmp/release/bl31/bl31.elf $@
 	@echo [$@] OK
 
 ###############################################################################
@@ -91,8 +137,23 @@ $(TMP_OS_PATH)/u-boot.elf: $(UBOOT_PATH)
 ###############################################################################
 
 $(TMP_OS_PATH)/boot.bin: $(TMP_OS_PATH)/fsbl/executable.elf $(BITSTREAM) $(TMP_OS_PATH)/u-boot.elf
-	echo "img:{[bootloader] $^}" > $(TMP_OS_PATH)/boot.bif
-	$(BOOTGEN) -image $(TMP_OS_PATH)/boot.bif -w -o i $@
+	echo "img:{[bootloader] $(TMP_OS_PATH)/fsbl/executable.elf" > $(TMP_OS_PATH)/boot.bif
+	echo " $(BITSTREAM)" >> $(TMP_OS_PATH)/boot.bif
+	echo " $(TMP_OS_PATH)/u-boot.elf" >> $(TMP_OS_PATH)/boot.bif
+	echo " }" >> $(TMP_OS_PATH)/boot.bif
+	$(BOOTGEN) -image $(TMP_OS_PATH)/boot.bif -arch $(ZYNQ_TYPE) -w -o i $@
+	@echo [$@] OK
+
+$(TMP_OS_PATH)/bootmp.bin: $(TMP_OS_PATH)/pmu/executable.elf $(TMP_OS_PATH)/bl31.elf $(TMP_OS_PATH)/fsbl/executable.elf $(BITSTREAM) $(TMP_OS_PATH)/u-boot.elf 
+	echo "img:{ [fsbl_config] a53_x64" > $(TMP_OS_PATH)/boot.bif
+	echo "[pmufw_image] $(TMP_OS_PATH)/pmu/executable.elf" >> $(TMP_OS_PATH)/boot.bif
+	echo "[bootloader] $(TMP_OS_PATH)/fsbl/executable.elf" >> $(TMP_OS_PATH)/boot.bif
+	echo "[destination_device=pl] $(BITSTREAM)" >> $(TMP_OS_PATH)/boot.bif
+	echo "[destination_cpu=a53-0,exception_level=el-2] $(TMP_OS_PATH)/bl31.elf" >> $(TMP_OS_PATH)/boot.bif
+	echo "[destination_cpu=a53-0,exception_level=el-2] $(TMP_OS_PATH)/u-boot.elf" >> $(TMP_OS_PATH)/boot.bif
+	echo "}" >> $(TMP_OS_PATH)/boot.bif
+	$(BOOTGEN) -image $(TMP_OS_PATH)/boot.bif -arch $(ZYNQ_TYPE) -w -o i $@
+	cp $(TMP_OS_PATH)/bootmp.bin $(TMP_OS_PATH)/boot.bin
 	@echo [$@] OK
 
 ###############################################################################
