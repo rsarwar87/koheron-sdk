@@ -22,13 +22,19 @@ TMP_OS_VERSION_FILE := $(TMP_OS_PATH)/version.json
 $(TMP_OS_VERSION_FILE): $(KOHERON_VERSION_FILE)
 	echo '{ "version": "$(KOHERON_VERSION)" }' > $@
 
+DTREE_SWITCH = $(TMP_OS_PATH)/devicetree.dtb
+ifdef DTREE_OVERRIDE
+DTREE_SWITCH = $(TMP_OS_PATH)/devicetree_$(DTREE_LOC) 
+endif
+
+BOOT_MEDIUM ?= mmcblk0
 .PHONY: os
-os: $(INSTRUMENT_ZIP) www api $(TMP_OS_PATH)/boot.bin $(TMP_OS_PATH)/uImage $(TMP_OS_PATH)/devicetree.dtb $(TMP_OS_VERSION_FILE)
+os: $(INSTRUMENT_ZIP) www api $(TMP_OS_PATH)/$(BOOTCALL) $(TMP_OS_PATH)/$(LINUX_IMAGE) $(DTREE_SWITCH) $(TMP_OS_VERSION_FILE)
 
 # Build image (run as root)
 .PHONY: image
 image:
-	bash $(OS_PATH)/scripts/ubuntu-$(MODE).sh $(TMP_PROJECT_PATH) $(OS_PATH) $(TMP_OS_PATH) $(NAME) $(TMP_OS_VERSION_FILE)
+	bash $(OS_PATH)/scripts/ubuntu-$(MODE).sh $(TMP_PROJECT_PATH) $(OS_PATH) $(TMP_OS_PATH) $(NAME) $(TMP_OS_VERSION_FILE) $(ZYNQ_TYPE) $(BOOT_MEDIUM)
 
 .PHONY: clean_os
 clean_os:
@@ -149,6 +155,20 @@ $(TMP_OS_PATH)/devicetree.dtb: $(TMP_OS_PATH)/uImage $(TMP_OS_PATH)/devicetree/s
 	$(LINUX_PATH)/scripts/dtc/dtc -I dts -O dtb -o $@ \
 	  -i $(TMP_OS_PATH)/devicetree $(TMP_OS_PATH)/devicetree/system-top.dts
 	@echo [$@] OK
+
+.PHONY: $(TMP_OS_PATH)/devicetree_linux
+$(TMP_OS_PATH)/devicetree_linux: $(TMP_OS_PATH)/$(LINUX_IMAGE)
+	echo ${DTREE_OVERRIDE}
+	cp -a $(PATCHES)/linux/. $(LINUX_PATH)/ 2>/dev/null || true
+	make -C $(LINUX_PATH) ARCH=$(ARCH) CROSS_COMPILE=$(GCC_ARCH)- dtbs -j$(N_CPUS)
+	cp $(LINUX_PATH)/${DTREE_OVERRIDE} $(TMP_OS_PATH)/devicetree.dtb
+	@echo [$(TMP_OS_PATH)/devicetree.dtb] OK
+
+.PHONY: $(TMP_OS_PATH)/devicetree_uboot
+$(TMP_OS_PATH)/devicetree_uboot: $(TMP_OS_PATH)/u-boot.elf
+	echo ${DTREE_OVERRIDE}
+	cp $(UBOOT_PATH)/${DTREE_OVERRIDE} $(TMP_OS_PATH)/devicetree.dtb
+	@echo [$(TMP_OS_PATH)/devicetree.dtb] OK
 
 ###############################################################################
 # HTTP API
