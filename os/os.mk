@@ -52,7 +52,7 @@ fsbl: $(TMP_OS_PATH)/fsbl/executable.elf
 
 $(TMP_OS_PATH)/fsbl/Makefile: $(TMP_FPGA_PATH)/$(NAME).hwdef
 	mkdir -p $(@D)
-	$(HSI) -source $(FPGA_PATH)/hsi/fsbl.tcl -tclargs $(NAME) $(PROC) $(TMP_OS_PATH)/hard $(@D) $<
+	$(HSI) -source $(FPGA_PATH)/hsi/fsbl.tcl -tclargs $(NAME) $(PROC) $(TMP_OS_PATH)/hard $(@D) $< $(ZYNQ_TYPE)
 	@echo [$@] OK
 
 $(TMP_OS_PATH)/fsbl/executable.elf: $(TMP_OS_PATH)/fsbl/Makefile $(FSBL_FILES)
@@ -142,17 +142,28 @@ $(LINUX_PATH): $(LINUX_TAR)
 	tar -zxf $< --strip-components=1 --directory=$@
 	@echo [$@] OK
 
-$(TMP_OS_PATH)/uImage: $(LINUX_PATH)
+$(TMP_OS_PATH)/$(LINUX_IMAGE): $(LINUX_PATH) $(shell find $(PATCHES)/linux -type f) $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_defconfig
+	cp -a $(PATCHES)/linux/. $(LINUX_PATH)/ 2>/dev/null || true
+	cp $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_defconfig $(LINUX_PATH)/arch/$(ARCH)/configs
 	make -C $< mrproper
-	make -C $< ARCH=arm xilinx_zynq_defconfig
-	make -C $< ARCH=arm CFLAGS=$(LINUX_CFLAGS) \
+	make -C $< ARCH=$(ARCH) xilinx_$(ZYNQ_TYPE)_defconfig
+	make -C $< ARCH=$(ARCH) CFLAGS="-O2 $(GCC_FLAGS)" \
 	  --jobs=$(N_CPUS) \
-	  CROSS_COMPILE=arm-linux-gnueabihf- UIMAGE_LOADADDR=0x8000 uImage
-	cp $</arch/arm/boot/uImage $@
+	  CROSS_COMPILE=$(GCC_ARCH)- UIMAGE_LOADADDR=0x8000 $(LINUX_IMAGE)
+	cp $</arch/$(ARCH)/boot/$(LINUX_IMAGE) $@
 	@echo [$@] OK
 
-$(TMP_OS_PATH)/devicetree.dtb: $(TMP_OS_PATH)/uImage $(TMP_OS_PATH)/devicetree/system-top.dts
-	$(LINUX_PATH)/scripts/dtc/dtc -I dts -O dtb -o $@ \
+$(TMP_PROJECT_PATH)/pl.dtbo: $(TMP_OS_PATH)/pl.dtbo
+	cp $(TMP_OS_PATH)/pl.dtbo  $(TMP_PROJECT_PATH)/pl.dtbo
+
+$(TMP_OS_PATH)/pl.dtbo: $(TMP_OS_PATH)/overlay/pl.dtsi 
+	sed -i 's/.bin/$(NAME).bit.bin/g' $(TMP_OS_PATH)/overlay/pl.dtsi
+	dtc -O dtb -o $@ \
+	  -i $(TMP_OS_PATH)/overlay -b 0 -@ $(TMP_OS_PATH)/overlay/pl.dtsi
+	@echo [$@] OK
+
+$(TMP_OS_PATH)/devicetree.dtb:  $(TMP_OS_PATH)/devicetree/system-top.dts 
+	dtc -I dts -O dtb -o $@ \
 	  -i $(TMP_OS_PATH)/devicetree $(TMP_OS_PATH)/devicetree/system-top.dts
 	@echo [$@] OK
 
