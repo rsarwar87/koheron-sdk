@@ -13,7 +13,7 @@ TMP ?= tmp
 
 KOHERON_VERSION_FILE := $(SDK_PATH)/version
 KOHERON_VERSION := $(shell cat $(KOHERON_VERSION_FILE))
-VIVADO_VERSION := 2017.2
+VIVADO_VERSION := 2019.1
 VIVADO_PATH := /opt/Xilinx/Vivado
 PYTHON := python
 
@@ -53,7 +53,8 @@ NAME := $(shell $(MAKE_PY) --name $(CONFIG) $(TMP_PROJECT_PATH)/name && cat $(TM
 # - Bash configuration script
 # - Web files (HTML, CSS, Javascript)
 
-BITSTREAM := $(TMP_PROJECT_PATH)/$(NAME).bit # FPGA bitstream
+BITSTREAM := $(TMP_PROJECT_PATH)/$(NAME).bit
+# FPGA bitstream
 SERVER := $(TMP_PROJECT_PATH)/serverd # TCP / Websocket server executable that communicates with the FPGA
 
 VERSION_FILE := $(TMP_PROJECT_PATH)/version
@@ -63,8 +64,8 @@ $(VERSION_FILE): $(CONFIG)
 
 # Zip file that contains all the files needed to run the instrument:
 INSTRUMENT_ZIP := $(TMP_PROJECT_PATH)/$(NAME).zip
-$(INSTRUMENT_ZIP): server $(BITSTREAM) web $(VERSION_FILE)
-	zip --junk-paths $(INSTRUMENT_ZIP) $(BITSTREAM) $(SERVER) $(WEB_ASSETS) $(VERSION_FILE)
+$(INSTRUMENT_ZIP): server $(BITSTREAM) web $(VERSION_FILE) $(TMP_PROJECT_PATH)/pl.dtbo $(BITSTREAM).bin
+	zip --junk-paths $(INSTRUMENT_ZIP) $(BITSTREAM).bin $(TMP_PROJECT_PATH)/pl.dtbo $(BITSTREAM) $(SERVER) $(WEB_ASSETS) $(VERSION_FILE)
 	@echo [$@] OK
 
 # Make builds the instrument zip file by default
@@ -79,6 +80,7 @@ run: $(INSTRUMENT_ZIP)
 	curl http://$(HOST)/api/instruments/run/$(NAME)
 	@echo
 
+OS_PATH := $(SDK_PATH)/os
 ###############################################################################
 # FPGA BITSTREAM
 ###############################################################################
@@ -86,6 +88,17 @@ FPGA_PATH := $(SDK_PATH)/fpga
 FPGA_MK ?= $(FPGA_PATH)/fpga.mk
 include $(FPGA_MK)
 
+###############################################################################
+# WEB FILES
+###############################################################################
+WEB_PATH := $(SDK_PATH)/web
+WEB_MK ?= $(WEB_PATH)/web.mk
+include $(WEB_MK)
+###############################################################################
+# LINUX OS
+###############################################################################
+OS_MK ?= $(OS_PATH)/os.mk
+include $(OS_MK)
 ###############################################################################
 # TCP / WEBSOCKET SERVER
 ###############################################################################
@@ -105,19 +118,7 @@ client:
 	@echo 'No client available for this instrument'
 endif
 
-###############################################################################
-# WEB FILES
-###############################################################################
-WEB_PATH := $(SDK_PATH)/web
-WEB_MK ?= $(WEB_PATH)/web.mk
-include $(WEB_MK)
 
-###############################################################################
-# LINUX OS
-###############################################################################
-OS_PATH := $(SDK_PATH)/os
-OS_MK ?= $(OS_PATH)/os.mk
-include $(OS_MK)
 
 ###############################################################################
 # TESTS
@@ -143,6 +144,7 @@ setup: setup_fpga setup_server setup_web setup_os
 .PHONY: setup_base
 setup_base:
 	sudo apt-get install -y g++-5-arm-linux-gnueabihf
+	sudo apt install -y g++-aarch64-linux-gnu
 	# On Ubuntu 18.04 you may have to link:	
 	# sudo ln -s /usr/bin/arm-linux-gnueabihf-gcc-5 /usr/bin/arm-linux-gnueabihf-gcc
 	# sudo ln -s /usr/bin/arm-linux-gnueabihf-g++-5 /usr/bin/arm-linux-gnueabihf-g++	
