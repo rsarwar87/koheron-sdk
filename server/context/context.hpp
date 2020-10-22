@@ -32,6 +32,20 @@ class Context : public ContextBase
         zynq_clocks::set_clocks(fclk);
     }
 
+    bool fpga_rewrite_bitsream()
+    {
+
+        if (fpga.unload_bitstream() < 0) {
+           log<PANIC>("Failed to unload bitstream. \n");
+           return false;
+        }
+        if (fpga.load_bitstream(instrument_name) < 0) {
+           log<PANIC>("Failed to load bitstream. \n");
+           return false;
+        }
+        return true;
+    }
+
     int init() {
         if (mm.open() < 0  ||
             spi.init() < 0 ||
