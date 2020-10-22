@@ -109,13 +109,24 @@ $(DTREE_PATH): $(DTREE_TAR)
 	tar -zxf $< --strip-components=1 --directory=$@
 	@echo [$@] OK
 
+.PHONY: overlay
+overlay: $(TMP_OS_PATH)/pl.dtbo
+
 .PHONY: devicetree
-devicetree: $(TMP_OS_PATH)/devicetree/system-top.dts
+devicetree: $(TMP_OS_PATH)/devicetree/system-top.dts 
+
+$(TMP_OS_PATH)/overlay/pl.dtsi: $(TMP_FPGA_PATH)/$(NAME).hwdef $(DTREE_PATH) $(PATCHES)/overlay.patch
+	mkdir -p $(@D)
+	$(HSI) -source $(FPGA_PATH)/hsi/devicetree.tcl -tclargs $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VER) \
+	  $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/overlay $(TMP_FPGA_PATH)/$(NAME).hwdef true
+	cp -R $(TMP_OS_PATH)/overlay $(TMP_OS_PATH)/overlay.orig
+	patch -d $(TMP_OS_PATH) -p -0 < $(PATCHES)/overlay.patch 
+	@echo [$@] OK
 
 $(TMP_OS_PATH)/devicetree/system-top.dts: $(TMP_FPGA_PATH)/$(NAME).hwdef $(DTREE_PATH) $(PATCHES)/devicetree.patch
 	mkdir -p $(@D)
-	$(HSI) -source $(FPGA_PATH)/hsi/devicetree.tcl -tclargs $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VERSION) \
-	  $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/devicetree $(TMP_FPGA_PATH)/$(NAME).hwdef
+	$(HSI) -source $(FPGA_PATH)/hsi/devicetree.tcl -tclargs $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VER) \
+	  $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/devicetree $(TMP_FPGA_PATH)/$(NAME).hwdef false
 	cp -R $(TMP_OS_PATH)/devicetree $(TMP_OS_PATH)/devicetree.orig
 	patch -d $(TMP_OS_PATH) -p -0 < $(PATCHES)/devicetree.patch
 	@echo [$@] OK
