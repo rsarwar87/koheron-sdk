@@ -25,6 +25,12 @@ class Common
     , ctl(ctx.mm.get<mem::control>())
     , sts(ctx.mm.get<mem::status>())
     {}
+    uint32_t get_forty_two() {
+        ctx.log<INFO>("TRACE: calling get forty_two \n");
+        uint32_t ret = sts.read<reg::forty_two>();
+        ctx.log<INFO>("TRACE: successfullt retrieved value: %d\n", ret);
+        return ret;
+    }
 
     uint64_t get_dna() {
         return sts.read<reg::dna, uint64_t>();
