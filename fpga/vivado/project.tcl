@@ -1,3 +1,4 @@
+set run_autowrapper 1
 source [file join [file dirname [info script]] "block_design.tcl"]
 
 if {[version -short] >= 2016.3} {
@@ -6,9 +7,11 @@ if {[version -short] >= 2016.3} {
 set_property target_language VHDL [current_project]
 
 generate_target all [get_files $bd_path/system.bd]
-make_wrapper -files [get_files $bd_path/system.bd] -top
+if { $run_autowrapper == 1 } {
+  make_wrapper -files [get_files $bd_path/system.bd] -top
+  add_files -norecurse $bd_path/hdl/system_wrapper.vhd
+}
 
-add_files -norecurse $bd_path/hdl/system_wrapper.vhd
 
 # Add verilog source files
 set files [glob -nocomplain $project_path/*.v $project_path/*.sv]
