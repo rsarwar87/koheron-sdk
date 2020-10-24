@@ -43,20 +43,17 @@ namespace Sclr_regs {
 constexpr uint32_t n_pts = 64 * 1024; // Number of words in one descriptor
 constexpr uint32_t n_desc = 64; // Number of descriptors
 
-class AdcDma
+class AdcDacDma
 {
   public:
-    AdcDma(Context& ctx_)
+    AdcDacDma(Context& ctx_)
     : ctx(ctx_)
     , ctl(ctx.mm.get<mem::control>())
-    , dma_0(ctx.mm.get<mem::dma0>())
-    , dma_1(ctx.mm.get<mem::dma1>())
-    , ram_s2mm_0(ctx.mm.get<mem::ram_s2mm0>())
-    , ram_s2mm_1(ctx.mm.get<mem::ram_s2mm1>())
+    , dma(ctx.mm.get<mem::dma0>())
+    , ram_s2mm(ctx.mm.get<mem::ram_s2mm0>())
     , axi_hp0(ctx.mm.get<mem::axi_hp0>())
     , axi_hp2(ctx.mm.get<mem::axi_hp2>())
-    , ocm_s2mm_1(ctx.mm.get<mem::ocm_s2mm1>())
-    , ocm_s2mm_0(ctx.mm.get<mem::ocm_s2mm0>())
+    , ocm_s2mm(ctx.mm.get<mem::ocm_s2mm0>())
     , sclr(ctx.mm.get<mem::sclr>())
     {
         // Unlock SCLR
@@ -73,160 +70,86 @@ class AdcDma
         sclr.write<Sclr_regs::ocm_cfg>(0b1000);
 
         for (uint32_t i = 0; i < n_pts * n_desc; i++) {
-            ram_s2mm_0.write_reg(4*i, 0);
+            ram_s2mm.write_reg(4*i, 0);
         }
-        log_hp0();
-        log_hp2();
 
     }
 
-
-    void set_descriptor_s2mm_1(uint32_t idx, uint32_t buffer_address, uint32_t buffer_length) {
-        ocm_s2mm_1.write_reg(0x40 * idx + Sg_regs::nxtdesc, mem::ocm_s2mm1_addr + 0x40 * ((idx+1) % n_desc));
-        ocm_s2mm_1.write_reg(0x40 * idx + Sg_regs::buffer_address, buffer_address);
-        ocm_s2mm_1.write_reg(0x40 * idx + Sg_regs::control, buffer_length);
-        ocm_s2mm_1.write_reg(0x40 * idx + Sg_regs::status, 0);
+    void select_adc_channel(uint32_t channel) {
+        ctl.write<reg::channel_select>(channel % 2);
     }
 
-    void set_descriptor_s2mm_0(uint32_t idx, uint32_t buffer_address, uint32_t buffer_length) {
-        ocm_s2mm_0.write_reg(0x40 * idx + Sg_regs::nxtdesc, mem::ocm_s2mm0_addr + 0x40 * ((idx+1) % n_desc));
-        ocm_s2mm_0.write_reg(0x40 * idx + Sg_regs::buffer_address, buffer_address);
-        ocm_s2mm_0.write_reg(0x40 * idx + Sg_regs::control, buffer_length);
-        ocm_s2mm_0.write_reg(0x40 * idx + Sg_regs::status, 0);
+    void set_descriptor_s2mm(uint32_t idx, uint32_t buffer_address, uint32_t buffer_length) {
+        ocm_s2mm.write_reg(0x40 * idx + Sg_regs::nxtdesc, mem::ocm_s2mm0_addr + 0x40 * ((idx+1) % n_desc));
+        ocm_s2mm.write_reg(0x40 * idx + Sg_regs::buffer_address, buffer_address);
+        ocm_s2mm.write_reg(0x40 * idx + Sg_regs::control, buffer_length);
+        ocm_s2mm.write_reg(0x40 * idx + Sg_regs::status, 0);
     }
 
-    void start_dma_0() {
-        for (uint32_t i = 0; i < n_pts * n_desc; i++) {
-            ram_s2mm_0.write_reg(4*i, 0);
+    void set_descriptors() {
+        for (uint32_t i = 0; i < n_desc; i++) {
+            set_descriptor_s2mm(i, mem::ram_s2mm0_addr + i * 4 * n_pts, 4 * n_pts);
         }
-        for (uint32_t i = 0; i < n_desc; i++) 
-            set_descriptor_s2mm_0(i, mem::ram_s2mm0_addr + i * 4 * n_pts, 4 * n_pts);
+    }
+
+    void start_dma() {
+        set_descriptors();
         // Write address of the starting descriptor
-        //dma_0.write<Dma_regs::mm2s_curdesc>(mem::ocm_mm2s_addr + 0x0);
-        dma_0.write<Dma_regs::s2mm_curdesc>(mem::ocm_s2mm0_addr + 0x0);
+        dma.write<Dma_regs::s2mm_curdesc>(mem::ocm_s2mm0_addr + 0x0);
         // Set DMA to cyclic mode
         //dma.set_bit<Dma_regs::s2mm_dmacr, 4>();
         // Start S2MM channel
-        //dma_0.set_bit<Dma_regs::mm2s_dmacr, 0>();
-        dma_0.set_bit<Dma_regs::s2mm_dmacr, 0>();
+        dma.set_bit<Dma_regs::s2mm_dmacr, 0>();
         // Write address of the tail descriptor
         //dma.write<Dma_regs::s2mm_taildesc>(0x50);
-        //dma_0.write<Dma_regs::mm2s_taildesc>(mem::ocm_s2mm1_addr + (n_desc-1) * 0x40);
-        dma_0.write<Dma_regs::s2mm_taildesc>(mem::ocm_s2mm0_addr + (n_desc-1) * 0x40);
+        dma.write<Dma_regs::s2mm_taildesc>(mem::ocm_s2mm0_addr + (n_desc-1) * 0x40);
 
-        log_dma();
+        //log_dma();
+        //log_hp0();
     }
 
-    void stop_dma_0() {
-        //dma_0.clear_bit<Dma_regs::mm2s_dmacr, 0>();
-        dma_0.clear_bit<Dma_regs::s2mm_dmacr, 0>();
-        //dma_0.write<Dma_regs::mm2s_taildesc>(mem::ocm_mm2s_addr + (n_desc-1) * 0x40);
-        dma_0.write<Dma_regs::s2mm_taildesc>(mem::ocm_s2mm0_addr + (n_desc-1) * 0x40);
+    void stop_dma() {
+        dma.clear_bit<Dma_regs::s2mm_dmacr, 0>();
+        dma.write<Dma_regs::s2mm_taildesc>(mem::ocm_s2mm0_addr + (n_desc-1) * 0x40);
     }
 
-    void start_dma_1() {
-        for (uint32_t i = 0; i < n_pts * n_desc; i++) {
-            ram_s2mm_1.write_reg(4*i, 0);
-        }
-        for (uint32_t i = 0; i < n_desc; i++) 
-            set_descriptor_s2mm_1(i, mem::ram_s2mm1_addr + i * 4 * n_pts, 4 * n_pts);
-        // Write address of the starting descriptor
-        //dma_0.write<Dma_regs::mm2s_curdesc>(mem::ocm_mm2s_addr + 0x0);
-        dma_1.write<Dma_regs::s2mm_curdesc>(mem::ocm_s2mm1_addr + 0x0);
-        // Set DMA to cyclic mode
-        //dma.set_bit<Dma_regs::s2mm_dmacr, 4>();
-        // Start S2MM channel
-        //dma_0.set_bit<Dma_regs::mm2s_dmacr, 0>();
-        dma_1.set_bit<Dma_regs::s2mm_dmacr, 0>();
-        // Write address of the tail descriptor
-        //dma.write<Dma_regs::s2mm_taildesc>(0x50);
-        //dma_0.write<Dma_regs::mm2s_taildesc>(mem::ocm_s2mm1_addr + (n_desc-1) * 0x40);
-        dma_1.write<Dma_regs::s2mm_taildesc>(mem::ocm_s2mm1_addr + (n_desc-1) * 0x40);
-
-        log_dma();
-    }
-
-    void stop_dma_1() {
-        //dma_0.clear_bit<Dma_regs::mm2s_dmacr, 0>();
-        dma_1.clear_bit<Dma_regs::s2mm_dmacr, 0>();
-        //dma_0.write<Dma_regs::mm2s_taildesc>(mem::ocm_mm2s_addr + (n_desc-1) * 0x40);
-        dma_1.write<Dma_regs::s2mm_taildesc>(mem::ocm_s2mm0_addr + (n_desc-1) * 0x40);
-    }
-
-    auto& get_adc1_data() {
-        data = ram_s2mm_1.read_array<uint32_t, n_desc * n_pts>();
-        return data;
-    }
-
-    auto& get_adc0_data() {
-        data = ram_s2mm_0.read_array<uint32_t, n_desc * n_pts>();
+    auto& get_adc_data() {
+        data = ram_s2mm.read_array<uint32_t, n_desc * n_pts>();
         return data;
     }
 
   private:
     Context& ctx;
     Memory<mem::control>& ctl;
-    Memory<mem::dma0>& dma_0;
-    Memory<mem::dma1>& dma_1;
-    Memory<mem::ram_s2mm0>& ram_s2mm_0;
-    Memory<mem::ram_s2mm1>& ram_s2mm_1;
+    Memory<mem::dma0>& dma;
+    Memory<mem::ram_s2mm0>& ram_s2mm;
     Memory<mem::axi_hp0>& axi_hp0;
     Memory<mem::axi_hp2>& axi_hp2;
-    Memory<mem::ocm_s2mm1>& ocm_s2mm_1;
-    Memory<mem::ocm_s2mm0>& ocm_s2mm_0;
+    Memory<mem::ocm_s2mm0>& ocm_s2mm;
     Memory<mem::sclr>& sclr;
 
     std::array<uint32_t, n_desc * n_pts> data;
 
     void log_dma() {
 
-        ctx.log<INFO>("S2MM_1 LOG \n");
-        ctx.log<INFO>("DMAHalted = %d \n", dma_1.read_bit<Dma_regs::s2mm_dmasr, 0>());
-        ctx.log<INFO>("DMAIdle = %d \n", dma_1.read_bit<Dma_regs::s2mm_dmasr, 1>());
-        ctx.log<INFO>("DMASDInc = %d \n", dma_1.read_bit<Dma_regs::s2mm_dmasr, 3>());
-        ctx.log<INFO>("DMAIntErr = %d \n", dma_1.read_bit<Dma_regs::s2mm_dmasr, 4>());
-        ctx.log<INFO>("DMASlvErr = %d \n", dma_1.read_bit<Dma_regs::s2mm_dmasr, 5>());
-        ctx.log<INFO>("DMADecErr = %d \n", dma_1.read_bit<Dma_regs::s2mm_dmasr, 6>());
-        ctx.log<INFO>("SGIntErr = %d \n", dma_1.read_bit<Dma_regs::s2mm_dmasr, 8>());
-        ctx.log<INFO>("SGSlvErr = %d \n", dma_1.read_bit<Dma_regs::s2mm_dmasr, 9>());
-        ctx.log<INFO>("SGDecErr = %d \n", dma_1.read_bit<Dma_regs::s2mm_dmasr, 10>());
-        ctx.log<INFO>("CURDESC = %u \n", (dma_1.read<Dma_regs::s2mm_curdesc>() - mem::ocm_s2mm1_addr)/0x40);
+
+        ctx.log<INFO>("S2MM LOG \n");
+        ctx.log<INFO>("DMAIntErr = %d \n", dma.read_bit<Dma_regs::s2mm_dmasr, 4>());
+        ctx.log<INFO>("DMASlvErr = %d \n", dma.read_bit<Dma_regs::s2mm_dmasr, 5>());
+        ctx.log<INFO>("DMADecErr = %d \n", dma.read_bit<Dma_regs::s2mm_dmasr, 6>());
+        ctx.log<INFO>("SGIntErr = %d \n", dma.read_bit<Dma_regs::s2mm_dmasr, 8>());
+        ctx.log<INFO>("SGSlvErr = %d \n", dma.read_bit<Dma_regs::s2mm_dmasr, 9>());
+        ctx.log<INFO>("SGDecErr = %d \n", dma.read_bit<Dma_regs::s2mm_dmasr, 10>());
+        ctx.log<INFO>("CURDESC = %u \n", (dma.read<Dma_regs::s2mm_curdesc>() - mem::ocm_s2mm0_addr)/0x40);
         ctx.log<INFO>("\n");
 
-        ctx.log<INFO>("S2MM_0 LOG \n");
-        ctx.log<INFO>("DMAHalted = %d \n", dma_0.read_bit<Dma_regs::s2mm_dmasr, 0>());
-        ctx.log<INFO>("DMAIdle = %d \n", dma_0.read_bit<Dma_regs::s2mm_dmasr, 1>());
-        ctx.log<INFO>("DMASDInc = %d \n", dma_0.read_bit<Dma_regs::s2mm_dmasr, 3>());
-        ctx.log<INFO>("DMAIntErr = %d \n", dma_0.read_bit<Dma_regs::s2mm_dmasr, 4>());
-        ctx.log<INFO>("DMASlvErr = %d \n", dma_0.read_bit<Dma_regs::s2mm_dmasr, 5>());
-        ctx.log<INFO>("DMADecErr = %d \n", dma_0.read_bit<Dma_regs::s2mm_dmasr, 6>());
-        ctx.log<INFO>("SGIntErr = %d \n", dma_0.read_bit<Dma_regs::s2mm_dmasr, 8>());
-        ctx.log<INFO>("SGSlvErr = %d \n", dma_0.read_bit<Dma_regs::s2mm_dmasr, 9>());
-        ctx.log<INFO>("SGDecErr = %d \n", dma_0.read_bit<Dma_regs::s2mm_dmasr, 10>());
-        ctx.log<INFO>("CURDESC = %u \n", (dma_0.read<Dma_regs::s2mm_curdesc>() - mem::ocm_s2mm0_addr)/0x40);
-        ctx.log<INFO>("\n");
-
-        ctx.log<INFO>("S2MM_1_STATUS DMAIntErr = %d \n", ocm_s2mm_1.read_bit<Sg_regs::status, 28>());
-        ctx.log<INFO>("S2MM_1_STATUS DMASlvErr = %d \n", ocm_s2mm_1.read_bit<Sg_regs::status, 29>());
-        ctx.log<INFO>("S2MM_1_STATUS DMADecErr = %d \n", ocm_s2mm_1.read_bit<Sg_regs::status, 30>());
-        ctx.log<INFO>("S2MM_1_STATUS Cmplt = %d \n", ocm_s2mm_1.read_bit<Sg_regs::status, 31>());
-        ctx.log<INFO>("\n");
-        ctx.log<INFO>("S2MM_0_STATUS DMAIntErr = %d \n", ocm_s2mm_0.read_bit<Sg_regs::status, 28>());
-        ctx.log<INFO>("S2MM_0_STATUS DMASlvErr = %d \n", ocm_s2mm_0.read_bit<Sg_regs::status, 29>());
-        ctx.log<INFO>("S2MM_0_STATUS DMADecErr = %d \n", ocm_s2mm_0.read_bit<Sg_regs::status, 30>());
-        ctx.log<INFO>("S2MM_0_STATUS Cmplt = %d \n", ocm_s2mm_0.read_bit<Sg_regs::status, 31>());
+        ctx.log<INFO>("S2MM_STATUS DMAIntErr = %d \n", ocm_s2mm.read_bit<Sg_regs::status, 28>());
+        ctx.log<INFO>("S2MM_STATUS DMASlvErr = %d \n", ocm_s2mm.read_bit<Sg_regs::status, 29>());
+        ctx.log<INFO>("S2MM_STATUS DMADecErr = %d \n", ocm_s2mm.read_bit<Sg_regs::status, 30>());
+        ctx.log<INFO>("S2MM_STATUS Cmplt = %d \n", ocm_s2mm.read_bit<Sg_regs::status, 31>());
         ctx.log<INFO>("\n");
     }
 
-    void log_hp2() {
-        ctx.log<INFO>("AXI_HP2 LOG \n");
-        ctx.log<INFO>("AFI_WRCHAN_CTRL = %x \n", axi_hp2.read<0x14>());
-        ctx.log<INFO>("AFI_WRCHAN_ISSUINGCAP = %x \n", axi_hp2.read<0x18>());
-        ctx.log<INFO>("AFI_WRQOS = %x \n", axi_hp2.read<0x1C>());
-        ctx.log<INFO>("AFI_WRDATAFIFO_LEVEL = %x \n", axi_hp2.read<0x20>());
-        ctx.log<INFO>("AFI_WRDEBUG = %x \n", axi_hp2.read<0x24>());
-        ctx.log<INFO>("\n");
-    }
     void log_hp0() {
         ctx.log<INFO>("AXI_HP0 LOG \n");
         ctx.log<INFO>("AFI_WRCHAN_CTRL = %x \n", axi_hp0.read<0x14>());
