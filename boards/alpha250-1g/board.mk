@@ -1,7 +1,7 @@
 # Linux and U-boot
-UBOOT_TAG := koheron-v$(VIVADO_VERSION)
-LINUX_TAG := koheron-v$(VIVADO_VERSION)-kernel-module-fix-dma
-DTREE_TAG := xilinx-v$(VIVADO_VERSION)
+UBOOT_TAG := koheron-v2017.2
+LINUX_TAG := koheron-v2017.2-kernel-module-fix-dma
+DTREE_TAG := xilinx-v2017.2
 
 UBOOT_URL := https://github.com/Koheron/u-boot-xlnx/archive/$(UBOOT_TAG).tar.gz
 LINUX_URL := https://github.com/Koheron/linux-xlnx/archive/$(LINUX_TAG).tar.gz
