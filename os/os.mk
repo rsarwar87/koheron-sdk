@@ -176,18 +176,18 @@ overlay: $(TMP_OS_PATH)/pl.dtbo
 .PHONY: devicetree
 devicetree: $(TMP_OS_PATH)/devicetree/system-top.dts 
 
-$(TMP_OS_PATH)/overlay/pl.dtsi: $(TMP_FPGA_PATH)/$(NAME).hwdef $(DTREE_PATH) $(PATCHES)/overlay.patch
+$(TMP_OS_PATH)/overlay/pl.dtsi: $(TMP_FPGA_PATH)/$(NAME).hwdef $(DTREE_PATH) 
 	mkdir -p $(@D)
 	$(HSI) -source $(FPGA_PATH)/hsi/devicetree.tcl -tclargs $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VER) \
 	  $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/overlay $(TMP_FPGA_PATH)/$(NAME).hwdef true
 	cp -R $(TMP_OS_PATH)/overlay $(TMP_OS_PATH)/overlay.orig
-	patch -d $(TMP_OS_PATH) -p -0 < $(PATCHES)/overlay.patch 
+	patch -d $(TMP_OS_PATH) -p -0 < $(PATCHES)/overlay.patch  || true
 	@echo [$@] OK
 
 $(TMP_OS_PATH)/devicetree/system-top.dts: $(TMP_FPGA_PATH)/$(NAME).hwdef $(DTREE_PATH) $(PATCHES)/devicetree.patch
 	mkdir -p $(@D)
 	$(HSI) -source $(FPGA_PATH)/hsi/devicetree.tcl -tclargs $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VER) \
-	  $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/devicetree $(TMP_FPGA_PATH)/$(NAME).hwdef false
+	  $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/devicetree $(TMP_FPGA_PATH)/$(NAME).hwdef true
 	cp -R $(TMP_OS_PATH)/devicetree $(TMP_OS_PATH)/devicetree.orig
 	patch -d $(TMP_OS_PATH) -p -0 < $(PATCHES)/devicetree.patch
 	@echo [$@] OK
@@ -242,8 +242,10 @@ $(TMP_OS_PATH)/pl.dtbo: $(TMP_OS_PATH)/overlay/pl.dtsi
 	@echo [$@] OK
 
 $(TMP_OS_PATH)/devicetree.dtb:  $(TMP_OS_PATH)/devicetree/system-top.dts 
+	gcc -I $(TMP_OS_PATH)/devicetree/ -E -nostdinc -undef -D__DTS__ -x assembler-with-cpp -o \
+		$(TMP_OS_PATH)/devicetree/system-top.dts.tmp $(TMP_OS_PATH)/devicetree/system-top.dts
 	dtc -I dts -O dtb -o $@ \
-	  -i $(TMP_OS_PATH)/devicetree $(TMP_OS_PATH)/devicetree/system-top.dts
+	  -i $(TMP_OS_PATH)/devicetree $(TMP_OS_PATH)/devicetree/system-top.dts.tmp
 	@echo [$@] OK
 
 .PHONY: $(TMP_OS_PATH)/devicetree_linux
