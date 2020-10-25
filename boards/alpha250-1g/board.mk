@@ -1,8 +1,10 @@
 # Linux and U-boot
-UBOOT_TAG := koheron-v2017.2
-LINUX_TAG := koheron-v2017.2-kernel-module-fix-dma
-DTREE_TAG := xilinx-v2017.2
+UBOOT_CONFIG = zynq_alpha250_1g_defconfig  
+ZYNQ_TYPE = zynq
+UBOOT_TAG := xilinx-v$(VIVADO_VERSION)
+LINUX_TAG := xilinx-v$(VIVADO_VERSION)
+DTREE_TAG := xilinx-v$(VIVADO_VERSION)
 
-UBOOT_URL := https://github.com/Koheron/u-boot-xlnx/archive/$(UBOOT_TAG).tar.gz
-LINUX_URL := https://github.com/Koheron/linux-xlnx/archive/$(LINUX_TAG).tar.gz
-DTREE_URL := https://github.com/Xilinx/device-tree-xlnx/archive/$(DTREE_TAG).tar.gz
+UBOOT_URL := https://github.com/Xilinx/u-boot-xlnx/archive/xilinx-v$(VIVADO_VERSION).tar.gz
+LINUX_URL := https://github.com/Xilinx/linux-xlnx/archive/xilinx-v$(VIVADO_VERSION).tar.gz
+TREE_URL := https://github.com/Xilinx/device-tree-xlnx/archive/xilinx-v$(VIVADO_VERSION).tar.gz
