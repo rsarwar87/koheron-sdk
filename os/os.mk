@@ -221,9 +221,9 @@ $(LINUX_PATH): $(LINUX_TAR)
 	tar -zxf $< --strip-components=1 --directory=$@
 	@echo [$@] OK
 
-$(TMP_OS_PATH)/$(LINUX_IMAGE): $(LINUX_PATH) $(shell find $(PATCHES)/linux -type f) $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_defconfig
+$(TMP_OS_PATH)/$(LINUX_IMAGE): $(LINUX_PATH) $(shell find $(PATCHES)/linux -type f) $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_$(VIVADO_VERSION)_defconfig
 	cp -a $(PATCHES)/linux/. $(LINUX_PATH)/ 2>/dev/null || true
-	cp $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_defconfig $(LINUX_PATH)/arch/$(ARCH)/configs
+	cp $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_$(VIVADO_VERSION)_defconfig $(LINUX_PATH)/arch/$(ARCH)/configs
 	make -C $< mrproper
 	make -C $< ARCH=$(ARCH) xilinx_$(ZYNQ_TYPE)_defconfig
 	make -C $< ARCH=$(ARCH) CFLAGS="-O2 $(GCC_FLAGS)" \
