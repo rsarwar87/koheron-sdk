@@ -81,9 +81,9 @@ ifeq ("$(UBOOT_CONFIG)","")
 UBOOT_CONFIG = zynq_$(BOARD)_defconfig
 endif
 
-$(TMP_OS_PATH)/u-boot.elf: $(UBOOT_PATH) $(shell find $(PATCHES)/u-boot -type f)
+$(TMP_OS_PATH)/u-boot.elf: $(UBOOT_PATH) $(shell find $(PATCHES)/u-boot/$(VIVADO_VERSION) -type f)
 	cp -a $(PATCHES)/${UBOOT_CONFIG} $(UBOOT_PATH)/ 2>/dev/null || true
-	cp -a $(PATCHES)/u-boot/. $(UBOOT_PATH)/ 2>/dev/null || true
+	cp -a $(PATCHES)/u-boot/$(VIVADO_VERSION)/. $(UBOOT_PATH)/ 2>/dev/null || true
 	mkdir -p $(@D)
 	make -C $< mrproper
 	make -C $< arch=arm $(UBOOT_CONFIG)
@@ -107,7 +107,7 @@ $(TMP_OS_PATH)/pmu/Makefile: $(TMP_FPGA_PATH)/$(NAME).xsa
 	@echo [$@] OK
 
 $(TMP_OS_PATH)/pmu/executable.elf: $(TMP_OS_PATH)/pmu/Makefile 
-	source $(VITIS_PATH)/$(VIVADO_VER)/settings64.sh && make -C $(@D) all
+	source $(VITIS_PATH)/$(VIVADO_VERSION)/settings64.sh && make -C $(@D) all
 
 .PHONY: clean_pmufw
 clean_pmufw:
@@ -178,18 +178,18 @@ devicetree: $(TMP_OS_PATH)/devicetree/system-top.dts
 
 $(TMP_OS_PATH)/overlay/pl.dtsi: $(TMP_FPGA_PATH)/$(NAME).hwdef $(DTREE_PATH) 
 	mkdir -p $(@D)
-	$(HSI) -source $(FPGA_PATH)/hsi/devicetree.tcl -tclargs $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VER) \
+	$(HSI) -source $(FPGA_PATH)/hsi/devicetree.tcl -tclargs $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VERSION) \
 	  $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/overlay $(TMP_FPGA_PATH)/$(NAME).hwdef true
 	cp -R $(TMP_OS_PATH)/overlay $(TMP_OS_PATH)/overlay.orig
 	patch -d $(TMP_OS_PATH) -p -0 < $(PATCHES)/overlay.patch  || true
 	@echo [$@] OK
 
-$(TMP_OS_PATH)/devicetree/system-top.dts: $(TMP_FPGA_PATH)/$(NAME).hwdef $(DTREE_PATH) $(PATCHES)/devicetree.patch
+$(TMP_OS_PATH)/devicetree/system-top.dts: $(TMP_FPGA_PATH)/$(NAME).hwdef $(DTREE_PATH) $(PATCHES)/devicetree_$(VIVADO_VERSION).patch
 	mkdir -p $(@D)
-	$(HSI) -source $(FPGA_PATH)/hsi/devicetree.tcl -tclargs $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VER) \
+	$(HSI) -source $(FPGA_PATH)/hsi/devicetree.tcl -tclargs $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VERSION) \
 	  $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/devicetree $(TMP_FPGA_PATH)/$(NAME).hwdef true
 	cp -R $(TMP_OS_PATH)/devicetree $(TMP_OS_PATH)/devicetree.orig
-	patch -d $(TMP_OS_PATH) -p -0 < $(PATCHES)/devicetree.patch
+	patch -d $(TMP_OS_PATH) -p -0 < $(PATCHES)/devicetree_$(VIVADO_VERSION).patch
 	@echo [$@] OK
 
 .PHONY: clean_devicetree
@@ -198,11 +198,11 @@ clean_devicetree:
 
 .PHONY: patch_devicetree
 patch_devicetree:
-	bash os/scripts/patch_devicetree.sh $(TMP_OS_PATH) $(BOARD_PATH)
+	bash os/scripts/patch_devicetree.sh $(TMP_OS_PATH) $(BOARD_PATH) $(VIVADO_VERSION)
 
 .PHONY: patch_overlay
 patch_overlay:
-	bash os/scripts/patch_overlay.sh $(TMP_OS_PATH) $(BOARD_PATH)
+	bash os/scripts/patch_overlay.sh $(TMP_OS_PATH) $(BOARD_PATH) $(VIVADO_VERSION)
 
 .PHONY: clean_overlay
 clean_overlay:
@@ -222,7 +222,7 @@ $(LINUX_PATH): $(LINUX_TAR)
 	@echo [$@] OK
 
 $(TMP_OS_PATH)/$(LINUX_IMAGE): $(LINUX_PATH) $(shell find $(PATCHES)/linux -type f) $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_$(VIVADO_VERSION)_defconfig
-	cp -a $(PATCHES)/linux/. $(LINUX_PATH)/ 2>/dev/null || true
+	cp -a $(PATCHES)/linux/$(VIVADO_VERSION)/. $(LINUX_PATH)/ 2>/dev/null || true
 	cp $(OS_PATH)/xilinx_$(ZYNQ_TYPE)_$(VIVADO_VERSION)_defconfig $(LINUX_PATH)/arch/$(ARCH)/configs
 	make -C $< mrproper
 	make -C $< ARCH=$(ARCH) xilinx_$(ZYNQ_TYPE)_defconfig
@@ -251,7 +251,7 @@ $(TMP_OS_PATH)/devicetree.dtb:  $(TMP_OS_PATH)/devicetree/system-top.dts
 .PHONY: $(TMP_OS_PATH)/devicetree_linux
 $(TMP_OS_PATH)/devicetree_linux: $(TMP_OS_PATH)/$(LINUX_IMAGE)
 	echo ${DTREE_OVERRIDE}
-	cp -a $(PATCHES)/linux/. $(LINUX_PATH)/ 2>/dev/null || true
+	cp -a $(PATCHES)/linux/$(VIVADO_VERSION)/. $(LINUX_PATH)/ 2>/dev/null || true
 	make -C $(LINUX_PATH) ARCH=$(ARCH) CROSS_COMPILE=$(GCC_ARCH)- dtbs -j$(N_CPUS)
 	cp $(LINUX_PATH)/${DTREE_OVERRIDE} $(TMP_OS_PATH)/devicetree.dtb
 	@echo [$(TMP_OS_PATH)/devicetree.dtb] OK
