@@ -213,7 +213,7 @@ cell user.org:user:adc_dataq_alpha:1.0 adc_dataq_alpha_0 {
   clk_ip ps_0/FCLK_CLK0
   clk_ip_rst_n proc_sys_reset_0/peripheral_aresetn
   
-  ext_trigger exp_io_0_p
+  ext_trigger exp_io_2_n
 
   adc_ch0 adc_dac/adc0
   adc_ch1 adc_dac/adc1
