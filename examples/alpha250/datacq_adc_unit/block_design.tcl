@@ -56,7 +56,7 @@ assign_bd_address [get_bd_addr_segs xadc_wiz_0/s_axi_lite/Reg]
 
 for {set i 0} {$i < 8} {incr i} {
   create_bd_port -dir I exp_io_${i}_p
-  create_bd_port -dir O exp_io_${i}_n
+  create_bd_port -dir I exp_io_${i}_n
 }
 connect_pin [sts_pin io_in] [get_concat_pin [list exp_io_0_p exp_io_1_p exp_io_2_p exp_io_3_p exp_io_4_p exp_io_5_p exp_io_6_p exp_io_7_p ]]
 
