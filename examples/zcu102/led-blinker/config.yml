@@ -1,0 +1,47 @@
+---
+name: zcu102-led-blinker
+board: boards/zcu102
+
+cores:
+  - fpga/cores/axi_ctl_register_v1_0
+  - fpga/cores/axi_sts_register_v1_0
+
+memory:
+  - name: control
+    offset: '0xA4001000'
+    range: 4K
+  - name: status
+    offset: '0xA4002000'
+    range: 4K
+  - name: eth0_0
+    offset: '0xA4100000'
+    range: 256K
+  - name: eth0_1
+    offset: '0xA4200000'
+    range: 256K
+
+control_registers:
+  - led
+
+status_registers:
+  - forty_two
+  - sw
+  - dip
+
+parameters:
+  fclk0: 50000000 # FPGA clock speed in Hz
+
+xdc:
+  - boards/zcu102/config/ports.xdc
+  - boards/zcu102/config/gpio.xdc
+
+drivers:
+  - server/drivers/common.hpp
+  - ./led_blinker.hpp
+
+web:
+  - ./web/index.html
+  - web/koheron.ts
+  - web/led-blinker.ts
+  - ./web/app.ts
+  - web/main.css
