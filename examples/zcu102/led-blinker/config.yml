@@ -34,6 +34,7 @@ parameters:
 xdc:
   - boards/zcu102/config/ports.xdc
   - boards/zcu102/config/gpio.xdc
+  - boards/zcu102/config/sfp.xdc
 
 drivers:
   - server/drivers/common.hpp

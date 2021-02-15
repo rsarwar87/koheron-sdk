@@ -1,0 +1,55 @@
+diff -rupN devicetree.orig/system-top.dts devicetree/system-top.dts
+--- devicetree.orig/system-top.dts	2021-02-15 20:38:30.424984220 +0000
++++ devicetree/system-top.dts	2021-02-15 21:25:38.392693877 +0000
+@@ -20,9 +20,38 @@
+ 	};
+ 	memory {
+ 		device_type = "memory";
+-		reg = <0x0 0x20000000>;
++		reg = <0x0 0x1E000000>;
+ 	};
+ 	cpus {
+ 		/delete-node/ cpu@1 ;
+ 	};
++	usb_phy0: phy0@e0002000 {
++		compatible = "ulpi-phy";
++		#phy-cells = <0>;
++		reg = <0xe0002000 0x1000>;
++		view-port = <0x0170>;
++		drv-vbus;
++	};
++};
++
++
++&gem0 {
++	phy-handle = <&ethernet_phy>;
++/*	phy-reset-gpio = <&gpio0 GPIO_ACTIVE_LOW>;
++	phy-reset-active-low;	
++	phy-reset-duration = <10>;  */
++	ethernet_phy: ethernet-phy@1 { /* rtl8211e-vl */
++		reg = <1>;
++		device_type = "ethernet-phy";
++	};
++};
++&usb0 {	
++	dr_mode = "host";
++	usb-phy = <&usb_phy0>;
++};
++&sdhci0 {
++	u-boot,dm-pre-reloc;
++};
++&uart0 {
++	u-boot,dm-pre-reloc;
+ };
+diff -rupN devicetree.orig/zynq-7000.dtsi devicetree/zynq-7000.dtsi
+--- devicetree.orig/zynq-7000.dtsi	2021-02-15 20:38:30.424984220 +0000
++++ devicetree/zynq-7000.dtsi	2021-02-15 21:26:01.672986205 +0000
+@@ -553,7 +553,7 @@
+ 			reg = <0xf889d000 0x1000>;
+ 			clocks = <&clkc 27>, <&clkc 46>, <&clkc 47>;
+ 			clock-names = "apb_pclk", "dbg_trc", "dbg_apb";
+-			cpu = <&cpu1>;
++			cpu = <&cpu0>;
+ 			out-ports {
+ 				port {
+ 					ptm1_out_port: endpoint {

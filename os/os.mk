@@ -250,14 +250,14 @@ $(TMP_PROJECT_PATH)/pl.dtbo: $(TMP_OS_PATH)/pl.dtbo
 
 $(TMP_OS_PATH)/pl.dtbo: $(TMP_OS_PATH)/overlay/pl.dtsi
 	sed -i 's/".bin"/"$(NAME).bit.bin"/g' $(TMP_OS_PATH)/overlay/pl.dtsi
-	dtc -O dtb -o $@ \
+	os/dtc-1.5.0/dtc -O dtb -o $@ \
 	  -i $(TMP_OS_PATH)/overlay -b 0 -@ $(TMP_OS_PATH)/overlay/pl.dtsi
 	@echo [$@] OK
 
 $(TMP_OS_PATH)/devicetree.dtb: $(TMP_OS_PATH)/$(LINUX_IMAGE) $(TMP_OS_PATH)/devicetree/system-top.dts
 	gcc -I $(TMP_OS_PATH)/devicetree/ -E -nostdinc -undef -D__DTS__ -x assembler-with-cpp -o \
 		$(TMP_OS_PATH)/devicetree/system-top.dts.tmp $(TMP_OS_PATH)/devicetree/system-top.dts
-	$(LINUX_PATH)/scripts/dtc/dtc -I dts -O dtb -o $@ \
+	dtc -I dts -O dtb -o $@ \
 	  -i $(TMP_OS_PATH)/devicetree -b 0 -@ $(TMP_OS_PATH)/devicetree/system-top.dts.tmp
 	@echo [$@] OK
 

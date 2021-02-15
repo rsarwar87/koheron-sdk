@@ -126,23 +126,23 @@ connect_pins xxv_ethernet_0/rx_reset_1 [get_not_pin axi_mcdma_1/s2mm_prmry_reset
 connect_pins xxv_ethernet_0/tx_reset_0 [get_not_pin axi_mcdma_0/mm2s_prmry_reset_out_n]
 connect_pins xxv_ethernet_0/tx_reset_1 [get_not_pin axi_mcdma_1/mm2s_prmry_reset_out_n]
 
-assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP0/HPC0_DDR_LOW] -force
-assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_DDR_LOW] -force
-assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_DDR_LOW] -force
-assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP0/HPC0_PCIE_LOW] -force
-assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_PCIE_LOW] -force
-assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_PCIE_LOW] -force
-assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP0/HPC0_QSPI] -force
-assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_QSPI] -force
-assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_QSPI] -force
-assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP1/HPC1_DDR_LOW] -force
-assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_DDR_LOW] -force
-assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_DDR_LOW] -force
-assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP1/HPC1_PCIE_LOW] -force
-assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_PCIE_LOW] -force
-assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_PCIE_LOW] -force
-assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP1/HPC1_QSPI] -force
-assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_QSPI] -force
-assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_QSPI] -force
+assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP0/HPC0_DDR_LOW] 
+assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_DDR_LOW] 
+assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_DDR_LOW] 
+assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP0/HPC0_PCIE_LOW]
+assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_PCIE_LOW]
+assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_PCIE_LOW]
+assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP0/HPC0_QSPI] 
+assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_QSPI] 
+assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_0/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP0/HPC0_QSPI] 
+assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP1/HPC1_DDR_LOW] 
+assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_DDR_LOW] 
+assign_bd_address -offset 0x00000000 -range 0x80000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_DDR_LOW] 
+assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP1/HPC1_PCIE_LOW]
+assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_PCIE_LOW]
+assign_bd_address -offset 0xE0000000 -range 0x10000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_PCIE_LOW]
+assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_SG]   [get_bd_addr_segs ps_0/SAXIGP1/HPC1_QSPI] 
+assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_MM2S] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_QSPI] 
+assign_bd_address -offset 0xC0000000 -range 0x20000000 -target_address_space [get_bd_addr_spaces axi_mcdma_1/Data_S2MM] [get_bd_addr_segs ps_0/SAXIGP1/HPC1_QSPI] 
 
 group_bd_cells eth1 [get_bd_cells axi_mcdma_1] [get_bd_cells not_axi_mcdma_0_s2mm_prmry_reset_out_n] [get_bd_cells not_axi_mcdma_1_s2mm_prmry_reset_out_n] [get_bd_cells not_axi_mcdma_0_mm2s_prmry_reset_out_n] [get_bd_cells not_axi_mcdma_1_mm2s_prmry_reset_out_n] [get_bd_cells const_v0_w3] [get_bd_cells dma_interconnect_eth_0] [get_bd_cells axi_mcdma_0] [get_bd_cells dma_interconnect_eth_1] [get_bd_cells xxv_ethernet_0]

@@ -74,6 +74,8 @@
 
   set_cell_props ps_0 {
     pcw_spi0_peripheral_enable 1
+    PCW_USE_FABRIC_INTERRUPT {1} 
+    PCW_IRQ_F2P_INTR {1}
   }
 
   connect_bd_net [get_bd_ports ck_spi_sck] [get_bd_pins $ps_name/SPI0_SCLK_O]
