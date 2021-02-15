@@ -73,7 +73,7 @@ entity system_top is
     ck_spi_mosi : out std_logic;
     ck_spi_miso : in std_logic;
     
-    user_dio : inout STD_LOGIC_VECTOR ( 12 downto 0 )
+    user_dio : inout STD_LOGIC_VECTOR ( 11 downto 0 )
   );
 end system_top;
 
@@ -420,7 +420,7 @@ IIC_sda_iobuf: component IOBUF
       T => IIC_sda_t
     );
 
-  GEN_USER: for I in 1 to 12 generate
+  GEN_USER: for I in 0 to 11 generate
     user_iobuf: component IOBUF
      port map (
       I => user_io_o(I),

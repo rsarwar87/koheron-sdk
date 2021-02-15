@@ -1,0 +1,66 @@
+---
+name: template
+board:  boards/cora07s
+version: 0.1.1
+
+cores:
+  - fpga/cores/axi_ctl_register_v1_0
+  - fpga/cores/dna_reader_v1_0
+  - fpga/cores/axi_sts_register_v1_0
+
+memory:
+  - name: control
+    offset: '0x60000000'
+    range: 4K
+  - name: status
+    offset: '0x50000000'
+    range: 4K
+  - name: led0
+    offset: '0x40001000'
+    range: 4K
+  - name: led1
+    offset: '0x40002000'
+    range: 4K
+  - name: pmod0
+    offset: '0x40003000'
+    range: 4K
+  - name: pmod1
+    offset: '0x40004000'
+    range: 4K
+  - name: ck_iic
+    offset: '0x40005000'
+    range: 4K
+  - name: axi_spi
+    offset: '0x40006000'
+    range: 4K
+  - name: xadc
+    offset: '0x40007000'
+    range: 4K
+
+control_registers:
+  - led
+  - ck_inner
+  - user_io
+
+status_registers:
+  - forty_two
+  - buttons
+  - ck_outer
+
+parameters:
+  fclk0: 100000000 # FPGA clock speed in Hz
+
+xdc:
+  - boards/cora07s/config/ports.xdc
+  - boards/cora07s/config/ck-analogue.xdc
+  - ./constraints.xdc
+
+drivers:
+  - server/drivers/common.hpp
+    #- boards/cora07s/drivers/xadc.hpp
+    #- boards/cora07s/drivers/pmod.hpp
+  - ./template.hpp
+
+web:
+  - web/koheron.ts
+  - web/main.css

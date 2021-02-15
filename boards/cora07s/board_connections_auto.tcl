@@ -1,13 +1,23 @@
-  create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 ck_iic 
+  set IIC [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 IIC ]
   set btns [ create_bd_port -dir I -from 1 -to 0 btns ]
+  set ck_inner_io_i [ create_bd_port -dir I -from 13 -to 0 ck_inner_io_i ]
+  set ck_inner_io_o [ create_bd_port -dir O -from 13 -to 0 ck_inner_io_o ]
+  set ck_inner_io_t [ create_bd_port -dir O -from 13 -to 0 ck_inner_io_t ]
+  set ck_outer_io_i [ create_bd_port -dir I -from 15 -to 0 ck_outer_io_i ]
+  set ck_outer_io_o [ create_bd_port -dir O -from 15 -to 0 ck_outer_io_o ]
+  set ck_outer_io_t [ create_bd_port -dir O -from 15 -to 0 ck_outer_io_t ]
   set led0 [ create_bd_port -dir O -from 2 -to 0 led0 ]
   set led1 [ create_bd_port -dir O -from 2 -to 0 led1 ]
-
-  create_bd_port -dir O ck_spi_mosi 
-  create_bd_port -dir O ck_spi_ss 
-  create_bd_port -dir O ck_spi_sck 
-  create_bd_port -dir I ck_spi_miso 
-  
+  set spi_clk_i [ create_bd_port -dir I spi_clk_i ]
+  set spi_clk_o [ create_bd_port -dir O spi_clk_o ]
+  set spi_csn_i [ create_bd_port -dir I -from 0 -to 0 spi_csn_i ]
+  set spi_csn_o [ create_bd_port -dir O -from 0 -to 0 spi_csn_o ]
+  set spi_sdi_i [ create_bd_port -dir I spi_sdi_i ]
+  set spi_sdo_i [ create_bd_port -dir I spi_sdo_i ]
+  set spi_sdo_o [ create_bd_port -dir O spi_sdo_o ]
+  set user_io_i [ create_bd_port -dir I -from 11 -to 0 user_io_i ]
+  set user_io_o [ create_bd_port -dir O -from 11 -to 0 user_io_o ]
+  set user_io_t [ create_bd_port -dir O -from 11 -to 0 user_io_t ]
   set Vp_Vn_0 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_analog_io_rtl:1.0 Vp_Vn_0 ]
 
   set_property "ip_repo_paths" "[concat [get_property ip_repo_paths [current_project]] [file normalize $board_path/ip]]" "[current_project]"
@@ -69,23 +79,31 @@
     S_AXI axi_mem_intercon_0/M[add_master_interface]_AXI
     s_axi_aclk $ps_name/FCLK_CLK0
     s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
-    IIC ck_iic
+    IIC IIC
   }
 
-  set_cell_props ps_0 {
-    pcw_spi0_peripheral_enable 1
+  # Create instance: axi_spi, and set properties
+  cell xilinx.com:ip:axi_quad_spi:3.2 axi_spi {
+   C_USE_STARTUP {0} 
+   C_USE_STARTUP_INT {0} 
+  } {
+    AXI_LITE axi_mem_intercon_0/M[add_master_interface]_AXI
+    ext_spi_clk $ps_name/FCLK_CLK0
+    s_axi_aclk $ps_name/FCLK_CLK0
+    s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
   }
-
-  connect_bd_net [get_bd_ports ck_spi_sck] [get_bd_pins $ps_name/SPI0_SCLK_O]
-  connect_bd_net [get_bd_pins $ps_name/SPI0_SCLK_I] [get_bd_pins $ps_name/SPI0_SCLK_O]
-  connect_bd_net [get_bd_ports ck_spi_ss] [get_bd_pins $ps_name/SPI0_SS_O]
-  connect_bd_net [get_bd_pins $ps_name/SPI0_MISO_I] [get_bd_ports ck_spi_miso] 
-  connect_bd_net [get_bd_pins $ps_name/SPI0_MOSI_I] [get_bd_pins $ps_name/SPI0_MOSI_O]
-  connect_bd_net [get_bd_ports ck_spi_mosi] [get_bd_pins $ps_name/SPI0_MOSI_O]
+  connect_bd_net -net spi_clk_i_1 [get_bd_ports spi_clk_i] [get_bd_pins axi_spi/sck_i]
+  connect_bd_net -net spi_csn_i_1 [get_bd_ports spi_csn_i] [get_bd_pins axi_spi/ss_i]
+  connect_bd_net -net spi_sdi_i_1 [get_bd_ports spi_sdi_i] [get_bd_pins axi_spi/io1_i]
+  connect_bd_net -net spi_sdo_i_1 [get_bd_ports spi_sdo_i] [get_bd_pins axi_spi/io0_i]
+  connect_bd_net -net axi_spi_io0_o [get_bd_ports spi_sdo_o] [get_bd_pins axi_spi/io0_o]
+  connect_bd_net -net axi_spi_sck_o [get_bd_ports spi_clk_o] [get_bd_pins axi_spi/sck_o]
+  connect_bd_net -net axi_spi_ss_o [get_bd_ports spi_csn_o] [get_bd_pins axi_spi/ss_o]
 
   create_bd_addr_seg -range [get_memory_range led0] -offset [get_memory_offset led0] [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs PWM_0/PWM_AXI/PWM_AXI_reg] SEG_PWM_0_PWM_AXI_reg
   create_bd_addr_seg -range [get_memory_range led1] -offset [get_memory_offset led1] [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs PWM_1/PWM_AXI/PWM_AXI_reg] SEG_PWM_1_PWM_AXI_reg
   create_bd_addr_seg -range [get_memory_range ck_iic] -offset [get_memory_offset ck_iic] [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs axi_iic/S_AXI/Reg] SEG_axi_iic_Reg
+  create_bd_addr_seg -range [get_memory_range ck_spi] -offset [get_memory_offset ck_spi] [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs axi_spi/AXI_LITE/Reg] SEG_axi_spi_Reg
   create_bd_addr_seg -range [get_memory_range xadc] -offset [get_memory_offset xadc] [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs xadc_wiz_0/s_axi_lite/Reg] SEG_xadc_wiz_0_Reg
 
 
