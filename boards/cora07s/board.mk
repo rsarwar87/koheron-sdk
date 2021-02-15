@@ -1,7 +1,7 @@
 # Linux and U-boot
 UBOOT_CONFIG = zynq_cora_defconfig
 ZYNQ_TYPE ?= zynq
-DTREE_OVERRIDE = arch/arm/boot/dts/zynq-cora7s7.dtb
+
 DTREE_LOC = linux  
 UBOOT_TAG := xilinx-uboot-v$(VIVADO_VERSION)
 LINUX_TAG := xilinx-linux-v$(VIVADO_VERSION)

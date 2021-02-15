@@ -1,0 +1,5 @@
+set_property -dict { PACKAGE_PIN T19   IOSTANDARD LVCMOS33 } [get_ports { user_spi_mosi }]; #IO_25_34 Sch=user_dio[8]
+set_property -dict { PACKAGE_PIN U20   IOSTANDARD LVCMOS33 } [get_ports { user_spi_ss[0] }]; #IO_L15N_T2_DQS_34 Sch=user_dio[9]
+set_property -dict { PACKAGE_PIN V20   IOSTANDARD LVCMOS33 } [get_ports { user_spi_ss[1] }]; #IO_L16P_T2_34 Sch=user_dio[10]
+set_property -dict { PACKAGE_PIN W20   IOSTANDARD LVCMOS33 } [get_ports { user_spi_sck }]; #IO_L16N_T2_34 Sch=user_dio[11]
+set_property -dict { PACKAGE_PIN K19   IOSTANDARD LVCMOS33 } [get_ports { user_spi_miso }]; #IO_L10P_T1_AD11P_35 Sch=user_dio[12]

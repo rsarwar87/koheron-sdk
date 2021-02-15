@@ -5,7 +5,7 @@ source $sdk_path/fpga/lib/starting_point.tcl
 # Add config and status registers
 source $sdk_path/fpga/lib/ctl_sts.tcl
 add_ctl_sts
-source $board_path/board_connections.tcl
+source $board_path/board_connections_auto.tcl
 source $board_path/analogue.tcl
 source $board_path/pmods.tcl
 

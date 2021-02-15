@@ -20,6 +20,6 @@
   }
   
   
-  create_bd_addr_seg -range [get_memory_range pmod0] -offset [get_memory_offset pmod0] [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs PmodGPIO_0/AXI_LITE_GPIO/Reg0] SEG_PmodGPIO_0_Reg0
+  create_bd_addr_seg -range [get_memory_range pmod0] -offset [get_memory_offset pmod0] [get_bd_addr_spaces_0/Data] [get_bd_addr_segs PmodGPIO_0/AXI_LITE_GPIO/Reg0] SEG_PmodGPIO_0_Reg0
   create_bd_addr_seg -range [get_memory_range pmod1] -offset [get_memory_offset pmod1] [get_bd_addr_spaces ps_0/Data] [get_bd_addr_segs PmodGPIO_1/AXI_LITE_GPIO/Reg0] SEG_PmodGPIO_1_Reg0
 
