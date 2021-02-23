@@ -145,7 +145,7 @@ setup: setup_fpga setup_server setup_web setup_os
 
 .PHONY: setup_base
 setup_base:
-	sudo apt-get install -y g++-5-arm-linux-gnueabihf
+	sudo apt-get install -y g++-7-arm-linux-gnueabihf
 	sudo apt install -y g++-aarch64-linux-gnu
 	# On Ubuntu 18.04 you may have to link:	
 	# sudo ln -s /usr/bin/arm-linux-gnueabihf-gcc-5 /usr/bin/arm-linux-gnueabihf-gcc
