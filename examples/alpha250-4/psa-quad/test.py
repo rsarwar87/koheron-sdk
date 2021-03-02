@@ -57,10 +57,16 @@ class AdcDma(object):
     def set_tx_debug(self, val):
         pass
     @command(classname='PSACore')
+    def set_debug_one(self, val):
+        pass
+    @command(classname='PSACore')
     def set_list_mode(self, val):
         pass
     @command(classname='PSACore')
     def get_tx_debug(self):
+        return self.client.recv_bool()
+    @command(classname='PSACore')
+    def get_debug_one(self):
         return self.client.recv_bool()
     @command(classname='PSACore')
     def get_list_mode(self):
@@ -84,23 +90,11 @@ class AdcDma(object):
         #self.adc[1::2] = (np.int32(data >> 16) & 0xFFFF )
 
 if __name__=="__main__":
-    host = os.getenv('HOST','10.211.3.130')
+    host = os.getenv('HOST','10.211.3.133')
     client = connect(host, name='psa-quad')
     driver = AdcDma(client)
-    
- #   for i in range (0, len(driver.dac)): 
- #       driver.dac[i] = (8192*4-1) + ((8192*4-1) << 16)
-
- #   driver.set_dac_data(driver.dac)
-    driver.start_dma_mm2s()
-    driver.get_adc()
-    print (driver.adc)
-    driver.stop_dma_mm2s()
-
-    print('DMA fullness: {}'.format(driver.get_dma_fullness()))
-    driver.set_psa_ram_at(2, 0x0, 123)
-    print('PSA_limit: {}'.format(driver.get_psa_ram_at(2, 0x0)))
-
+    print('Active Channels: {}'.format(driver.get_channel_active()))
+    print('Debug Active: {}'.format(driver.get_debug_one()))
     trig = np.uint32(np.zeros(4))
     trig[0] = 0
     trig[1] = 1023
@@ -112,16 +106,35 @@ if __name__=="__main__":
     gates[0] = 15
     gates[1] = 10
     gates[2] = 20
-    gates[3] = 160
-    gates[4] = 180
+    gates[3] = 150
+    gates[4] = 170
     for idx in range(0, 5): print('Gates{}: {}'.format(idx, driver.set_psa_gates(idx, gates)))
     for idx in range(0, 5): print('Gates{}: {}'.format(idx, driver.get_psa_gates(idx)))
+    driver.set_debug_one(True)
+    driver.set_channel_active(0, False)
+    driver.set_channel_active(0, True)
+    print('DMA fullness: {}'.format(driver.get_dma_fullness()))
+    exit()
+    
+    for i in range (0, len(driver.dac)): 
+        driver.dac[i] = np.uint32(np.uint16((8192*4-1)) + np.uint16(((8192*4-1)) << 16))
+
+    driver.set_dac_data(driver.dac)
+    driver.start_dma_mm2s()
+    driver.get_adc()
+    print (driver.adc)
+    driver.stop_dma_mm2s()
+
+    driver.set_psa_ram_at(2, 0x0, 123)
+    print('PSA_limit: {}'.format(driver.get_psa_ram_at(2, 0x0)))
+
 
     driver.set_list_mode(True)
     driver.set_tx_debug(True)
     print('ListMode: {}'.format( driver.get_list_mode()))
     print('DebugMode: {}'.format(driver.get_tx_debug()))
+    print('Active Channels: {}'.format(driver.get_channel_active()))
     for idx in range(0, 5): driver.set_channel_active(idx, False)
-    driver.set_channel_active(4, True)
+    driver.set_channel_active(0, True)
     print('Active Channels: {}'.format(driver.get_channel_active()))
 

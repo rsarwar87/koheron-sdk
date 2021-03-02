@@ -40,8 +40,8 @@ class AdcDma(object):
 
     def get_adc1(self):
         data = self.get_adc1_data()
-        self.adc0 = (np.int32(data % 65536) - 32768) % 65536 - 32768
-        self.adc1 = (np.int32(data >> 16) - 32768) % 65536 - 32768
+        self.adc0 = (np.int16((data & 0x3FFF) << 2 ))/4 
+        self.adc1 = (np.int32((data >> 16) & 0x3FFF) << 2 )/4
 
     @command()
     def start_dma_acquisition(self, val):
@@ -82,34 +82,17 @@ class AdcDma(object):
 
     def get_adc0(self):
         data = self.get_adc0_data()
-        self.adc0 = (np.int32(data % 65536) & 0x3FFF) #- 32768) % 65536 - 32768
-        self.adc1 = (np.int32((data >> 16)) & 0x3FFF)#- 32768) % 65536 - 32768
+        self.adc0 = (np.int16((data & 0xFFFF) ))/4 
+        self.adc1 = (np.int32((data >> 16) & 0xFFFF) )/4
 
 if __name__=="__main__":
-    host = os.getenv('HOST','192.168.1.89')
+    host = os.getenv('HOST','10.211.3.130')
     client = connect(host, name='adc-dma-triggered')
     driver = AdcDma(client)
 
-    driver.start_fifo_acquisition(True);
-    time.sleep(2.4)
-    ret = driver.get_vector_rx()
-    driver.stop_fifo_acquisition(); 
-    ret0 = (np.int32(ret %0x3FFF)) # % 65536) - 32768) % 65536 - 32768
-    ret1  = (np.int32((ret >> 16) & 0x3FFF))# - 32768) % 65536 - 32768
-
-    adc0 = np.zeros(driver.n/2)
-    adc1 = np.zeros(driver.n/2)
-    adc_channel = 0;
-
-    driver.fifo_reset_rx()
-
-    for x in range(1000):
-        print ("FIFO STATUS: {}: {} {}; {}". format(x, ret0[x], ret1[x], driver.fifo_vacancy_rx()))
-
-    print("Get ADC{} data ({} points)".format(adc_channel, driver.n))
-    time.sleep(5)
     driver.stop_dma_0()
     driver.start_dma_0()
+    time.sleep(101)
     driver.get_adc0()
     driver.print_dma_log()
 
@@ -117,10 +100,9 @@ if __name__=="__main__":
     t = np.arange(driver.n/2) / fs
     n_pts = 1000000
     print("Plot first {} points".format(n_pts))
-    plt.plot(1e6 * t[0:n_pts], driver.adc0[0:n_pts], marker=".")
+    plt.plot(1e6 * t, driver.adc0, marker=".")
     #plt.plot(1e6 * t[0:n_pts], driver.adc1[0:n_pts])
     plt.legend(['ADC0', 'ADC1'])
-    plt.ylim((-1000, 2**14+1000))
     plt.xlabel('Time (us)')
     plt.ylabel('ADC Raw data')
     plt.show()

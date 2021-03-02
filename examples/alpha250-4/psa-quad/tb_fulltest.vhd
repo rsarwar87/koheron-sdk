@@ -25,7 +25,6 @@ use ieee.numeric_std.all;
 library xil_defaultlib;
 use STD.textio.all;
 use ieee.std_logic_textio.all;
-use work.global_pkg.all;
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --use IEEE.NUMERIC_STD.ALL;
@@ -54,13 +53,14 @@ signal ADC7_IN : STD_LOGIC_VECTOR (16-1 downto 0):= (others => '0');
  
 signal PSA_RST : STD_LOGIC_VECTOR (7 downto 0):= (others => '1');
 signal LIST_MODE: STD_LOGIC_VECTOR (1 downto 0):= (others => '1');
+signal DEBUG: STD_LOGIC_VECTOR (1 downto 0):= (others => '0');
 signal TIMEOUT : STD_LOGIC_VECTOR (31 downto 0):= (others => '0');
 
 signal GATE_SETTINGS7 : STD_LOGIC_VECTOR (31 downto 0):= (others => '0');
 signal TRIGGER_SETTINGS7: STD_LOGIC_VECTOR (31 downto 0):= (others => '0');
  
-signal GATE_SETTINGS    : t_gating_array;
-signal TRIGGER_SETTINGS : t_trigger_array; 
+type t_dbus_array is array (0 to 7) of std_logic_vector(31 downto 0);
+
 signal DMA_FULLNESS     :   t_dbus_array;
     
 signal m_axis_aclk    : STD_LOGIC;
@@ -171,6 +171,7 @@ begin
           -- Pass the variable to a signal to allow the ripple-carry to use it
           v_value := to_integer(unsigned(v_ADD_TERM1));
           v_value := 8192 - 16384 + (v_value) ;
+          v_value := v_value*4;
           ADC0_IN <= std_logic_vector(to_signed(v_value, ADC0_IN'length)); --"0000000000000001";--
           wait for CLK_PERIOD;
         end loop;
@@ -203,6 +204,7 @@ begin
     stim_proc: process
      begin        
           RST <= '0';
+          DEBUG <= "00";
           PSA_RST <= (others => '1');   
           GATE_SETTINGS7(3 downto 0)                 <= "0011";                -- FIFO Full Flag
           GATE_SETTINGS7(7 downto 4)                 <= "1010";                -- FIFO Empty Flag
@@ -210,7 +212,7 @@ begin
           GATE_SETTINGS7(21 downto 14)               <= "10100000";
           GATE_SETTINGS7(30 downto 22)               <= "010110100";
           TRIGGER_SETTINGS7(1 downto 0)              <= "00";
-          TRIGGER_SETTINGS7(17 downto 2)             <= "0000001111111111";
+          TRIGGER_SETTINGS7(17 downto 2)             <= "0000000111111111";
           TRIGGER_SETTINGS7(26 downto 18)            <= "001111111";
           TRIGGER_SETTINGS7(30 downto 27)            <= "0011";
          
@@ -240,6 +242,7 @@ psacore: entity work.system_psa_core_0_0_psa_core_top
       ADC5_IN(15 downto 0) => B"0000000000000000",
       ADC6_IN(15 downto 0) => B"0000000000000000",
       ADC7_IN(15 downto 0) => B"0000000000000000",
+      SIM_IN(15 downto 0) => B"0000000000000000",
       CLK => CLK,
       \DMA_FULLNESS[0]\(31 downto 0) => DMA_FULLNESS(0)(31 downto 0),
       \DMA_FULLNESS[1]\(31 downto 0) => DMA_FULLNESS(1)(31 downto 0),
@@ -258,6 +261,7 @@ psacore: entity work.system_psa_core_0_0_psa_core_top
       GATE_SETTINGS6 => GATE_SETTINGS7,
       GATE_SETTINGS7 => GATE_SETTINGS7,
       LIST_MODE(1 downto 0) => LIST_MODE(1 downto 0),
+      DEBUG(1 downto 0) => DEBUG(1 downto 0),
       PSA_RST(7) => '0',
       PSA_RST(6 downto 0) => PSA_RST(6 downto 0),
       RST => RST,

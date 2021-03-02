@@ -52,7 +52,7 @@ class AdcDma(object):
         self.adc1 = (np.int32((data >> 16) & 0x3FFF))
 
 if __name__=="__main__":
-    host = os.getenv('HOST','192.168.1.89')
+    host = os.getenv('HOST','10.211.3.130')
     client = connect(host, name='adc-dma-orig')
     driver = AdcDma(client)
 

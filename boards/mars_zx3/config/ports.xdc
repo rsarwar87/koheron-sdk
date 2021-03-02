@@ -43,11 +43,11 @@ set_property CONFIG_VOLTAGE 2.5 [current_design]
 # ----------------------------------------------------------------------------------
 set_property PACKAGE_PIN Y21 [get_ports Rev5]
 set_property IOSTANDARD LVCMOS25 [get_ports Rev5]
-set_property PULLUP TRUE [get_ports Rev5]
+set_property PULLUP true [get_ports Rev5]
 
 set_property PACKAGE_PIN AB21 [get_ports Rev4]
 set_property IOSTANDARD LVCMOS25 [get_ports Rev4]
-set_property PULLUP TRUE [get_ports Rev4]
+set_property PULLUP true [get_ports Rev4]
 
 # ----------------------------------------------------------------------------------
 # -- system pins
@@ -71,7 +71,7 @@ set_property IOSTANDARD LVCMOS25 [get_ports ETH_MDC]
 
 set_property PACKAGE_PIN AB12 [get_ports ETH_MDIO]
 set_property IOSTANDARD LVCMOS25 [get_ports ETH_MDIO]
-set_property PULLUP TRUE [get_ports ETH_MDIO]
+set_property PULLUP true [get_ports ETH_MDIO]
 
 set_property PACKAGE_PIN Y9 [get_ports ETH_RX_CLK]
 set_property IOSTANDARD LVCMOS25 [get_ports ETH_RX_CLK]
@@ -166,7 +166,7 @@ set_property IOSTANDARD LVCMOS25 [get_ports I2C0_INT_N_pin]
 # ----------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------
-# -- UART 
+# -- UART
 # ----------------------------------------------------------------------------------
 
 set_property PACKAGE_PIN N18 [get_ports UART0_TX]
@@ -407,7 +407,7 @@ set_property IOSTANDARD LVCMOS25 [get_ports FX3_SLWR_SDCMD_N]
 # -- timing constraints
 # ----------------------------------------------------------------------------------
 
-create_clock -name CLK33 -period 30.000 [get_ports CLK33]
+create_clock -period 30.000 -name CLK33 [get_ports CLK33]
 
 set_property PACKAGE_PIN L11 [get_ports Vp_Vn_v_p]
 set_property PACKAGE_PIN M12 [get_ports Vp_Vn_v_n]
@@ -415,3 +415,4 @@ set_property PACKAGE_PIN M12 [get_ports Vp_Vn_v_n]
 # ----------------------------------------------------------------------------------------------------
 # eof
 # ----------------------------------------------------------------------------------------------------
+

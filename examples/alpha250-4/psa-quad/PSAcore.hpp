@@ -164,6 +164,18 @@ class PSACore {
      psa_ctx.write_reg<uint32_t> (ch*psa_regs::ch_offset + psa_regs::g_long    , val[4] & 0x1FF); 
   }
 
+  void set_debug_one(bool isEnabled)
+  {
+    if (isEnabled)
+       psa_ctx.set_bit<psa_regs::ctrl, 10>();
+    else
+       psa_ctx.clear_bit<psa_regs::ctrl, 10>();
+  }
+  bool get_debug_one() 
+  {
+    bool ret = psa_ctx.get_bit<psa_regs::ctrl, 10>() ;
+    return ret;
+  }
   uint32_t get_channel_active() 
   {
     uint32_t ret = psa_ctx.read<psa_regs::ctrl>() & 0xFF;

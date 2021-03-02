@@ -59,9 +59,9 @@ begin
             S_TDATA <= (others => '0');
             State <= State;
             
-            adc_cur1 <= to_integer(unsigned(ADC_INPUT(29 downto 16)));
+            adc_cur1 <= to_integer(signed(ADC_INPUT(31 downto 16)));
             adc_prev1 <= adc_cur1;
-            adc_cur0 <= to_integer(unsigned(ADC_INPUT(13 downto 0)));
+            adc_cur0 <= to_integer(signed(ADC_INPUT(15 downto 0)));
             adc_prev0 <= adc_cur0;
             
             diff0 <= adc_prev0 - adc_cur0;
@@ -91,7 +91,7 @@ begin
             adc20 <= adc19;
             adc21 <= adc20;
             adc22 <= adc21;
-            thresh <= to_integer(unsigned(THRESHOLD));
+            thresh <= to_integer(signed(THRESHOLD));
             
             case State is
                 when SEEK =>

@@ -39,6 +39,15 @@ namespace Sclr_regs {
     constexpr uint32_t fpga_rst_ctrl = 0x240;   // FPGA Software Reset Control
     constexpr uint32_t ocm_cfg = 0x910;         // FPGA Software Reset Control
 }
+namespace Sclr_regs {
+    constexpr uint32_t sclr_unlock = 0x8;       // SLCR Write Protection Unlock
+    constexpr uint32_t fpga0_clk_ctrl = 0x170;  // PL Clock 0 Output control
+    constexpr uint32_t fpga1_clk_ctrl = 0x180;  // PL Clock 1 Output control
+    constexpr uint32_t ocm_rst_ctrl = 0x238;    // OCM Software Reset Control
+    constexpr uint32_t fpga_rst_ctrl = 0x240;   // FPGA Software Reset Control
+    constexpr uint32_t ocm_cfg = 0x910;         // FPGA Software Reset Control
+}
+
 
 constexpr uint32_t n_pts = 64 * 1024; // Number of words in one descriptor
 constexpr uint32_t n_desc = 64; // Number of descriptors

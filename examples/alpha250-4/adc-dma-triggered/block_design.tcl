@@ -270,7 +270,10 @@ set_property offset [get_memory_offset ram_s2mm0] [get_bd_addr_segs {axi_dma_0/D
 
 move_bd_cells [get_bd_cells ctl] [get_bd_cells slice_3_3_ctl_digital_outputs] [get_bd_cells slice_5_5_ctl_digital_outputs] [get_bd_cells slice_2_2_ctl_digital_outputs] [get_bd_cells slice_1_1_ctl_digital_outputs] [get_bd_cells slice_7_7_ctl_digital_outputs] [get_bd_cells slice_4_4_ctl_digital_outputs] [get_bd_cells slice_6_6_ctl_digital_outputs] [get_bd_cells slice_0_0_ctl_digital_outputs]
 
-add_files -norecurse {/home/rsarwar/workspace/fpga/koheron-sdk-orig/examples/alpha250-4/adc-dma-triggered/trigger2.vhd /home/rsarwar/workspace/fpga/koheron-sdk-orig/examples/alpha250-4/adc-dma-triggered/trigger.vhd}
+set files [glob -nocomplain $project_path/*.vhd]
+if {[llength $files] > 0} {
+  add_files -norecurse $files
+}
 update_compile_order -fileset sources_1
 create_bd_cell -type module -reference trigger trigger_0
 create_bd_cell -type module -reference trigger2 trigger2_0

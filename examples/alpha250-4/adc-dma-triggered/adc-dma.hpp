@@ -219,10 +219,10 @@ class AdcDma {
     }
     using namespace std::chrono_literals;
     auto start = std::chrono::high_resolution_clock::now();
-    while (ocm_s2mm_0.read_bit<0x40 * (n_desc - 1) + Sg_regs::status, 31>() ==
+    /*while (ocm_s2mm_0.read_bit<0x40 * (n_desc - 1) + Sg_regs::status, 31>() ==
            0) {
       std::this_thread::sleep_for(10ms);
-    }
+    }*/
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> elapsed = end - start;
     ctx.log<INFO>("DMA::get_data:: completed after %6.6f msec \n",
