@@ -191,7 +191,7 @@ $(TMP_OS_PATH)/overlay/pl.dtsi: $(TMP_FPGA_PATH)/$(NAME).xsa $(DTREE_PATH) $(PAT
 	mkdir -p $(@D)
 	$(HSI) $(FPGA_PATH)/hsi/devicetree.tcl $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VER) $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/overlay $(TMP_FPGA_PATH)/$(NAME).xsa $(BOOT_MEDIUM)
 	cp -R $(TMP_OS_PATH)/overlay $(TMP_OS_PATH)/overlay.orig
-	patch -d $(TMP_OS_PATH) -p -0 < $(PATCHES)/overlay.patch 
+	patch -d $(TMP_OS_PATH) -p -0 < $(PROJECT_PATH)/overlay.patch 
 	@echo [$@] OK
 
 $(TMP_OS_PATH)/devicetree/system-top.dts: $(TMP_FPGA_PATH)/$(NAME).xsa $(DTREE_PATH) $(PATCHES)/devicetree.patch
@@ -211,7 +211,7 @@ patch_devicetree:
 
 .PHONY: patch_overlay
 patch_overlay:
-	bash os/scripts/patch_overlay.sh $(TMP_OS_PATH) $(BOARD_PATH)
+	bash os/scripts/patch_overlay.sh $(TMP_OS_PATH) $(PROJECT_PATH)
 
 .PHONY: clean_overlay
 clean_overlay:
