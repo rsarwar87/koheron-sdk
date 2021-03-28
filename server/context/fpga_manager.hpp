@@ -28,7 +28,7 @@ class FpgaManager {
         // use xdev it it exists
         if (exists_fs(xdev)) {
             ctx.log<INFO>("Detected xdevcfg ... %s\n", "True" );
-            isXDevCfg = false;
+            isXDevCfg = true;
             return;
         }
         // check if fpga manager is present, without flag option, it wont work. 
