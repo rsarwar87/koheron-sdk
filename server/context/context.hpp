@@ -9,6 +9,7 @@
 #include <spi_dev.hpp>
 #include <i2c_dev.hpp>
 #include <zynq_fclk.hpp>
+#include <fpga_manager.hpp>
 
 #include "memory.hpp"
 
@@ -20,9 +21,29 @@ class Context : public ContextBase
     , spi(*this)
     , i2c(*this)
     , fclk(*this)
+    , fpga(*this)
     {
+        if (fpga.load_bitstream(instrument_name) < 0) {
+           log<PANIC>("Failed to load bitstream. Exiting server...\n");
+           exit(EXIT_FAILURE);
+        }
+
         // We set all the Zynq clocks before starting the drivers
         zynq_clocks::set_clocks(fclk);
+    }
+
+    bool fpga_rewrite_bitsream()
+    {
+
+        if (fpga.unload_bitstream() < 0) {
+           log<PANIC>("Failed to unload bitstream. \n");
+           return false;
+        }
+        if (fpga.load_bitstream(instrument_name) < 0) {
+           log<PANIC>("Failed to load bitstream. \n");
+           return false;
+        }
+        return true;
     }
 
     int init() {
@@ -38,6 +59,7 @@ class Context : public ContextBase
     SpiManager spi;
     I2cManager i2c;
     ZynqFclk fclk;
+    FpgaManager fpga;
 };
 
 #endif // __CONTEXT_HPP__

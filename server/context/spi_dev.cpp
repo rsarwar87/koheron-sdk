@@ -93,13 +93,13 @@ int SpiDev::set_word_length(uint8_t word_length_)
     return 0;
 }
 
-int SpiDev::recv(uint8_t *buffer, int64_t n_bytes)
+int SpiDev::recv(uint8_t *buffer, size_t n_bytes)
 {
     if (! is_ok())
         return -1;
 
     int bytes_rcv = 0;
-    int64_t bytes_read = 0;
+    size_t bytes_read = 0;
 
     while (bytes_read < n_bytes) {
         bytes_rcv = read(fd, buffer + bytes_read, n_bytes - bytes_read);

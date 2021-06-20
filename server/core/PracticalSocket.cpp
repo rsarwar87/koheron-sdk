@@ -162,7 +162,7 @@ void CommunicatingSocket::connect(
 
 void CommunicatingSocket::send(const void *buffer,
                                int bufferLen)  {
-  if (::send(sockDesc, (raw_type *)buffer, bufferLen, 0) < 0) {
+  if (::send(sockDesc, buffer, bufferLen, 0) < 0) {
     throw SocketException("Send failed (send())", true);
   }
 }
