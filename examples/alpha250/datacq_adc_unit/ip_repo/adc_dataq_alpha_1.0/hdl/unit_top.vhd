@@ -37,7 +37,7 @@ use UNIMACRO.vcomponents.all;
 
 entity unit_top is
 	generic (
-		C_M00_AXIS_TDATA_WIDTH	: integer	:= 16
+		C_M00_AXIS_TDATA_WIDTH	: integer	:= 32
 	);
   Port ( 
     clk_adc                         : in std_logic;
@@ -45,10 +45,10 @@ entity unit_top is
     clk_ip                          : in std_logic;
     clk_ip_rst_n                    : in std_logic;
     
-    adc_ch0                         : in std_logic_vector(C_M00_AXIS_TDATA_WIDTH-1 downto 0);
-    adc_ch1                         : in std_logic_vector(C_M00_AXIS_TDATA_WIDTH-1 downto 0);
-    adc_ch2                         : in std_logic_vector(C_M00_AXIS_TDATA_WIDTH-1 downto 0);
-    adc_ch3                         : in std_logic_vector(C_M00_AXIS_TDATA_WIDTH-1 downto 0);
+    adc_ch0                         : in std_logic_vector(16-1 downto 0);
+    adc_ch1                         : in std_logic_vector(16-1 downto 0);
+    adc_ch2                         : in std_logic_vector(16-1 downto 0);
+    adc_ch3                         : in std_logic_vector(16-1 downto 0);
     adc_freq                        : out std_logic_vector(31 downto 0);
     up_time                         : out std_logic_vector(31 downto 0);
   
@@ -64,7 +64,7 @@ entity unit_top is
     datac_window                    : in  std_logic_vector(31 downto 0);
     
     m00_axis_tvalid	                : out std_logic;
-    m00_axis_tkeep	                : out std_logic_vector(1 downto 0);
+    m00_axis_tkeep	                : out std_logic_vector(3 downto 0);
 	  m00_axis_tdata	                : out std_logic_vector(C_M00_AXIS_TDATA_WIDTH-1 downto 0);
     m00_axis_tready	                : in std_logic
     
@@ -177,7 +177,7 @@ signal error, clk_err, iprst, is_triggered          :  std_logic := '0';
 
 begin
 
-m00_axis_tkeep <= "11";
+m00_axis_tkeep <= "1111";
 U_CLK_DOMAINS : clk_domain_crossover 
   Port map ( 
     clk_adc                         => clk_adc        ,
@@ -230,13 +230,17 @@ U_CLK_DOMAINS : clk_domain_crossover
             trigger_buf <= ext_trigger;
             case channel_select is
                 when "00" =>
-                    data_in <= adc_ch0;
+                    data_in(15 downto 0) <= adc_ch0;
+                    data_in(31 downto 16) <= adc_ch1;
                 when "01" =>
-                    data_in <= adc_ch1;
+                    data_in(15 downto 0) <= adc_ch0;
+                    data_in(31 downto 16) <= adc_ch1;
                 when "10" =>
-                    data_in <= adc_ch2;
+                    data_in(15 downto 0) <= adc_ch2;
+                    data_in(31 downto 16) <= adc_ch3;
                 when others =>
-                    data_in <= adc_ch3;
+                    data_in(15 downto 0) <= adc_ch2;
+                    data_in(31 downto 16) <= adc_ch3;
             end case;
             
             -- status

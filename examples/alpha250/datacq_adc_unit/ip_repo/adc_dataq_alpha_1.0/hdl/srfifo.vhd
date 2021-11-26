@@ -36,7 +36,7 @@ use xpm.vcomponents.all;
 
 entity sr_fifo is
         generic (
-            C_M00_AXIS_TDATA_WIDTH	: integer	:= 16
+            C_M00_AXIS_TDATA_WIDTH	: integer	:= 32
         );
     Port ( CLK : in STD_LOGIC;
            RST : in STD_LOGIC := '0';
@@ -117,11 +117,11 @@ FI: xpm_fifo_sync
       PROG_EMPTY_THRESH => 10,    -- DECIMAL
       PROG_FULL_THRESH => 10,     -- DECIMAL
       RD_DATA_COUNT_WIDTH => 9,   -- DECIMAL ----
-      READ_DATA_WIDTH => 16,      -- DECIMAL
+      READ_DATA_WIDTH => C_M00_AXIS_TDATA_WIDTH,      -- DECIMAL
       READ_MODE => "std",         -- String
       USE_ADV_FEATURES => "0000", -- String
       WAKEUP_TIME => 0,           -- DECIMAL
-      WRITE_DATA_WIDTH => 16,     -- DECIMAL
+      WRITE_DATA_WIDTH => C_M00_AXIS_TDATA_WIDTH,     -- DECIMAL
       WR_DATA_COUNT_WIDTH => 9    -- DECIMAL
    )
    port map (

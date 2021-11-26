@@ -120,7 +120,7 @@ cell xilinx.com:ip:smartconnect:1.0 dma_interconnect_s2mm {
 }
 
 cell xilinx.com:ip:axis_dwidth_converter:1.1 axis_dwidth_converter_s2mm {
-  S_TDATA_NUM_BYTES 2
+  S_TDATA_NUM_BYTES 4
   M_TDATA_NUM_BYTES 8
   HAS_TLAST.VALUE_SRC USER 
   HAS_TKEEP.VALUE_SRC USER

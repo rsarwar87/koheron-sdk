@@ -39,7 +39,7 @@ use UNIMACRO.vcomponents.all;
 
 entity trigger_module is
         generic (
-            C_M00_AXIS_TDATA_WIDTH	: integer	:= 16
+            C_M00_AXIS_TDATA_WIDTH	: integer	:= 32
         );
     Port ( clk           : in STD_LOGIC;
            nrst           : in STD_LOGIC;
@@ -144,11 +144,15 @@ begin
                 --tdata <= data_in;
                 in_simulation <= '0';
                 tdata(15 downto 14) <= "00";
+                tdata(31 downto 30) <= "00";
                 tdata(13) <= data_in(15);
+                tdata(29) <= data_in(31);
                 tdata(12 downto 0) <= not data_in(14 downto 2);
+                tdata(28 downto 16) <= not data_in(30 downto 18);
             else
                 ext_trigger_buffer <= sim_trigger_in;
-                tdata <= count(15 downto 0);
+                tdata(15 downto 0) <= count(15 downto 0);
+                tdata(31 downto 16) <= count(15 downto 0);
                 in_simulation <= '1';
             end if;
             
@@ -164,7 +168,7 @@ begin
            trigger_delay <= delay_window;
            trigger_duration_latched <= trigger_duration_latched;
            trigger_delay_latched <= trigger_delay_latched;
-           tdata_buf <= x"F000";
+           tdata_buf <= x"F000F000";
            
            do_prepare_delay <= do_prepare;
            do_arm_delay     <= do_arm;
@@ -193,7 +197,7 @@ begin
                   state <= s_seeking;
                   state_out <= "0011";
               when s_seeking => 
-                  tdata_buf <= x"FF00";
+                  tdata_buf <= x"FF00FF00";
                   rst_cnter <= '0';
                   is_active <= '1';
                   if ext_trigger_buffer = '0' and ext_trigger_buffer_delay = '1' then
@@ -208,7 +212,7 @@ begin
                   is_active <= '1';
                   is_triggered <= '1';
                   in_delay     <= '1';
-                  tdata_buf <= x"FFF0";
+                  tdata_buf <= x"FFF0FFF0";
                   count <= std_logic_vector(unsigned(count)  + 1);
                   if count = trigger_delay_latched then
                      state <= s_triggered;
@@ -229,7 +233,7 @@ begin
                   is_active <= '0';
                   is_triggered <= '1';
                   ext_en_cntr <= '0';
-                  tdata_buf <= x"FFFF";
+                  tdata_buf <= x"FFFFFFFF";
                   tvalid <= m_axis_tready;
                   if iprst = '1' then
                      state <= s_idle;
