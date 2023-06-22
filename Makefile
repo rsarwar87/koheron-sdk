@@ -14,8 +14,8 @@ TMP ?= tmp
 KOHERON_VERSION_FILE := $(SDK_PATH)/version
 KOHERON_VERSION := $(shell cat $(KOHERON_VERSION_FILE))
 VIVADO_VERSION := 2020.1
-VIVADO_PATH := /tools/Xilinx/Vivado
-VITIS_PATH := /tools/Xilinx/Vitis
+VIVADO_PATH := /opt/Xilinx/Vivado
+VITIS_PATH := /opt/Xilinx/Vitis
 PYTHON := python3
 
 .PHONY: help
