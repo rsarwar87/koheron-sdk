@@ -1,0 +1,1627 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spirit:component xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <spirit:vendor>user.org</spirit:vendor>
+  <spirit:library>user</spirit:library>
+  <spirit:name>adc_triggered_dataq</spirit:name>
+  <spirit:version>1.0</spirit:version>
+  <spirit:busInterfaces>
+    <spirit:busInterface>
+      <spirit:name>S00_AXI</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="aximm" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="aximm_rtl" spirit:version="1.0"/>
+      <spirit:slave>
+        <spirit:memoryMapRef spirit:memoryMapRef="S00_AXI"/>
+      </spirit:slave>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>AWADDR</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_awaddr</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>AWPROT</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_awprot</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>AWVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_awvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>AWREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_awready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>WDATA</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_wdata</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>WSTRB</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_wstrb</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>WVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_wvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>WREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_wready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>BRESP</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_bresp</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>BVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_bvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>BREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_bready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>ARADDR</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_araddr</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>ARPROT</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_arprot</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>ARVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_arvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>ARREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_arready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RDATA</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_rdata</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RRESP</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_rresp</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_rvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_rready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>WIZ_DATA_WIDTH</spirit:name>
+          <spirit:value spirit:format="long" spirit:id="BUSIFPARAM_VALUE.S00_AXI.WIZ_DATA_WIDTH" spirit:choiceRef="choice_list_6fc15197">32</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
+          <spirit:name>WIZ_NUM_REG</spirit:name>
+          <spirit:value spirit:format="long" spirit:id="BUSIFPARAM_VALUE.S00_AXI.WIZ_NUM_REG" spirit:minimum="4" spirit:maximum="512" spirit:rangeType="long">32</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
+          <spirit:name>SUPPORTS_NARROW_BURST</spirit:name>
+          <spirit:value spirit:format="long" spirit:id="BUSIFPARAM_VALUE.S00_AXI.SUPPORTS_NARROW_BURST" spirit:choiceRef="choice_pairs_ce1226b1">0</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>M00_AXIS</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis_rtl" spirit:version="1.0"/>
+      <spirit:master/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TDATA</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>m00_axis_tdata</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>m00_axis_tvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>m00_axis_tready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TKEEP</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>m00_axis_tkeep</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>WIZ_DATA_WIDTH</spirit:name>
+          <spirit:value spirit:format="long" spirit:id="BUSIFPARAM_VALUE.M00_AXIS.WIZ_DATA_WIDTH" spirit:choiceRef="choice_list_6fc15197">32</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>S00_AXI_RST</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
+      <spirit:slave/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RST</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_aresetn</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>POLARITY</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.S00_AXI_RST.POLARITY" spirit:choiceRef="choice_list_9d8b0d81">ACTIVE_LOW</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>S00_AXI_CLK</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock_rtl" spirit:version="1.0"/>
+      <spirit:slave/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>CLK</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_aclk</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>ASSOCIATED_BUSIF</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.S00_AXI_CLK.ASSOCIATED_BUSIF">S00_AXI</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
+          <spirit:name>ASSOCIATED_RESET</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.S00_AXI_CLK.ASSOCIATED_RESET">s00_axi_aresetn</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>adc_rst_n</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
+      <spirit:slave/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RST</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>adc_rst_n</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>POLARITY</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.ADC_RST_N.POLARITY" spirit:choiceRef="choice_list_9d8b0d81">ACTIVE_LOW</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>adc_clk</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock_rtl" spirit:version="1.0"/>
+      <spirit:slave/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>CLK</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>adc_clk</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>ASSOCIATED_RESET</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.ADC_CLK.ASSOCIATED_RESET">adc_rst_n</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
+          <spirit:name>ASSOCIATED_BUSIF</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.ADC_CLK.ASSOCIATED_BUSIF">M00_AXIS</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>clk_ref</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock_rtl" spirit:version="1.0"/>
+      <spirit:slave/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>CLK</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>clk_ref</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+    </spirit:busInterface>
+  </spirit:busInterfaces>
+  <spirit:memoryMaps>
+    <spirit:memoryMap>
+      <spirit:name>S00_AXI</spirit:name>
+      <spirit:addressBlock>
+        <spirit:name>S00_AXI_reg</spirit:name>
+        <spirit:baseAddress spirit:format="long" spirit:resolve="user">0</spirit:baseAddress>
+        <spirit:range spirit:format="long">4096</spirit:range>
+        <spirit:width spirit:format="long">32</spirit:width>
+        <spirit:usage>register</spirit:usage>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>OFFSET_BASE_PARAM</spirit:name>
+            <spirit:value spirit:id="ADDRBLOCKPARAM_VALUE.S00_AXI.S00_AXI_REG.OFFSET_BASE_PARAM">C_S00_AXI_BASEADDR</spirit:value>
+          </spirit:parameter>
+          <spirit:parameter>
+            <spirit:name>OFFSET_HIGH_PARAM</spirit:name>
+            <spirit:value spirit:id="ADDRBLOCKPARAM_VALUE.S00_AXI.S00_AXI_REG.OFFSET_HIGH_PARAM">C_S00_AXI_HIGHADDR</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:addressBlock>
+    </spirit:memoryMap>
+  </spirit:memoryMaps>
+  <spirit:model>
+    <spirit:views>
+      <spirit:view>
+        <spirit:name>xilinx_vhdlsynthesis</spirit:name>
+        <spirit:displayName>VHDL Synthesis</spirit:displayName>
+        <spirit:envIdentifier>vhdlSource:vivado.xilinx.com:synthesis</spirit:envIdentifier>
+        <spirit:language>vhdl</spirit:language>
+        <spirit:modelName>adc_triggered_dataq_unit_v1_0</spirit:modelName>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_vhdlsynthesis_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>70996cba</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>xilinx_vhdlbehavioralsimulation</spirit:name>
+        <spirit:displayName>VHDL Simulation</spirit:displayName>
+        <spirit:envIdentifier>vhdlSource:vivado.xilinx.com:simulation</spirit:envIdentifier>
+        <spirit:language>vhdl</spirit:language>
+        <spirit:modelName>adc_triggered_dataq_unit_v1_0</spirit:modelName>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_vhdlbehavioralsimulation_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>70996cba</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>xilinx_xpgui</spirit:name>
+        <spirit:displayName>UI Layout</spirit:displayName>
+        <spirit:envIdentifier>:vivado.xilinx.com:xgui.ui</spirit:envIdentifier>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_xpgui_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>fbed2263</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>bd_tcl</spirit:name>
+        <spirit:displayName>Block Diagram</spirit:displayName>
+        <spirit:envIdentifier>:vivado.xilinx.com:block.diagram</spirit:envIdentifier>
+        <spirit:fileSetRef>
+          <spirit:localName>bd_tcl_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>45a2f450</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>xilinx_testbench</spirit:name>
+        <spirit:displayName>Test Bench</spirit:displayName>
+        <spirit:envIdentifier>:vivado.xilinx.com:simulation.testbench</spirit:envIdentifier>
+        <spirit:modelName>tb_ip</spirit:modelName>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_testbench_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>08ab1cf4</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+    </spirit:views>
+    <spirit:ports>
+      <spirit:port>
+        <spirit:name>adc_clk</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>adc_rst_n</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>adc_ch0</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_M00_AXIS_TDATA_WIDTH&apos;)) - 1)">15</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>adc_ch1</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_M00_AXIS_TDATA_WIDTH&apos;)) - 1)">15</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>adc_ch2</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_M00_AXIS_TDATA_WIDTH&apos;)) - 1)">15</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>adc_ch3</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_M00_AXIS_TDATA_WIDTH&apos;)) - 1)">15</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>ext_trigger</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>clk_ref</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_aclk</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_aresetn</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_awaddr</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_ADDR_WIDTH&apos;)) - 1)">6</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_awprot</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">2</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_awvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_awready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_wdata</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_DATA_WIDTH&apos;)) - 1)">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_wstrb</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="((spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_DATA_WIDTH&apos;)) / 8) - 1)">3</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_wvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_wready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_bresp</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">1</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_bvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_bready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_araddr</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_ADDR_WIDTH&apos;)) - 1)">6</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_arprot</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">2</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_arvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_arready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_rdata</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_DATA_WIDTH&apos;)) - 1)">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_rresp</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">1</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_rvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_rready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>m00_axis_tvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>m00_axis_tdata</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_M00_AXIS_TDATA_WIDTH&apos;)) - 1)">15</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>m00_axis_tready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>m00_axis_tkeep</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">1</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_vhdlsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_vhdlbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+    </spirit:ports>
+    <spirit:modelParameters>
+      <spirit:modelParameter xsi:type="spirit:nameValueTypeType" spirit:dataType="integer">
+        <spirit:name>C_M00_AXIS_TDATA_WIDTH</spirit:name>
+        <spirit:displayName>C M00 AXIS TDATA WIDTH</spirit:displayName>
+        <spirit:description>Width of S_AXIS address bus. The slave accepts the read and write addresses of width C_M_AXIS_TDATA_WIDTH.</spirit:description>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_M00_AXIS_TDATA_WIDTH" spirit:order="3" spirit:rangeType="long">16</spirit:value>
+      </spirit:modelParameter>
+      <spirit:modelParameter spirit:dataType="integer">
+        <spirit:name>C_S00_AXI_DATA_WIDTH</spirit:name>
+        <spirit:displayName>C S00 AXI DATA WIDTH</spirit:displayName>
+        <spirit:description>Width of S_AXI data bus</spirit:description>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S00_AXI_DATA_WIDTH" spirit:order="5" spirit:rangeType="long">32</spirit:value>
+      </spirit:modelParameter>
+      <spirit:modelParameter spirit:dataType="integer">
+        <spirit:name>C_S00_AXI_ADDR_WIDTH</spirit:name>
+        <spirit:displayName>C S00 AXI ADDR WIDTH</spirit:displayName>
+        <spirit:description>Width of S_AXI address bus</spirit:description>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S00_AXI_ADDR_WIDTH" spirit:order="6" spirit:rangeType="long">7</spirit:value>
+      </spirit:modelParameter>
+    </spirit:modelParameters>
+  </spirit:model>
+  <spirit:choices>
+    <spirit:choice>
+      <spirit:name>choice_list_6fc15197</spirit:name>
+      <spirit:enumeration>32</spirit:enumeration>
+    </spirit:choice>
+    <spirit:choice>
+      <spirit:name>choice_list_9d8b0d81</spirit:name>
+      <spirit:enumeration>ACTIVE_HIGH</spirit:enumeration>
+      <spirit:enumeration>ACTIVE_LOW</spirit:enumeration>
+    </spirit:choice>
+    <spirit:choice>
+      <spirit:name>choice_list_af38333b</spirit:name>
+      <spirit:enumeration>16</spirit:enumeration>
+    </spirit:choice>
+    <spirit:choice>
+      <spirit:name>choice_pairs_ce1226b1</spirit:name>
+      <spirit:enumeration spirit:text="true">1</spirit:enumeration>
+      <spirit:enumeration spirit:text="false">0</spirit:enumeration>
+    </spirit:choice>
+  </spirit:choices>
+  <spirit:fileSets>
+    <spirit:fileSet>
+      <spirit:name>xilinx_vhdlsynthesis_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>hdl/SyncToClock.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/adc_triggered_dataq_unit_v1_0_S00_AXI.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/clk_domain_crossover.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/simple_trigger.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/srfifo.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/unit_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/adc_triggered_dataq_unit_v1_0.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>CHECKSUM_e5bec09d</spirit:userFileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_vhdlbehavioralsimulation_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>hdl/SyncToClock.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/adc_triggered_dataq_unit_v1_0_S00_AXI.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/clk_domain_crossover.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/simple_trigger.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/srfifo.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/unit_top.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/adc_triggered_dataq_unit_v1_0.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_xpgui_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>xgui/adc_triggered_dataq_v1_0.tcl</spirit:name>
+        <spirit:fileType>tclSource</spirit:fileType>
+        <spirit:userFileType>CHECKSUM_fbed2263</spirit:userFileType>
+        <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>bd_tcl_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>bd/bd.tcl</spirit:name>
+        <spirit:fileType>tclSource</spirit:fileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_testbench_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>hdl/tb_ip.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_simulation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_testbench</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/tb_ip_behav.wcfg</spirit:name>
+        <spirit:fileType>unknown</spirit:fileType>
+        <spirit:userFileType>USED_IN_simulation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_testbench</spirit:userFileType>
+      </spirit:file>
+    </spirit:fileSet>
+  </spirit:fileSets>
+  <spirit:description>My new AXI IP</spirit:description>
+  <spirit:parameters>
+    <spirit:parameter>
+      <spirit:name>C_M00_AXIS_TDATA_WIDTH</spirit:name>
+      <spirit:displayName>C M00 AXIS TDATA WIDTH</spirit:displayName>
+      <spirit:description>Width of S_AXIS address bus. The slave accepts the read and write addresses of width C_M_AXIS_TDATA_WIDTH.</spirit:description>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.C_M00_AXIS_TDATA_WIDTH" spirit:choiceRef="choice_list_af38333b" spirit:order="3">16</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.C_M00_AXIS_TDATA_WIDTH">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>C_S00_AXI_DATA_WIDTH</spirit:name>
+      <spirit:displayName>C S00 AXI DATA WIDTH</spirit:displayName>
+      <spirit:description>Width of S_AXI data bus</spirit:description>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.C_S00_AXI_DATA_WIDTH" spirit:choiceRef="choice_list_6fc15197" spirit:order="5">32</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.C_S00_AXI_DATA_WIDTH">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>C_S00_AXI_ADDR_WIDTH</spirit:name>
+      <spirit:displayName>C S00 AXI ADDR WIDTH</spirit:displayName>
+      <spirit:description>Width of S_AXI address bus</spirit:description>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.C_S00_AXI_ADDR_WIDTH" spirit:order="6" spirit:rangeType="long">7</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.C_S00_AXI_ADDR_WIDTH">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>C_S00_AXI_BASEADDR</spirit:name>
+      <spirit:displayName>C S00 AXI BASEADDR</spirit:displayName>
+      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.C_S00_AXI_BASEADDR" spirit:order="7" spirit:bitStringLength="32">0xFFFFFFFF</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.C_S00_AXI_BASEADDR">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>C_S00_AXI_HIGHADDR</spirit:name>
+      <spirit:displayName>C S00 AXI HIGHADDR</spirit:displayName>
+      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.C_S00_AXI_HIGHADDR" spirit:order="8" spirit:bitStringLength="32">0x00000000</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.C_S00_AXI_HIGHADDR">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>Component_Name</spirit:name>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">adc_triggered_dataq_unit_v1_0</spirit:value>
+    </spirit:parameter>
+  </spirit:parameters>
+  <spirit:vendorExtensions>
+    <xilinx:coreExtensions>
+      <xilinx:supportedFamilies>
+        <xilinx:family xilinx:lifeCycle="Pre-Production">zynq</xilinx:family>
+      </xilinx:supportedFamilies>
+      <xilinx:taxonomies>
+        <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
+      </xilinx:taxonomies>
+      <xilinx:displayName>adc_triggered_dataq_unit_v1.0</xilinx:displayName>
+      <xilinx:coreRevision>6</xilinx:coreRevision>
+      <xilinx:upgrades>
+        <xilinx:canUpgradeFrom>user.org:user:adc_triggered_dataq_unit:1.0</xilinx:canUpgradeFrom>
+      </xilinx:upgrades>
+      <xilinx:coreCreationDateTime>2020-10-19T22:47:50Z</xilinx:coreCreationDateTime>
+      <xilinx:tags>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@99f215b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@346412a5_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2f41e3d9_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@fc93efa_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6064d10d_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3b5e51c2_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@44c1e17f_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@66c8c817_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@390684b6_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1415a6a5_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4256ded4_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@374043cf_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1d3114ae_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39664e33_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@ef3550_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1aeb43a1_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@55d9b6d1_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@886ce34_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3367966b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@668095b7_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@308134df_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@68ff99fd_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@661a0b94_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7bf5ccf2_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@79f8e07a_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5dc4fedb_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@62b71c3a_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1eef62fe_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5d975584_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1f47ba13_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@304b4984_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@76e8ea60_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5608f30e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ad2d580_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1e2f59f5_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7875faee_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4dd9b97a_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@b459de2_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6d6699ea_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@217daa0c_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2d9f2eef_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@38f4e249_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@34fbcc7d_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3ec97c5_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@621a9fdd_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7e29d4a6_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@44b07137_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7d827e69_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@d20290f_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@773bf6c5_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7edf6791_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@33c473d3_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@40e8847d_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e87c3d8_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2469fc29_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4e16373e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@395b471a_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2039c523_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5f49238d_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@79a9724b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@78fc4046_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5c434032_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@24802186_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@53758527_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@19c0d349_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5b8213da_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@74849f8e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@281e52c9_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@74186049_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@8d185ca_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6508a44c_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@91298e5_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4863c5fc_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@16d10d18_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1d0221b7_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@258b1ddd_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2ec43a5d_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5de98d61_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@c657d30_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7361a827_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@43c6f0db_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@42a1351f_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@377842cf_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39717550_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5eb1740e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4eb9f737_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1168e1a3_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@639fefeb_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3eccc1e4_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1f6aeb45_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4b14035d_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@66922119_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7d133cee_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@36964d12_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@a09483a_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5241bce8_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@611efdf3_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@503d4f67_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@61fa1101_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@30b538d2_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1bc4a2f6_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31790d16_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@8fd16d1_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2d605d95_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7c4ce15_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@9d6eeff_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@61ff0d55_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7600d193_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@609e1514_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@ce0d51b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@538c6f76_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@43dff306_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@64112be6_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@64d327f9_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@563607b4_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@61f345f2_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2348b519_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@36c1f0d_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4edaae02_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7ee96dab_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4ce5c3e1_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@56f965a_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3902d296_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5b22efaa_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5f92843c_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4b34e95b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@65ad1499_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5034b645_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@61a3103e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1f46c48b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5c219e62_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2810152b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3010a652_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@13c9f251_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@76cc34d1_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@27081e17_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e56a887_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@45f24b8d_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2d5db39e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4c88c40e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@356dd36a_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4ba5c6c6_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@ef15aaa_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@8e3c96_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@593f3a0e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3a4ab8d2_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@52594b12_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1c41b734_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@58efa3d8_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2af6026b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@71ba415a_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@32844867_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@17dc195f_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e68d33c_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5f1fe8e3_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a7015de_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39a0e4f4_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@338cc982_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7fe56c7f_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1192256f_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@21393fa_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2833bcdb_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4f418dee_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@307af2b0_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31a820fa_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1224e16e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e5481c8_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@a9024da_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@d1f4422_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1948ac8a_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39bc9b97_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@724839de_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@38132be3_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@42d9acec_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3b8f6d7d_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f93c6d9_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@ac23bef_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4a6361c8_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@64dc6990_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@615bffe1_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@50b28d06_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@ef01a83_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6b3ca74f_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1e47bd52_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@535b00d8_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2514df25_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@27bd9770_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@af09491_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@358f3e7f_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@57e5e243_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@366a1d2b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7bcb6025_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7c79f6f6_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2bf21c9b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a2cb3d5_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2b727665_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39c0e121_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@e9a71b4_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a78549f_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e082d9e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2069db64_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@67872ebb_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@35f6833_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@65c99640_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@67b19398_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@379fb603_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@46d180eb_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6d3f9532_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f27e7ae_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@62f96b79_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@19a7307b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1d871bcf_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@42919310_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@47986a7a_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5970b545_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@143e5fc1_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3bcb20ca_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3f8b0888_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@147a6b9_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31e0750f_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@120ab8d1_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3f17723d_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@61893ace_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@75e72886_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4dc10c5f_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5be25c84_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@38bb654e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6490cf53_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@635aa6d4_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a101367_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@349c868b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3caa045e_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@cbd7878_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@c38b7de_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7b6035c0_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5029f754_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5f97de9b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@358b60b3_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4cdffa47_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2313c2dd_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@77856583_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1c24a5a4_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@526c4a08_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e3f45d_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6112a141_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@9abe93b_ARCHIVE_LOCATION">/media/wkspace/wkspace1/koheron/koheron-sdk-2020/examples/alpha250-1g/dataqc_adc_dma_trigger/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3e1bbe1c_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@70739cc4_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7f2d51a4_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@21445e9f_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@51247535_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@537be1d2_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7f0a984a_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@87ec1f4_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@58dbfa03_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@78ab33c5_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@16ea7795_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7c5d81cb_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2109b6ae_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6411c7e0_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4afffb34_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3cea63cc_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f6f92d4_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@343e8970_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@376c3854_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6ceb9556_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@33dec0cf_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7ac45bd3_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@77a5554d_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1d1684a1_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@464b30ff_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@18c19cfd_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@61734eb0_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7b90c81d_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@56352572_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@422f624f_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@488c66e5_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@58a12b46_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@209e5750_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f5e471a_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f3b6c34_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@532b0451_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@52122ff2_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@52bbb4f3_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@68f8f40e_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@68a46208_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7e718215_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@58d012ca_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e92f598_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@26601fba_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1ab53b06_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1e68205_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@a333cf8_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4daf0e6c_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1fa71658_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f87bdc0_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@309db1e6_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1afd477d_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@59b6b2a1_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@10f6813b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@78ee6f60_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2f8dc9e2_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@23bd6a45_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7e9f4832_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f375adb_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@a363f75_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7d0a1f40_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7fa120e5_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3c2f313a_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@a88fe77_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2abeaf2b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@94c3871_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@69da8efc_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2dd7252_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@443fe031_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@a1bf2d4_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7d270e38_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@67ab8bd0_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5bbccf2c_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@255367db_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@13b69f8d_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@59dc83e2_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@12c2e6a5_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6a1f4974_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@72d7a501_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@44cbc1d1_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@64f7ede3_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@e637837_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1160461b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@21c889f7_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4e5184be_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@72d2df76_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e102873_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4e24d07c_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@123c0c2a_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4f465c12_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7a12db01_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5a7d0a91_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@ba3367b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@50f2b402_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5c129e1b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@13eb73a4_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@233c23b8_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1c6f508d_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2931162c_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1c8e515b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2122e5f9_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3befd87e_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@79910bce_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f07e972_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5f9daf47_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6edae893_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@b3f4593_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@aa4ecef_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@419fcd2_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3a53959e_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3ee7a9d9_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5eb2e3a4_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@cc180fe_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1f247e8f_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2871e94c_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f763799_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1aa7be13_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6fa2c8dd_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f26e27d_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f41b4dc_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7692bb43_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2e9bb209_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@52cc88c5_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7b101601_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e71bb87_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@409e4c60_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4d1176eb_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5adbee25_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@609bb2c9_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7857a138_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1c91ac98_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@435460c1_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@78730cea_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@252767a1_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@17e43993_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2332a875_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a253157_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@53a3f6ab_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@67dd9ad0_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3789b82b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@17d2e7ed_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@17fdd6c1_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@28856f5b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@215db548_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2359088a_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f45ced9_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4dfda959_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@20343b48_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@79dc0cfa_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@799a872a_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3fc53fe3_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4e0e6856_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@63282648_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@794bdbd7_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@ce6f6ba_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@226974fb_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1b9bdb4d_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f999a52_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7f9e8cbc_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@644b7da0_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@38879058_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7195f685_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5d79bea5_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ab26b61_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f55bd2d_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3a910cc4_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6afa703c_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@35bff3ef_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@52c36844_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@41f1bfdf_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1fa9038a_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6881867b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@20fdb351_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@42aef69c_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@772ba52_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@40d90a26_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@319f289e_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5e59c180_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2b438df2_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@398a7e1c_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4ddaed2b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@41d8ecdb_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@49c62417_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7e95b22b_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3b30ca77_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@495b03c3_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3c1c69c4_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@8af07c5_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@41daf068_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@bca97e8_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@33ae117e_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3678e12f_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@56086910_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3ef1420_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@567675ba_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@45d2bbb1_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@17a23982_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@63565475_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@d5543fd_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a1edafa_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2e50f9d7_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@34cabf97_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4f5f3ee6_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5030ed35_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5795baed_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@65840387_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7390b5de_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3462c871_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2940df2c_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2c8c1757_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7974bf89_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f60d6af_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@c50f6ee_ARCHIVE_LOCATION">/media/2TB/workspace/rsarwar/koheron/koheron-sdk-master/examples/alpha250/datacq_adc_unit/ip_repo/adc_triggered_dataq_unit_1.0</xilinx:tag>
+      </xilinx:tags>
+    </xilinx:coreExtensions>
+    <xilinx:packagingInfo>
+      <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="4d7d2adb"/>
+      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="ed1368d5"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="3d299a4b"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="6831f81d"/>
+      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="7920f936"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="fc9cd0ab"/>
+    </xilinx:packagingInfo>
+  </spirit:vendorExtensions>
+</spirit:component>
