@@ -10,12 +10,7 @@ image=$tmp_project_path/${name}-production.img
 BOOTPART=$7
 size=1024
 
-<<<<<<< HEAD
-ubuntu_version=20.04.2
-
-=======
 ubuntu_version=20.04.5
->>>>>>> origin/master
 part1=/dev/${BOOTPART}p1
 part2=/dev/${BOOTPART}p2
 if [ "${zynq_type}" = "zynqmp" ]; then
