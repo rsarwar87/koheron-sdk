@@ -74,27 +74,27 @@ set_property -dict {PACKAGE_PIN J15   IOSTANDARD LVCMOS25  } [get_ports {IO3_D2_
 set_property -dict {PACKAGE_PIN K15   IOSTANDARD LVCMOS25  } [get_ports {IO3_D3_N}]
 
 # LED
-set_property -dict {PACKAGE_PIN H18    IOSTANDARD LVCMOS25  } [get_ports {LED_N[0]}]
-set_property -dict {PACKAGE_PIN AA14   IOSTANDARD LVCMOS25  } [get_ports {LED_N[1]}]
-set_property -dict {PACKAGE_PIN AA13   IOSTANDARD LVCMOS25  } [get_ports {LED_N[2]}]
-set_property -dict {PACKAGE_PIN AB15   IOSTANDARD LVCMOS25  } [get_ports {LED_N[3]}]
+set_property -dict {PACKAGE_PIN H18 IOSTANDARD LVCMOS25} [get_ports {LED_N[0]}]
+set_property -dict {PACKAGE_PIN AA14 IOSTANDARD LVCMOS25} [get_ports {LED_N[1]}]
+set_property -dict {PACKAGE_PIN AA13 IOSTANDARD LVCMOS25} [get_ports {LED_N[2]}]
+set_property -dict {PACKAGE_PIN AB15 IOSTANDARD LVCMOS25} [get_ports {LED_N[3]}]
 
 # User_Osc
 set_property -dict {PACKAGE_PIN L19   IOSTANDARD LVCMOS25  } [get_ports {OSC_clk_n[0]}]
 set_property -dict {PACKAGE_PIN L18   IOSTANDARD LVCMOS25  } [get_ports {OSC_clk_p[0]}]
-set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets OSC_clk_n_IBUF[0]] 
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets OSC_clk_n_IBUF[0]]
 
 # I2C_PL
 set_property -dict {PACKAGE_PIN H17   IOSTANDARD LVCMOS25  } [get_ports {I2C_INT_N}]
 set_property -dict {PACKAGE_PIN AB21  IOSTANDARD LVCMOS25  PULLUP TRUE} [get_ports {Rev4}]
 set_property -dict {PACKAGE_PIN Y21   IOSTANDARD LVCMOS25  PULLUP TRUE} [get_ports {Rev5}]
-set_property -dict {PACKAGE_PIN R15   IOSTANDARD LVCMOS25  } [get_ports {I2C_PL_scl_io}]
-set_property -dict {PACKAGE_PIN H15   IOSTANDARD LVCMOS25  } [get_ports {I2C_PL_sda_io}]
+set_property -dict {PACKAGE_PIN R15 IOSTANDARD LVCMOS25} [get_ports I2C_PL_scl_io]
+set_property -dict {PACKAGE_PIN H15 IOSTANDARD LVCMOS25} [get_ports I2C_PL_sda_io]
 
 
 # I2C_USER
-set_property -dict {PACKAGE_PIN E19   IOSTANDARD LVCMOS25  } [get_ports {I2C_USER_scl_io}]
-set_property -dict {PACKAGE_PIN E20   IOSTANDARD LVCMOS25  } [get_ports {I2C_USER_sda_io}]
+set_property -dict {PACKAGE_PIN E19 IOSTANDARD LVCMOS25} [get_ports I2C_USER_scl_io]
+set_property -dict {PACKAGE_PIN E20 IOSTANDARD LVCMOS25} [get_ports I2C_USER_sda_io]
 
 #set_property -dict {PACKAGE_PIN Y7    IOSTANDARD LVCMOS25  } [get_ports {CLK33}]
 #create_clock -name CLK33 -period 30.000 [get_ports {CLK33}]
@@ -159,6 +159,8 @@ set_property -dict {PACKAGE_PIN P21   IOSTANDARD LVCMOS25  } [get_ports {USBH_SS
 set_property -dict {PACKAGE_PIN P20   IOSTANDARD LVCMOS25  } [get_ports {USBH_SSTX_P}]
 
 # DDR3
-set_property -dict {PACKAGE_PIN AA22  IOSTANDARD LVCMOS25  } [get_ports {DDR3_VSEL}]
+set_property -dict {PACKAGE_PIN AA22 IOSTANDARD LVCMOS25} [get_ports DDR3_VSEL]
 set_property -dict {PACKAGE_PIN U14   IOSTANDARD LVCMOS25  } [get_ports {USB_RST_N}]
+
+
 

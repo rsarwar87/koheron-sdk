@@ -235,7 +235,7 @@ diff -rupN devicetree.orig/pcw.dtsi devicetree/pcw.dtsi
 +	pinctrl-0 = <&pinctrl_usb0_default>;
  };
  &clkc {
- 	fclk-enable = <0x1>;
+ 	fclk-enable = <0xf>;
  	ps-clk-frequency = <33333333>;
  };
 +&pinctrl0 {
