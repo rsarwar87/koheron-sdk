@@ -28,7 +28,7 @@ else
     qemu_path=/usr/bin/qemu-arm-static
 fi
 
-ubuntu_version=20.04.2
+ubuntu_version=20.04.5
 part1=/dev/${BOOTPART}p1
 part2=/dev/${BOOTPART}p2
 if [ "${zynq_type}" = "zynqmp" ]; then
