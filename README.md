@@ -1,6 +1,6 @@
 # koheron-sdk
 
-[![Circle CI](https://circleci.com/gh/Koheron/Koheron.svg?style=shield&circle-token=ad29c97013160e9c7f0572c722c9e4ee42217e97)](https://circleci.com/gh/Koheron/koheron-sdk)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/Koheron/koheron-sdk/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/Koheron/koheron-sdk/tree/master)
 [![PyPI version](https://img.shields.io/pypi/v/koheron.svg)](https://pypi.python.org/pypi/koheron)
 
 ## What is Koheron Software Development Kit ?
@@ -9,7 +9,7 @@
 
 ## Getting started
 
-1. [Install Vivado 2018.2](https://koheron.com/software-development-kit/documentation/setup-development-machine)
+1. [Install Vivado 2020.1](https://koheron.com/software-development-kit/documentation/setup-development-machine)
 
 2. Install required packages
 
@@ -17,7 +17,7 @@
     $ make setup
     ```
 
-3. Install Ubuntu 18.04 for Zynq ([Download SD card image](https://www.koheron.com/software-development-kit/documentation/ubuntu-zynq/))
+3. Install Ubuntu 20.04 for Zynq ([Download SD card image](https://www.koheron.com/software-development-kit/documentation/ubuntu-zynq/))
 
 4. Build and run the led-blinker instrument
 
@@ -33,6 +33,7 @@ Ready to develop your instrument? Read the [documentation](https://www.koheron.c
 * [`loopback`](https://github.com/Koheron/koheron-sdk/tree/master/examples/alpha250/loopback) : minimal instrument.
 * [`adc-dac-bram`](https://github.com/Koheron/koheron-sdk/tree/master/examples/alpha250/adc-dac-bram) : set DAC waveforms and get ADC using Block RAMs.
 * [`adc-dac-dma`](https://github.com/Koheron/koheron-sdk/tree/master/examples/alpha250/adc-dac-dma) : set DAC waveforms and get ADC using DMA.
+* [`phase-noise-analyzer`](https://github.com/Koheron/koheron-sdk/tree/master/examples/alpha250/adc-dac-dma) : phase noise analyzer.
 
 ## Red Pitaya designs
 

@@ -49,7 +49,10 @@ OBJ := $(SERVER_OBJ) $(INTERFACE_DRIVERS_OBJ) $(DRIVERS_OBJ) $(CONTEXT_OBJS)
 DEP := $(subst .o,.d,$(OBJ))
 -include $(DEP)
 
-SERVER_CCXX = /usr/bin/$(GCC_ARCH)-g++-7 -flto
+UID = $(shell id -u)
+GID = $(shell id -g) 
+SERVER_CCXX := docker run --rm -v $(SDK_FULL_PATH):/home/containeruser/wkspace:Z -u $(UID):$(GID) -w /home/containeruser/wkspace gnu-gcc-9.5 $(GCC_ARCH)-g++-$(GCC_VERSION) -flto
+#SERVER_CCXX := /usr/bin/arm-linux-gnu-g++ -flto
 
 SERVER_CCXXFLAGS = -Wall -Werror -Wextra
 SERVER_CCXXFLAGS += -Wpedantic -Wfloat-equal -Wunused-macros -Wcast-qual -Wuseless-cast
@@ -62,10 +65,6 @@ SERVER_CCXXFLAGS += -I$(TMP_SERVER_PATH) -I$(SERVER_PATH)/jsoncpp/include/ -I$(S
 SERVER_CCXXFLAGS += -DKOHERON_VERSION=$(KOHERON_VERSION).$(shell git rev-parse --short HEAD)
 SERVER_CCXXFLAGS += -MMD -MP -O3 -lstdc++fs $(GCC_FLAGS) -L$(SERVER_PATH)/jsoncpp_build/lib/ #-ljsoncpp
 SERVER_CCXXFLAGS += -std=c++17 -pthread
-
-PHONY: gcc_flags
-gcc_flags:
-	@echo $(GCC_FLAGS) -std=c++2a
 
 PHONY: gcc_flags
 gcc_flags:
