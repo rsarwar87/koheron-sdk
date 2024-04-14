@@ -199,7 +199,7 @@ setup_server: setup_base
 setup_web: setup_base
 	sudo bash setup/install_web_$(DISTRO).sh
 	#sudo rm -f /usr/bin/node && sudo ln -s /usr/bin/nodejs /usr/bin/node
-	npm install typescript
+	npm install typescript ts-node
 	npm install @types/jquery@2.0.46 @types/jquery-mousewheel@3.1.5 websocket @types/node
 
 .PHONY: setup_os
