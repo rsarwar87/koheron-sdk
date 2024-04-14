@@ -1,12 +1,22 @@
 proc add_ctl_sts {{mclk "None"}  {mrstn "None"}} {
   global isZynqMP
+  global include_dna
+
+  if {[info exists include_dna]} {
+    if {$include_dna == 1 } {
+      puts "Including dna"
+    }
+  } else {
+    set include_dna 0 
+  }
   # dna (hidden ports)
   add_config_register ctl control $mclk $mrstn config::ctl_register $config::control_size
-  if {$isZynqMP == 0} {
-    add_status_register sts status $mclk $mrstn config::sts_register $config::status_size
-  } else {
-    add_status_register sts status $mclk $mrstn config::sts_register $config::status_size 0 0 
-  }
+  add_status_register sts status $mclk $mrstn config::sts_register $config::status_size 0 $include_dna
+  #if {$isZynqMP == 0} {
+  #  add_status_register sts status $mclk $mrstn config::sts_register $config::status_size
+  #} else {
+  #  add_status_register sts status $mclk $mrstn config::sts_register $config::status_size 0 0 
+  #}
 
   if {$config::ps_control_size > 0} {
     add_config_register ps_ctl ps_control "None" "None" config::ps_ctl_register $config::ps_control_size
@@ -83,11 +93,7 @@ proc add_status_register {module_name memory_name mclk mrstn reg_names {num_port
   set bd [current_bd_instance .]
   current_bd_instance [create_bd_cell -type hier $module_name]
 
-  if {$has_dna == 1} {
-    set n_hidden_ports 2
-  } else {
-    set n_hidden_ports 0
-  }
+  set n_hidden_ports 2
 
   for {set i 0} {$i < $num_ports} {incr i} {
     create_bd_pin -dir I -from 31 -to 0 $register($i)
@@ -171,14 +177,12 @@ proc add_status_register {module_name memory_name mclk mrstn reg_names {num_port
     incr concat_idx
   }
 
-if {$has_dna == 1} {
-  if {$isZynqMP == 0} {
+  if {$isZynqMP == 0 && $has_dna == 1} {
     connect_pins concat_0/In0 [get_slice_pin dna/dna_data 31 0]
     connect_pins concat_0/In1 [get_slice_pin dna/dna_data 63 32]
   } else {
     connect_pins concat_0/In0 [get_constant_pin 4222 32]
     connect_pins concat_0/In1 [get_constant_pin 78661 32]
-  }
   }
 
   # Other ports
