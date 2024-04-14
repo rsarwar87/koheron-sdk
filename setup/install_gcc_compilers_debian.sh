@@ -1,5 +1,6 @@
 apt-get install -y g++-$1-arm-linux-gnueabihf
 apt-get install -y g++-$1-aarch64-linux-gnu
+GCC_VERSION=$1
 update-alternatives --install /usr/bin/arm-linux-gnueabihf-g++ arm-linux-gnueabihf-g++ /usr/bin/arm-linux-gnueabihf-g++-${GCC_VERSION}  100
 update-alternatives --install /usr/bin/arm-linux-gnueabihf-gcc arm-linux-gnueabihf-gcc /usr/bin/arm-linux-gnueabihf-gcc-${GCC_VERSION}  100
 update-alternatives --install /usr/bin/arm-linux-gnueabihf-gcc-ar arm-linux-gnueabihf-gcc-ar /usr/bin/arm-linux-gnueabihf-gcc-ar-${GCC_VERSION}  100
