@@ -27,8 +27,8 @@ set_gcc_version:
 	unlink /usr/bin/arm-linux-gnueabihf-gcc
 	ln -s /usr/bin/arm-linux-gnueabihf-gcc-$(GCC_VERSION) /usr/bin/arm-linux-gnueabihf-gcc
 	arm-linux-gnueabihf-gcc --version
-BUILD_METHOD := native
-#BUILD_METHOD = docker
+#BUILD_METHOD := native
+BUILD_METHOD = docker
 
 # Use this command to set GCC_VERSION to 9 on Ubuntu 22.04
 .PHONY: set_gcc_version
@@ -42,7 +42,7 @@ BUILD_METHOD := native
 
 OS=$(shell lsb_release -si)
 VER=$(shell lsb_release -sr)
-DISTRO := $(shell ./setup/get_distro.sh)
+DISTRO := $(shell ./.setup/get_distro.sh)
 
 
 .PHONY: help
@@ -178,8 +178,8 @@ setup: setup_docker setup_fpga setup_server setup_web setup_os
 
 .PHONY: setup_base
 setup_base:
-	sudo bash setup/install_gcc_compilers_$(DISTRO).sh $(GCC_VERSION) || true
-	sudo bash setup/install_dependencies_$(DISTRO).sh $(PYTHON)
+	sudo bash .setup/install_gcc_compilers_$(DISTRO).sh $(GCC_VERSION) || true
+	sudo bash .setup/install_dependencies_$(DISTRO).sh $(PYTHON)
 	$(PIP) install -r $(SDK_PATH)/requirements.txt --break-system-packages
 	$(PIP) install $(SDK_PATH)/python --break-system-packages
 
@@ -197,14 +197,22 @@ setup_server: setup_base
 
 .PHONY: setup_web
 setup_web: setup_base
-	sudo bash setup/install_web_$(DISTRO).sh
+	sudo bash .setup/install_web_$(DISTRO).sh
 	#sudo rm -f /usr/bin/node && sudo ln -s /usr/bin/nodejs /usr/bin/node
 	npm install typescript ts-node
 	npm install @types/jquery@2.0.46 @types/jquery-mousewheel@3.1.5 websocket @types/node
 
 .PHONY: setup_os
 setup_os: setup_base
-	sudo bash setup/install_os_$(DISTRO).sh
+	sudo bash .setup/install_os_$(DISTRO).sh
+
+.PHONY: local_setup_only
+local_setup_only:
+	$(PIP) install -r $(SDK_PATH)/requirements.txt --break-system-packages
+	$(PIP) install $(SDK_PATH)/python --break-system-packages
+	npm install typescript ts-node
+	npm install @types/jquery@2.0.46 @types/jquery-mousewheel@3.1.5 websocket @types/node
+
 
 ###############################################################################
 # CLEAN TARGETS
