@@ -1,4 +1,5 @@
 // Zynq bistream loader
+// 
 // (c) Koheron
 
 #ifndef __SERVER_CONTEXT_FPGA_MANAGER__
@@ -10,7 +11,7 @@
 #include <string>
 #include <vector>
 #include <sys/mount.h>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <context_base.hpp>
 #include "memory.hpp"
 
@@ -40,7 +41,7 @@ class FpgaManager {
             bit_extension = ".bit.bin";
             chandle_path = fmanager_done;
             fhandle_path = fmanager_firmware;
-            namespace fs = std::experimental::filesystem;
+            namespace fs = std::filesystem;
 
             // check if fpga manager is present 
             bool firmware_exists = exists_fs(fmanager_firmware);
@@ -72,7 +73,7 @@ class FpgaManager {
                 // remove any previous overlay
                 if (exists_fs(overlay_path)) 
                 {
-                    fs::remove_all(overlay_path);
+                    rmdir(overlay_path.c_str());
                 }
                 if (exists_fs(overlay_path))
                     ctx.log<PANIC>("Failed to remove previous overlay ...\n");
@@ -99,13 +100,13 @@ class FpgaManager {
 
     int unload_bitstream()
     {
-      namespace fs = std::experimental::filesystem;
+      namespace fs = std::filesystem;
       if (!useOverlay) return 0;
 
       // remove any previous overlay
       if (exists_fs(overlay_path)) 
       {
-          fs::remove_all(overlay_path);
+          rmdir(overlay_path.c_str());
       }
       if (exists_fs(overlay_path))
       {
@@ -202,7 +203,7 @@ class FpgaManager {
 
     inline bool exists_fs(const std::string& p)
     {
-        namespace fs = std::experimental::filesystem;
+        namespace fs = std::filesystem;
         fs::file_status s = fs::file_status{};
         if(fs::status_known(s) ? fs::exists(s) : fs::exists(p))
         {
