@@ -9,7 +9,7 @@ zynq_type=$6
 image=$tmp_project_path/${name}-development.img
 BOOTPART=$7
 
-size=2560
+size=3000
 
 
 ubuntu_version=20.04.5
@@ -47,7 +47,7 @@ timezone=Europe/Paris
 
 parted -s $device mklabel msdos
 parted -s $device mkpart primary fat16 4MB 1024MB
-parted -s $device mkpart primary ext4 512MB 100%
+parted -s $device mkpart primary ext4 1024MB 100%
 
 boot_dev=/dev/`lsblk -ln -o NAME -x NAME $device | sed '2!d'`
 root_dev=/dev/`lsblk -ln -o NAME -x NAME $device | sed '3!d'`
