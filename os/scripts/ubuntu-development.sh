@@ -12,7 +12,7 @@ BOOTPART=$7
 size=3000
 
 
-ubuntu_version=20.04.5
+ubuntu_version=22.04.1
 part1=/dev/${BOOTPART}p1
 part2=/dev/${BOOTPART}p2
 if [ "${zynq_type}" = "zynqmp" ]; then
@@ -30,6 +30,7 @@ else
 fi
 
 dd if=/dev/zero of=$image bs=1M count=${size}
+echo "dd if=/dev/zero of=$image bs=1M count=${size}"
 
 device=`losetup -f`
 
@@ -75,7 +76,7 @@ tar -zxf tmp/$root_tar --directory=$root_dir
 # Add missing configuration files and packages
 
 cp /etc/resolv.conf $root_dir/etc/
-#cp /usr/bin/qemu-arm-static $root_dir/usr/bin/
+cp /usr/bin/qemu-arm-static $root_dir/usr/bin/
 cp $qemu_path $root_dir/usr/bin/
 
 # Add Web app
@@ -106,7 +107,12 @@ cp $os_path/scripts/unzip_default_instrument.sh $root_dir/usr/local/instruments/
 echo "${name}.zip" > $root_dir/usr/local/instruments/default
 cp ${tmp_project_path}/${name}.zip $root_dir/usr/local/instruments
 
+mount --bind /dev $root_dir/dev
+mount --bind /dev/pts $root_dir/dev/pts
+mount --bind /proc $root_dir/proc
+mount --bind /sys $root_dir/sys
 chroot $root_dir <<- EOF_CHROOT
+date
 export LANG=C
 export LC_ALL=C
 # Add /usr/local/koheron-server to the environment PATH
@@ -136,6 +142,7 @@ cat <<- EOF_CAT >> etc/hosts
 EOF_CAT
 
 sed -i '/^# deb .* universe$/s/^# //' etc/apt/sources.list
+apt install gpgv1
 apt update
 apt -y upgrade
 apt -y install locales
@@ -159,16 +166,14 @@ apt install -y nginx
 sudo dpkg --configure -a
 apt install -y build-essential python3-dev
 sudo dpkg --configure -a
-apt install -y python-numpy
+apt install -y python3-numpy
 sudo dpkg --configure -a
-apt install -y python3-pip python-setuptools
+apt install -y python3-pip 
 sudo dpkg --configure -a
-pip3 install wheel
-pip3 install --upgrade pip==20.2.2
-pip3 install flask
+pip3 install flask 
 pip3 install uwsgi
-pip3 install werkzeug==2.2.2
-pip3 install simplejson
+pip3 install werkzeug 
+pip3 install simplejson  
 
 systemctl enable uwsgi
 systemctl enable unzip-default-instrument
@@ -211,9 +216,13 @@ rm $root_dir/usr/bin/qemu-a*
 
 # Unmount file systems
 
+umount  $root_dir/dev
+umount  $root_dir/dev/pts
+umount  $root_dir/proc
+umount  $root_dir/sys
 umount $boot_dir $root_dir
 
-rmdir $boot_dir $root_dir
+#rmdir $boot_dir $root_dir
 
 zerofree $root_dev
 
