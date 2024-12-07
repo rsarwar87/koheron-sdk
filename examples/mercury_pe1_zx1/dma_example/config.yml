@@ -1,0 +1,74 @@
+---
+name: PE1_XZ1_7030_DMA
+board: boards/enclustra/pe1/zx1
+version: 0.1.1
+
+cores:
+  - fpga/cores/axi_ctl_register_v1_0
+  - fpga/cores/axi_sts_register_v1_0
+  - fpga/cores/tlast_gen_v1_0
+  - fpga/cores/dna_reader_v1_0
+
+memory:
+  - name: control
+    offset: '0x60000000'
+    range: 4K
+  - name: status
+    offset: '0x50000000'
+    range: 4K
+  - name: xadc
+    offset: '0x43C00000'
+    range: 64K
+  - name: ram_mm2s
+    offset: '0x30000000'
+    range: 128M
+  - name: ram_s2mm
+    offset: '0x38000000'
+    range: 128M
+  - name: dma
+    offset: '0x80000000'
+    range: 64K
+  - name: axi_hp0
+    offset: '0xF8008000'
+    range: 4K
+  - name: axi_hp2
+    offset: '0xF800A000'
+    range: 4K
+  - name: ocm_mm2s
+    offset: '0xFFFF0000'
+    range: 32K
+  - name: ocm_s2mm
+    offset: '0xFFFF8000'
+    range: 32K
+  - name: sclr
+    offset: '0xF8000000'
+    range: 64K
+  - name: SDRAM
+    offset: '0xA0000000'
+    range: 256M
+
+control_registers:
+  - led
+
+status_registers:
+  - forty_two
+
+parameters:
+  fclk0: 125000000 # FPGA clock speed in Hz
+  fclk1: 100000000 # FPGA clock speed in Hz
+
+xdc:
+  - boards/enclustra/pe1/zx1/ports.xdc 
+  - boards/enclustra/pe1/zx1/pcie.xdc 
+  - ./constraints.xdc
+
+drivers:
+  - server/drivers/common.hpp
+  - ./dma_example.hpp
+
+web:
+  - ./web/index.html
+  - web/koheron.ts
+  - web/led-blinker.ts
+  - ./web/app.ts
+  - web/main.css
