@@ -2,6 +2,7 @@ set ps_name ps_0
 
 # Find the number of interconnects
 variable isZynqMP 1
+variable isXDma 0
 set i 0
 while {[info exists config::fclk$i] == 1} {
   set interconnect_${i}_name axi_mem_intercon_$i
@@ -58,3 +59,18 @@ for {set i 0} {$i < $n_interconnects} {incr i} {
       set bus_type LPD
     }
 }
+
+cell xilinx.com:ip:system_management_wiz:1.3 system_management_wiz {
+    CHANNEL_ENABLE_VP_VN {false} 
+    TEMPERATURE_ALARM_OT_TRIGGER {85} 
+} {
+  s_axi_aclk ${ps_name}/pl_clk0
+  S_AXI_LITE axi_mem_intercon_0/M[add_master_interface]_AXI
+  s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
+}
+assign_bd_address -offset [get_memory_offset system_management_wiz] -range [get_memory_range system_management_wiz] \
+            -target_address_space [get_bd_addr_spaces ps_0/Data] \
+            [get_bd_addr_segs adc_311x_0/S00_AXI/Reg] 
+
+
+
