@@ -10,6 +10,7 @@ connect_bd_net [get_bd_ports spi_precision_adc_sck] [get_bd_pins ps_0/SPI0_SCLK_
 connect_bd_net [get_bd_ports spi_precision_adc_sdi] [get_bd_pins ps_0/SPI0_MOSI_O]
 connect_bd_net [get_bd_ports spi_precision_adc_sdo] [get_bd_pins ps_0/SPI0_MISO_I]
 
+make_bd_intf_pins_external  [get_bd_intf_pins ps_0/IIC_0]
 #---------------------------------------------------------------------------------------
 # Start Precision DAC IP
 #---------------------------------------------------------------------------------------
