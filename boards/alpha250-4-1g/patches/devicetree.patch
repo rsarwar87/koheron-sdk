@@ -1,7 +1,7 @@
 diff -rupN devicetree.orig/pcw.dtsi devicetree/pcw.dtsi
---- devicetree.orig/pcw.dtsi	2020-12-08 11:54:18.826945863 +0100
-+++ devicetree/pcw.dtsi	2020-12-08 11:58:32.285853505 +0100
-@@ -51,11 +51,21 @@
+--- devicetree.orig/pcw.dtsi	2024-11-24 21:12:16.098708135 +0000
++++ devicetree/pcw.dtsi	2024-11-24 21:24:48.651152580 +0000
+@@ -49,11 +49,21 @@
  	is-decoded-cs = <0>;
  	num-cs = <3>;
  	status = "okay";
@@ -23,21 +23,22 @@ diff -rupN devicetree.orig/pcw.dtsi devicetree/pcw.dtsi
  };
  &uart0 {
  	cts-override ;
-@@ -64,8 +74,10 @@
+@@ -62,8 +72,10 @@
  	status = "okay";
  };
  &usb0 {
 -	phy_type = "ulpi";
+-	status = "okay";
 +	dr_mode = "host";
 +	usb-phy = <&usb_phy0>;
- 	status = "okay";
++ 	status = "okay";
 +	xlnx,phy-reset-gpio = <&gpio0 48 0>;
  };
  &clkc {
  	fclk-enable = <0x1>;
 diff -rupN devicetree.orig/system-top.dts devicetree/system-top.dts
---- devicetree.orig/system-top.dts	2020-12-08 11:54:18.826945863 +0100
-+++ devicetree/system-top.dts	2020-12-08 11:57:42.541299730 +0100
+--- devicetree.orig/system-top.dts	2024-11-24 21:12:16.099708153 +0000
++++ devicetree/system-top.dts	2024-11-24 21:21:18.091389879 +0000
 @@ -13,6 +13,13 @@
  		bootargs = "console=ttyPS0,115200 root=/dev/mmcblk0p2 ro rootfstype=ext4 earlyprintk rootwait earlycon";
  		stdout-path = "serial0:115200n8";
@@ -58,14 +59,15 @@ diff -rupN devicetree.orig/system-top.dts devicetree/system-top.dts
  		device_type = "memory";
 -		reg = <0x0 0x40000000>;
 +		reg = <0x0 0x20000000>;
-+	};
-+};
+ 	};
+ };
++
 +
 +&gem0 {
 +	status = "okay";
 +	phy-mode = "rgmii-id";
 +	phy-handle = <&ethernet_phy>;
-+	local-mac-address = [00 0a 35 00 00 00];
++	local-mac-address = [00 0a 35 03 01 06];
 +
 +	ethernet_phy: ethernet-phy@3 {
 +		reg = <3>;
@@ -74,7 +76,6 @@ diff -rupN devicetree.orig/system-top.dts devicetree/system-top.dts
 +			rxdv-skew-ps = <420>;
 +			txc-skew-ps = <1860>;
 +			txen-skew-ps = <420>;
- 	};
- };
-+
++ 	};
++ };
 +
