@@ -1,0 +1,47 @@
+---
+name: st1_ux1_6ge_template
+board: boards/enclustra/st1/ux1_6eg
+version: 0.1.1
+
+cores:
+  - fpga/cores/axi_ctl_register_v1_0
+  - fpga/cores/axi_sts_register_v1_0
+  - fpga/cores/dna_reader_v1_0
+
+memory:
+  - name: control
+    offset: '0xA4001000'
+    range: 4K
+  - name: status
+    offset: '0xA4002000'
+    range: 4K
+  - name: system_management_wiz
+    offset: '0xA4003000'
+    range: 4K
+
+control_registers:
+  - led
+
+status_registers:
+  - forty_two
+
+parameters:
+  fclk0: 250000000 # FPGA clock speed in Hz
+
+xdc:
+  - boards/enclustra/st1/ux1_6eg/config/ports.xdc 
+  - boards/enclustra/st1/ux1_6eg/config/fmc.xdc 
+  - boards/enclustra/st1/ux1_6eg/config/pmods.xdc 
+  - boards/enclustra/st1/ux1_6eg/config/anios.xdc 
+  - ./constraints.xdc
+
+drivers:
+  - server/drivers/common.hpp
+  - ./led_blinker.hpp
+
+web:
+  - ./web/index.html
+  - web/koheron.ts
+  - web/led-blinker.ts
+  - ./web/app.ts
+   web/main.css

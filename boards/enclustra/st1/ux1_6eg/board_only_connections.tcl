@@ -6,11 +6,12 @@ set DP_AUX_OE [ create_bd_port -dir O DP_AUX_OE ]
 set DP_AUX_IN [ create_bd_port -dir I DP_AUX_IN ]
 set DP_HPD [ create_bd_port -dir I DP_HPD ]
 
-connect_bd_net -net DP_AUX_IN_1 [get_bd_ports DP_AUX_IN] [get_bd_pins zynq_ultra_ps_e/dp_aux_data_in]
-connect_bd_net -net DP_HPD_1 [get_bd_ports DP_HPD] [get_bd_pins zynq_ultra_ps_e/dp_hot_plug_detect]
-connect_bd_net -net zynq_ultra_ps_e_dp_aux_data_oe_n [get_bd_pins zynq_ultra_ps_e/dp_aux_data_oe_n] [get_bd_ports DP_AUX_OE]
-connect_bd_net -net zynq_ultra_ps_e_dp_aux_data_out [get_bd_pins zynq_ultra_ps_e/dp_aux_data_out] [get_bd_ports DP_AUX_OUT]
 
-
-
+connect_cell ps_0 {
+    dp_aux_data_in DP_AUX_IN
+    dp_hot_plug_detect DP_HPD
+    dp_aux_data_oe_n DP_AUX_OE
+    dp_aux_data_out DP_AUX_OUT
+    IIC_1 IIC_FPGA
+}
 

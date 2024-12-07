@@ -49,8 +49,8 @@ set_property -dict {PACKAGE_PIN J14   IOSTANDARD LVCMOS18  } [get_ports {CLK_100
 
 
 # I2C FPGA
-set_property -dict {PACKAGE_PIN C14   IOSTANDARD LVCMOS18  } [get_ports {I2C_SCL_FPGA}]
-set_property -dict {PACKAGE_PIN C13   IOSTANDARD LVCMOS18  } [get_ports {I2C_SDA_FPGA}]
+set_property -dict {PACKAGE_PIN C14   IOSTANDARD LVCMOS18  } [get_ports {IIC_FPGA_scl_io}]
+set_property -dict {PACKAGE_PIN C13   IOSTANDARD LVCMOS18  } [get_ports {IIC_FPGA_sda_io}]
 
 
 # I2C_MIPI_SEL
