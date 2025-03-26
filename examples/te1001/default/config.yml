@@ -1,0 +1,44 @@
+---
+name: default
+board: boards/tef1001/160T
+
+cores:
+  - fpga/cores/axi_ctl_register_v1_0
+  - fpga/cores/axi_sts_register_v1_0
+
+memory:
+  - name: control
+    offset: '0x60000000'
+    range: 4K
+  - name: status
+    offset: '0x50000000'
+    range: 4K
+  - name: iic_0
+    offset: '0x4000000'
+    range: 4K
+  - name: qspi_0
+    offset: '0x40001000'
+    range: 4K
+
+control_registers:
+  - led
+
+status_registers:
+  - forty_two
+
+parameters:
+  fclk0: 1250000000 # FPGA clock speed in Hz
+
+xdc:
+  - ./constraints.xdc
+
+drivers:
+  - server/drivers/common.hpp
+  - ./monitor.hpp
+
+web:
+  - ./web/index.html
+  - web/koheron.ts
+  - ./web/monitor.ts
+  - ./web/app.ts
+  - web/main.css
