@@ -40,6 +40,7 @@ cell xilinx.com:ip:xdma:4.1 $ps_name {
    cfg_mgmt_if false
    pf0_device_id {7024} 
    pf0_msi_enabled {false} 
+   xdma_axi_intf_mm {AXI_Stream}
    pf0_msix_cap_pba_bir {BAR_1} 
    pf0_msix_cap_table_bir {BAR_1} 
    pl_link_cap_max_link_speed {5.0_GT/s} 
@@ -50,7 +51,7 @@ cell xilinx.com:ip:xdma:4.1 $ps_name {
   sys_rst_n PCIe_RESETN
   sys_clk util_ds_buf_0/IBUF_OUT
 
-  pcie_7x_mgt pcie_7x_mgt
+  pcie_mgt pcie_7x_mgt
 }
 
 for {set i 0} {$i < $n_interconnects} {incr i} {
