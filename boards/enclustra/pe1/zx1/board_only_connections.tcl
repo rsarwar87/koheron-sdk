@@ -23,7 +23,7 @@ proc write_mig_file_Mercury_ZX1_SDRAM_0 { str_mig_prj_filepath } {
    puts $mig_prj_file {    <DataDepth_En>1024</DataDepth_En>}
    puts $mig_prj_file {    <LowPower_En>ON</LowPower_En>}
    puts $mig_prj_file {    <XADC_En>Disabled</XADC_En>}
-   puts $mig_prj_file {    <TargetFPGA>xc7z045-ffg676/-2</TargetFPGA>}
+   puts $mig_prj_file {    <TargetFPGA>xc7z030-fbg676/-2</TargetFPGA>}
    puts $mig_prj_file {    <Version>4.2</Version>}
    puts $mig_prj_file {    <SystemClock>Differential</SystemClock>}
    puts $mig_prj_file {    <ReferenceClock>Use System Clock</ReferenceClock>}
@@ -33,7 +33,7 @@ proc write_mig_file_Mercury_ZX1_SDRAM_0 { str_mig_prj_filepath } {
    puts $mig_prj_file {    <dci_hr_inouts_inputs>50 Ohms</dci_hr_inouts_inputs>}
    puts $mig_prj_file {    <dci_cascade>0</dci_cascade>}
    puts $mig_prj_file {    <FPGADevice>}
-   puts $mig_prj_file {        <selected>7z/xc7z045-ffg676</selected>}
+   puts $mig_prj_file {        <selected>7z/xc7z030-fbg676</selected>}
    puts $mig_prj_file {    </FPGADevice>}
    puts $mig_prj_file {    <Controller number="0" >}
    puts $mig_prj_file {        <MemoryDevice>DDR3_SDRAM/Components/MT41K256M16XX-125</MemoryDevice>}
@@ -167,7 +167,7 @@ set SDRAM [ create_bd_cell -type ip -vlnv xilinx.com:ip:mig_7series SDRAM ]
 set str_mig_folder [get_property IP_DIR [ get_ips [ get_property CONFIG.Component_Name $SDRAM ] ] ]
 set str_mig_file_name mig_a.prj
 set str_mig_file_path ${str_mig_folder}/${str_mig_file_name}
-write_mig_file_MercuryZX1_SDRAM_0 $str_mig_file_path
+write_mig_file_Mercury_ZX1_SDRAM_0 $str_mig_file_path
   set_property -dict [ list \
   CONFIG.BOARD_MIG_PARAM {Custom} \
   CONFIG.MIG_DONT_TOUCH_PARAM {Custom} \
@@ -208,8 +208,8 @@ connect_bd_net -net In1_1 [get_bd_ports ETH0_INT_N_PL] [get_bd_pins xlconcat_0/I
 connect_bd_net -net xlconcat_0_dout [get_bd_pins ${ps_name}/IRQ_F2P] [get_bd_pins xlconcat_0/dout]
 connect_bd_net  [get_bd_pins SDRAM/sys_rst] [get_bd_pins ${ps_name}/FCLK_RESET0_N]
 #apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config { Clk_master {/${ps_name}/FCLK_CLK0 (50 MHz)} Clk_slave {/SDRAM/ui_clk (100 MHz)} Clk_xbar {/ps_0/FCLK_CLK0 (50 MHz)} Master {/ps_0/M_AXI_GP0} Slave {/SDRAM/S_AXI} intc_ip {/axi_mem_intercon_0} master_apm {0}}  [get_bd_intf_pins SDRAM/S_AXI]
-connect_cell ${ps_name} {
-  SDIO0_WP       [get_constant_pin 1 1]
-  SDIO0_CDN      [get_constant_pin 0 1]
-}
+#connect_cell ${ps_name} {
+#  SDIO0_WP       [get_constant_pin 1 1]
+#  SDIO0_CDN      [get_constant_pin 0 1]
+#}
 

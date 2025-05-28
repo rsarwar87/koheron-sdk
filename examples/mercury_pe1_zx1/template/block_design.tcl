@@ -18,11 +18,11 @@ connect_pins [get_constant_pin 42 32] [sts_pin forty_two]
 
 # add pcie at after adding all interfaces to the ps_0 interconnect.
 set int_bus 0   
-# source $board_path/pcie_mm_connections.tcl
-#source $board_path/pcie_streaming_connections.tcl
-#connect_cell xdma_0 {
-#    M_AXIS_H2C_0 xdma_0/S_AXIS_C2H_0
-#    M_AXIS_H2C_1 xdma_0/S_AXIS_C2H_1
-#}
+#source $board_path/pcie_mm_connections.tcl
+source $board_path/pcie_streaming_connections.tcl
+connect_cell xdma_0 {
+    M_AXIS_H2C_0 xdma_0/S_AXIS_C2H_0
+    M_AXIS_H2C_1 xdma_0/S_AXIS_C2H_1
+}
 # connect_pins xdma_0/M_AXIS_H2C_0 xdma_0/S_AXIS_C2H_0 
 # connect_pins xdma_0/M_AXIS_H2C_1 xdma_0/S_AXIS_C2H_1 
