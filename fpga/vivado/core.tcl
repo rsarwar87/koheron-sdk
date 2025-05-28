@@ -13,7 +13,14 @@ file delete -force $output_path/$core_name $output_path/$project_name.cache $out
 
 create_project -part $part $project_name $output_path
 
-add_files -norecurse [glob $core_path/*.v* $core_path/*.xci]
+
+if {[file exists $core_path/load_files.tcl]} {
+    source $core_path/load_files.tcl
+    load_files $core_path $output_path $project_name
+} else {
+    add_files -norecurse [glob $core_path/*.v* $core_path/*.xci]
+}
+
 
 # Remove testbench files
 set testbench_files [glob -nocomplain $core_path/*_tb.v*]
