@@ -1,3 +1,12 @@
+set_property PACKAGE_PIN AR19     [get_ports led[0]] ;# Bank  66 VCCO - VCC1V2   - IO_L9P_T1L_N4_AD12P_66
+set_property PACKAGE_PIN AT17     [get_ports led[1]] ;# Bank  66 VCCO - VCC1V2   - IO_L7N_T1L_N1_QBC_AD13N_66
+set_property PACKAGE_PIN AR17     [get_ports led[2]] ;# Bank  66 VCCO - VCC1V2   - IO_L7P_T1L_N0_QBC_AD13P_66
+set_property PACKAGE_PIN AU19     [get_ports led[3]] ;# Bank  66 VCCO - VCC1V2   - IO_L6N_T0U_N11_AD6N_66
+set_property PACKAGE_PIN AU20     [get_ports led[4]] ;# Bank  66 VCCO - VCC1V2   - IO_L6P_T0U_N10_AD6P_66
+set_property PACKAGE_PIN AW21     [get_ports led[5]] ;# Bank  66 VCCO - VCC1V2   - IO_L4N_T0U_N7_DBC_AD7N_66
+set_property PACKAGE_PIN AV21     [get_ports led[6]] ;# Bank  66 VCCO - VCC1V2   - IO_L4P_T0U_N6_DBC_AD7P_66
+set_property PACKAGE_PIN AV17     [get_ports led[7]] ;# Bank  66 VCCO - VCC1V2   - IO_L3N_T0L_N5_AD15N_66
+set_property IOSTANDARD  LVCMOS12 [get_ports led* ]   ;# Bank  66 VCCO - VCC1V2   - IO_L9P_T1L_N4_AD12P_66
 
 
 create_clock -period 8.138 -name pl_clk [get_ports pl_clk_p]
