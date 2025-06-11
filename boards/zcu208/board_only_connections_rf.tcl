@@ -24,9 +24,13 @@ set dac0_clk [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_c
   set_property -dict [ list \
    CONFIG.FREQ_HZ {245760000} \
    ] $dac0_clk
+#create_bd_intf_port -mode Slave -vlnv xilinx.com:display_usp_rf_data_converter:diff_pins_rtl:1.0 pl_clk 
+#create_bd_intf_port -mode Slave -vlnv xilinx.com:display_usp_rf_data_converter:diff_pins_rtl:1.0 pl_sysref 
 
-create_bd_port -dir I pl_clk_dac 
-create_bd_port -dir I pl_clk_adc 
+create_bd_port -dir I pl_sysref_n 
+create_bd_port -dir I pl_sysref_p 
+create_bd_port -dir I pl_clk_n 
+create_bd_port -dir I pl_clk_p 
 
 create_bd_port -dir I dac0_hw_trigger 
 create_bd_port -dir I dac0_hw_trigger_en 
@@ -36,8 +40,8 @@ create_bd_port -dir I dac2_hw_trigger
 create_bd_port -dir I dac2_hw_trigger_en 
 create_bd_port -dir I dac3_hw_trigger 
 create_bd_port -dir I dac3_hw_trigger_en 
-create_bd_port -dir I user_sysref_dac_0 
-create_bd_port -dir I user_sysref_adc_0 
+
+
 
 cell  xilinx.com:ip:usp_rf_data_converter:2.6 rfip {
     ADC0_Band {0} \
@@ -438,8 +442,6 @@ cell  xilinx.com:ip:usp_rf_data_converter:2.6 rfip {
   sysref_in sysref_in
   adc2_clk adc2_clk
   dac0_clk dac0_clk
-  user_sysref_adc user_sysref_adc_0
-  user_sysref_dac user_sysref_dac_0
 
   s_axi_aclk ps_0/pl_clk0
   s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
@@ -463,22 +465,35 @@ cell  xilinx.com:ip:usp_rf_data_converter:2.6 rfip {
   vout30 vout6
   vout32 vout7
 }
+
+cell amd:user:multi_tile_sync:1.0 multi_tile_sync_0 {
+} {
+  user_sysref_adc rfip/user_sysref_adc
+  user_sysref_dac rfip/user_sysref_dac
+  pl_clk_p     pl_clk_p
+  pl_clk_n     pl_clk_n
+  pl_sysref_n     pl_sysref_n
+  pl_sysref_p     pl_sysref_p
+  adc_axis_clk rfip/clk_adc0 
+  dac_axis_clk rfip/clk_dac0
+}
+
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_dac1  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_dac0
+  slowest_sync_clk rfip/clk_dac1
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_dac2  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_dac0
+  slowest_sync_clk rfip/clk_dac2
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_dac3  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_dac0
+  slowest_sync_clk rfip/clk_dac3
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_dac0  {
@@ -490,19 +505,19 @@ cell xilinx.com:ip:proc_sys_reset:5.0 rst_dac0  {
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_adc1  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_adc0
+  slowest_sync_clk rfip/clk_adc1
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_adc2  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_adc0
+  slowest_sync_clk rfip/clk_adc2
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_adc3  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_adc0
+  slowest_sync_clk rfip/clk_adc3
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_adc0  {
@@ -544,4 +559,7 @@ connect_cell rfip {
 }
 
 group_bd_cells adc_calib [get_bd_cells not_rfip_adc1_23_sig_detect] [get_bd_cells not_rfip_adc1_01_sig_detect] [get_bd_cells not_rfip_adc0_01_sig_detect] [get_bd_cells not_rfip_adc3_01_sig_detect] [get_bd_cells not_rfip_adc0_23_sig_detect] [get_bd_cells not_rfip_adc2_23_sig_detect] [get_bd_cells not_rfip_adc2_01_sig_detect] [get_bd_cells not_rfip_adc3_23_sig_detect]
+assign_bd_address -offset [get_memory_offset rfip] -range [get_memory_range rfip] \
+            -target_address_space [get_bd_addr_spaces ps_0/data] \
+            [get_bd_addr_segs rfip/s_axi/reg] 
 
