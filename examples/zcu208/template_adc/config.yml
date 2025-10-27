@@ -26,12 +26,12 @@ memory:
   - name: rfip
     offset: '0xA4005000'
     range: 4K
-  - name: ddr4_0
-    offset: '0x400000000'
-    range: 4G
-  - name: ddr4_1
-    offset: '0x1000000000'
-    range: 4G
+      #  - name: ddr4_0
+      #    offset: '0x400000000'
+      #    range: 4G
+      #  - name: ddr4_1
+      #    offset: '0x1000000000'
+      #    range: 4G
 
 control_registers:
   - led

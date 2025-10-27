@@ -466,6 +466,215 @@ cell  xilinx.com:ip:usp_rf_data_converter:2.6 rfip {
   vout32 vout7
 }
 
+cell xilinx.com:ip:clk_wiz:6.0 clk_wiz_dac0 {
+    AXI_DRP {false} \
+    CLKIN1_JITTER_PS {36.160000000000004} \
+    CLKOUT1_DRIVES {No_buffer} \
+    CLKOUT1_JITTER {76.550} \
+    CLKOUT1_PHASE_ERROR {83.786} \
+    CLKOUT1_REQUESTED_OUT_FREQ {368.64} \
+    FEEDBACK_SOURCE {FDBK_ONCHIP} \
+    JITTER_SEL {Min_O_Jitter} \
+    MMCM_BANDWIDTH {HIGH} \
+    MMCM_CLKFBOUT_MULT_F {16} \
+    MMCM_CLKIN1_PERIOD {3.617} \
+    MMCM_CLKOUT0_DIVIDE_F {4} \
+    MMCM_COMPENSATION {AUTO} \
+    PRIMITIVE {PLL} \
+    PRIM_IN_FREQ {491.52} \
+    PRIM_SOURCE {No_buffer} \
+    USE_DYN_RECONFIG {true} \
+    USE_PHASE_ALIGNMENT {false} \
+} {
+  s_axi_aclk  ps_0/pl_clk0
+  clk_in1  rfip/clk_dac0
+  s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
+  s_axi_lite axi_mem_intercon_0/M[add_master_interface]_AXI
+}
+cell xilinx.com:ip:clk_wiz:6.0 clk_wiz_dac1 {
+    AXI_DRP {false} \
+    CLKIN1_JITTER_PS {36.160000000000004} \
+    CLKOUT1_DRIVES {No_buffer} \
+    CLKOUT1_JITTER {76.550} \
+    CLKOUT1_PHASE_ERROR {83.786} \
+    CLKOUT1_REQUESTED_OUT_FREQ {368.64} \
+    FEEDBACK_SOURCE {FDBK_ONCHIP} \
+    JITTER_SEL {Min_O_Jitter} \
+    MMCM_BANDWIDTH {HIGH} \
+    MMCM_CLKFBOUT_MULT_F {16} \
+    MMCM_CLKIN1_PERIOD {3.617} \
+    MMCM_CLKOUT0_DIVIDE_F {4} \
+    MMCM_COMPENSATION {AUTO} \
+    PRIMITIVE {PLL} \
+    PRIM_IN_FREQ {491.52} \
+    PRIM_SOURCE {No_buffer} \
+    USE_DYN_RECONFIG {true} \
+    USE_PHASE_ALIGNMENT {false} \
+
+} {
+  s_axi_aclk  ps_0/pl_clk0
+  clk_in1  rfip/clk_dac1
+  s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
+  s_axi_lite axi_mem_intercon_0/M[add_master_interface]_AXI
+}
+cell xilinx.com:ip:clk_wiz:6.0 clk_wiz_dac2 {
+    AXI_DRP {false} \
+    CLKIN1_JITTER_PS {36.160000000000004} \
+    CLKOUT1_DRIVES {No_buffer} \
+    CLKOUT1_JITTER {76.550} \
+    CLKOUT1_PHASE_ERROR {83.786} \
+    CLKOUT1_REQUESTED_OUT_FREQ {368.64} \
+    FEEDBACK_SOURCE {FDBK_ONCHIP} \
+    JITTER_SEL {Min_O_Jitter} \
+    MMCM_BANDWIDTH {HIGH} \
+    MMCM_CLKFBOUT_MULT_F {16} \
+    MMCM_CLKIN1_PERIOD {3.617} \
+    MMCM_CLKOUT0_DIVIDE_F {4} \
+    MMCM_COMPENSATION {AUTO} \
+    PRIMITIVE {PLL} \
+    PRIM_IN_FREQ {491.52} \
+    PRIM_SOURCE {No_buffer} \
+    USE_DYN_RECONFIG {true} \
+    USE_PHASE_ALIGNMENT {false} \
+
+} {
+  s_axi_aclk  ps_0/pl_clk0
+  clk_in1  rfip/clk_dac2
+  s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
+  s_axi_lite axi_mem_intercon_0/M[add_master_interface]_AXI
+}
+cell xilinx.com:ip:clk_wiz:6.0 clk_wiz_dac3 {
+    AXI_DRP {false} \
+    CLKIN1_JITTER_PS {36.160000000000004} \
+    CLKOUT1_DRIVES {No_buffer} \
+    CLKOUT1_JITTER {76.550} \
+    CLKOUT1_PHASE_ERROR {83.786} \
+    CLKOUT1_REQUESTED_OUT_FREQ {368.64} \
+    FEEDBACK_SOURCE {FDBK_ONCHIP} \
+    JITTER_SEL {Min_O_Jitter} \
+    MMCM_BANDWIDTH {HIGH} \
+    MMCM_CLKFBOUT_MULT_F {16} \
+    MMCM_CLKIN1_PERIOD {3.617} \
+    MMCM_CLKOUT0_DIVIDE_F {4} \
+    MMCM_COMPENSATION {AUTO} \
+    PRIMITIVE {PLL} \
+    PRIM_IN_FREQ {491.52} \
+    PRIM_SOURCE {No_buffer} \
+    USE_DYN_RECONFIG {true} \
+    USE_PHASE_ALIGNMENT {false} \
+
+} {
+  s_axi_aclk  ps_0/pl_clk0
+  clk_in1  rfip/clk_dac3
+  s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
+  s_axi_lite axi_mem_intercon_0/M[add_master_interface]_AXI
+}
+
+
+cell xilinx.com:ip:clk_wiz:6.0 clk_wiz_adc0 {
+    AXI_DRP {false} \
+    CLKIN1_JITTER_PS {36.160000000000004} \
+    CLKOUT1_DRIVES {No_buffer} \
+    CLKOUT1_JITTER {76.550} \
+    CLKOUT1_PHASE_ERROR {83.786} \
+    CLKOUT1_REQUESTED_OUT_FREQ {368.64} \
+    FEEDBACK_SOURCE {FDBK_ONCHIP} \
+    JITTER_SEL {Min_O_Jitter} \
+    MMCM_BANDWIDTH {HIGH} \
+    MMCM_CLKFBOUT_MULT_F {16} \
+    MMCM_CLKIN1_PERIOD {3.617} \
+    MMCM_CLKOUT0_DIVIDE_F {4} \
+    MMCM_COMPENSATION {AUTO} \
+    PRIMITIVE {PLL} \
+    PRIM_IN_FREQ {276.48} \
+    PRIM_SOURCE {No_buffer} \
+    USE_DYN_RECONFIG {true} \
+    USE_PHASE_ALIGNMENT {false} \
+
+} {
+  s_axi_aclk  ps_0/pl_clk0
+  clk_in1  rfip/clk_adc0
+  s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
+  s_axi_lite axi_mem_intercon_0/M[add_master_interface]_AXI
+}
+cell xilinx.com:ip:clk_wiz:6.0 clk_wiz_adc1 {
+    AXI_DRP {false} \
+    CLKIN1_JITTER_PS {36.160000000000004} \
+    CLKOUT1_DRIVES {No_buffer} \
+    CLKOUT1_JITTER {76.550} \
+    CLKOUT1_PHASE_ERROR {83.786} \
+    CLKOUT1_REQUESTED_OUT_FREQ {368.64} \
+    FEEDBACK_SOURCE {FDBK_ONCHIP} \
+    JITTER_SEL {Min_O_Jitter} \
+    MMCM_BANDWIDTH {HIGH} \
+    MMCM_CLKFBOUT_MULT_F {16} \
+    MMCM_CLKIN1_PERIOD {3.617} \
+    MMCM_CLKOUT0_DIVIDE_F {4} \
+    MMCM_COMPENSATION {AUTO} \
+    PRIMITIVE {PLL} \
+    PRIM_IN_FREQ {276.48} \
+    PRIM_SOURCE {No_buffer} \
+    USE_DYN_RECONFIG {true} \
+    USE_PHASE_ALIGNMENT {false} \
+
+} {
+  s_axi_aclk  ps_0/pl_clk0
+  clk_in1  rfip/clk_adc1
+  s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
+  s_axi_lite axi_mem_intercon_0/M[add_master_interface]_AXI
+}
+cell xilinx.com:ip:clk_wiz:6.0 clk_wiz_adc2 {
+    AXI_DRP {false} \
+    CLKIN1_JITTER_PS {36.160000000000004} \
+    CLKOUT1_DRIVES {No_buffer} \
+    CLKOUT1_JITTER {76.550} \
+    CLKOUT1_PHASE_ERROR {83.786} \
+    CLKOUT1_REQUESTED_OUT_FREQ {368.64} \
+    FEEDBACK_SOURCE {FDBK_ONCHIP} \
+    JITTER_SEL {Min_O_Jitter} \
+    MMCM_BANDWIDTH {HIGH} \
+    MMCM_CLKFBOUT_MULT_F {16} \
+    MMCM_CLKIN1_PERIOD {3.617} \
+    MMCM_CLKOUT0_DIVIDE_F {4} \
+    MMCM_COMPENSATION {AUTO} \
+    PRIMITIVE {PLL} \
+    PRIM_IN_FREQ {276.48} \
+    PRIM_SOURCE {No_buffer} \
+    USE_DYN_RECONFIG {true} \
+    USE_PHASE_ALIGNMENT {false} \
+
+} {
+  s_axi_aclk  ps_0/pl_clk0
+  clk_in1  rfip/clk_adc2
+  s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
+  s_axi_lite axi_mem_intercon_0/M[add_master_interface]_AXI
+}
+cell xilinx.com:ip:clk_wiz:6.0 clk_wiz_adc3 {
+    AXI_DRP {false} \
+    CLKIN1_JITTER_PS {36.160000000000004} \
+    CLKOUT1_DRIVES {No_buffer} \
+    CLKOUT1_JITTER {76.550} \
+    CLKOUT1_PHASE_ERROR {83.786} \
+    CLKOUT1_REQUESTED_OUT_FREQ {368.64} \
+    FEEDBACK_SOURCE {FDBK_ONCHIP} \
+    JITTER_SEL {Min_O_Jitter} \
+    MMCM_BANDWIDTH {HIGH} \
+    MMCM_CLKFBOUT_MULT_F {16} \
+    MMCM_CLKIN1_PERIOD {3.617} \
+    MMCM_CLKOUT0_DIVIDE_F {4} \
+    MMCM_COMPENSATION {AUTO} \
+    PRIMITIVE {PLL} \
+    PRIM_IN_FREQ {276.48} \
+    PRIM_SOURCE {No_buffer} \
+    USE_DYN_RECONFIG {true} \
+    USE_PHASE_ALIGNMENT {false} \
+
+} {
+  s_axi_aclk  ps_0/pl_clk0
+  clk_in1  rfip/clk_adc3
+  s_axi_aresetn proc_sys_reset_0/peripheral_aresetn
+  s_axi_lite axi_mem_intercon_0/M[add_master_interface]_AXI
+}
 cell amd:user:multi_tile_sync:1.0 multi_tile_sync_0 {
 } {
   user_sysref_adc rfip/user_sysref_adc
@@ -481,49 +690,57 @@ cell amd:user:multi_tile_sync:1.0 multi_tile_sync_0 {
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_dac1  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_dac1
+  slowest_sync_clk clk_wiz_dac1/clk_out1
+  dcm_locked clk_wiz_dac1/locked
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_dac2  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_dac2
+  slowest_sync_clk clk_wiz_dac2/clk_out1
+  dcm_locked clk_wiz_dac2/locked
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_dac3  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_dac3
+  slowest_sync_clk clk_wiz_dac3/clk_out1
+  dcm_locked clk_wiz_dac3/locked
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_dac0  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_dac0
+  slowest_sync_clk clk_wiz_dac0/clk_out1
+  dcm_locked clk_wiz_dac0/locked
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_adc1  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_adc1
+  dcm_locked clk_wiz_adc1/locked
+  slowest_sync_clk clk_wiz_adc1/clk_out1
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_adc2  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_adc2
+  dcm_locked clk_wiz_adc2/locked
+  slowest_sync_clk clk_wiz_adc2/clk_out1
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_adc3  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_adc3
+  dcm_locked clk_wiz_adc3/locked
+  slowest_sync_clk clk_wiz_adc3/clk_out1
   ext_reset_in ps_0/pl_resetn0
 }
 cell xilinx.com:ip:proc_sys_reset:5.0 rst_adc0  {
   C_EXT_RST_WIDTH {1}
 } {
-  slowest_sync_clk rfip/clk_adc0
+  dcm_locked clk_wiz_adc0/locked
+  slowest_sync_clk clk_wiz_adc0/clk_out1
   ext_reset_in ps_0/pl_resetn0
 }
 
@@ -538,14 +755,14 @@ connect_cell rfip {
   adc3_23_int_cal_freeze [get_not_pin rfip/adc3_23_sig_detect]
 
 
-  s0_axis_aclk rfip/clk_dac0
-  s1_axis_aclk rfip/clk_dac1
-  s2_axis_aclk rfip/clk_dac2
-  s3_axis_aclk rfip/clk_dac3
-  m0_axis_aclk rfip/clk_adc0
-  m1_axis_aclk rfip/clk_adc1
-  m2_axis_aclk rfip/clk_adc2
-  m3_axis_aclk rfip/clk_adc3
+  s0_axis_aclk clk_wiz_dac0/clk_out1
+  s1_axis_aclk clk_wiz_dac1/clk_out1
+  s2_axis_aclk clk_wiz_dac2/clk_out1
+  s3_axis_aclk clk_wiz_dac3/clk_out1
+  m0_axis_aclk clk_wiz_adc0/clk_out1
+  m1_axis_aclk clk_wiz_adc1/clk_out1
+  m2_axis_aclk clk_wiz_adc2/clk_out1
+  m3_axis_aclk clk_wiz_adc3/clk_out1
 
   m0_axis_aresetn rst_adc0/peripheral_aresetn
   m1_axis_aresetn rst_adc1/peripheral_aresetn

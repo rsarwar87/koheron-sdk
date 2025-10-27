@@ -3,10 +3,13 @@ set obj [current_project]
 set_property -name "board_part" -value "xilinx.com:zcu208:part0:2.0" -objects $obj
 set board_preset $board_path/config/board_preset.tcl
 
+set_property "ip_repo_paths" "[concat [get_property ip_repo_paths [current_project]] [file normalize $project_path/ip_repo]]" "[current_project]"
+update_ip_catalog -rebuild 
+
 source $sdk_path/fpga/lib/starting_point_zynqmp.tcl
 source $board_path/board_only_connections_rf.tcl
-source $board_path/board_only_connections_ram_c0.tcl
-source $board_path/board_only_connections_ram_c1.tcl
+#source $board_path/board_only_connections_ram_c0.tcl
+#source $board_path/board_only_connections_ram_c1.tcl
 
 create_bd_port -dir O -from 7 -to 0 led
 # Add config and status registers
@@ -34,7 +37,7 @@ cell xilinx.com:ip:dds_compiler:6.0 dds_compiler_0 {
   Phase_offset {None} \
   S_PHASE_Has_TUSER {Not_Required} \
 } {
-  aclk  rfip/clk_dac0
+  aclk  clk_wiz_dac0/clk_out1
 }
 cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_0 {
   Clock_Frequency {300.0} \
@@ -52,7 +55,7 @@ cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_0 {
   Sample_Frequency {300} \
   Zero_Pack_Factor {1} \
 } {
-  aclk  rfip/clk_dac0
+  aclk  clk_wiz_dac0/clk_out1
   S_AXIS_DATA dds_compiler_0/M_AXIS_PHASE
   M_AXIS_DATA rfip/s00_axis
 }
@@ -74,7 +77,7 @@ cell xilinx.com:ip:dds_compiler:6.0 dds_compiler_1 {
   Phase_offset {None} \
   S_PHASE_Has_TUSER {Not_Required} \
 } {
-  aclk  rfip/clk_dac0
+  aclk  clk_wiz_dac0/clk_out1
 }
 cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_1 {
   Clock_Frequency {300.0} \
@@ -92,7 +95,7 @@ cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_1 {
   Sample_Frequency {300} \
   Zero_Pack_Factor {1} \
 } {
-  aclk  rfip/clk_dac0
+  aclk  clk_wiz_dac0/clk_out1
   S_AXIS_DATA dds_compiler_1/M_AXIS_PHASE
   M_AXIS_DATA rfip/s02_axis
 }
@@ -114,7 +117,7 @@ cell xilinx.com:ip:dds_compiler:6.0 dds_compiler_2 {
   Phase_offset {None} \
   S_PHASE_Has_TUSER {Not_Required} \
 } {
-  aclk  rfip/clk_dac1
+  aclk  clk_wiz_dac1/clk_out1
 }
 cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_2 {
   Clock_Frequency {300.0} \
@@ -132,7 +135,7 @@ cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_2 {
   Sample_Frequency {300} \
   Zero_Pack_Factor {1} \
 } {
-  aclk  rfip/clk_dac1
+  aclk  clk_wiz_dac1/clk_out1
   S_AXIS_DATA dds_compiler_2/M_AXIS_PHASE
   M_AXIS_DATA rfip/s10_axis
 }
@@ -154,7 +157,7 @@ cell xilinx.com:ip:dds_compiler:6.0 dds_compiler_3 {
   Phase_offset {None} \
   S_PHASE_Has_TUSER {Not_Required} \
 } {
-  aclk  rfip/clk_dac1
+  aclk  clk_wiz_dac1/clk_out1
 }
 cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_3 {
   Clock_Frequency {300.0} \
@@ -172,7 +175,7 @@ cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_3 {
   Sample_Frequency {300} \
   Zero_Pack_Factor {1} \
 } {
-  aclk  rfip/clk_dac1
+  aclk clk_wiz_dac1/clk_out1
   S_AXIS_DATA dds_compiler_3/M_AXIS_PHASE
   M_AXIS_DATA rfip/s12_axis
 }
@@ -194,7 +197,7 @@ cell xilinx.com:ip:dds_compiler:6.0 dds_compiler_4 {
   Phase_offset {None} \
   S_PHASE_Has_TUSER {Not_Required} \
 } {
-  aclk  rfip/clk_dac2
+  aclk  clk_wiz_dac2/clk_out1
 }
 cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_4 {
   Clock_Frequency {300.0} \
@@ -212,7 +215,7 @@ cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_4 {
   Sample_Frequency {300} \
   Zero_Pack_Factor {1} \
 } {
-  aclk  rfip/clk_dac2
+  aclk  clk_wiz_dac2/clk_out1
   S_AXIS_DATA dds_compiler_4/M_AXIS_PHASE
   M_AXIS_DATA rfip/s20_axis
 }
@@ -234,7 +237,7 @@ cell xilinx.com:ip:dds_compiler:6.0 dds_compiler_5 {
   Phase_offset {None} \
   S_PHASE_Has_TUSER {Not_Required} \
 } {
-  aclk  rfip/clk_dac2
+  aclk  clk_wiz_dac2/clk_out1
 }
 cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_5 {
   Clock_Frequency {300.0} \
@@ -252,7 +255,7 @@ cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_5 {
   Sample_Frequency {300} \
   Zero_Pack_Factor {1} \
 } {
-  aclk  rfip/clk_dac2
+  aclk  clk_wiz_dac2/clk_out1
   S_AXIS_DATA dds_compiler_5/M_AXIS_PHASE
   M_AXIS_DATA rfip/s22_axis
 }
@@ -275,7 +278,7 @@ cell xilinx.com:ip:dds_compiler:6.0 dds_compiler_6 {
   Phase_offset {None} \
   S_PHASE_Has_TUSER {Not_Required} \
 } {
-  aclk  rfip/clk_dac3
+  aclk clk_wiz_dac3/clk_out1
 }
 cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_6 {
   Clock_Frequency {300.0} \
@@ -293,7 +296,7 @@ cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_6 {
   Sample_Frequency {300} \
   Zero_Pack_Factor {1} \
 } {
-  aclk  rfip/clk_dac3
+  aclk  clk_wiz_dac3/clk_out1
   S_AXIS_DATA dds_compiler_6/M_AXIS_PHASE
   M_AXIS_DATA rfip/s30_axis
 }
@@ -315,7 +318,7 @@ cell xilinx.com:ip:dds_compiler:6.0 dds_compiler_7 {
   Phase_offset {None} \
   S_PHASE_Has_TUSER {Not_Required} \
 } {
-  aclk  rfip/clk_dac3
+  aclk  clk_wiz_dac3/clk_out1
 }
 cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_7 {
   Clock_Frequency {300.0} \
@@ -333,7 +336,7 @@ cell xilinx.com:ip:fir_compiler:7.2 fir_compiler_7 {
   Sample_Frequency {300} \
   Zero_Pack_Factor {1} \
 } {
-  aclk  rfip/clk_dac3
+  aclk  clk_wiz_dac3/clk_out1
   S_AXIS_DATA dds_compiler_7/M_AXIS_PHASE
   M_AXIS_DATA rfip/s32_axis
 }
@@ -350,7 +353,7 @@ cell xilinx.com:ip:ila:6.2 ila_0 {
   C_PROBE6_WIDTH {192} \
   C_PROBE7_WIDTH {192}
 } {
-  clk  rfip/clk_adc0
+  clk  clk_wiz_adc0/clk_out1
   probe0 rfip/m00_axis_tdata
   probe1 rfip/m02_axis_tdata
   probe2 rfip/m10_axis_tdata
@@ -360,6 +363,38 @@ cell xilinx.com:ip:ila:6.2 ila_0 {
   probe6 rfip/m30_axis_tdata
   probe7 rfip/m32_axis_tdata
 }
+
+cell trenz.biz:user:labtools_fmeter:1.0 labtools_fmeter_0 {
+      C_REFCLK_HZ {[get_parameter fclk0]}
+   C_CHANNELS {8}
+} {
+  refclk  ps_0/pl_clk0
+  fin [get_concat_pin [list rfip/clk_adc0 rfip/clk_adc1 rfip/clk_adc2 rfip/clk_adc3 rfip/clk_dac0 rfip/clk_dac1 rfip/clk_dac2  rfip/clk_dac3]]
+}
+
+cell xilinx.com:ip:vio:3.0 vio_0 {
+   C_NUM_PROBE_IN {8} 
+   C_PROBE_IN7_WIDTH {32} 
+   C_PROBE_IN6_WIDTH {32} 
+   C_PROBE_IN5_WIDTH {32} 
+   C_PROBE_IN4_WIDTH {32} 
+   C_PROBE_IN3_WIDTH {32} 
+   C_PROBE_IN2_WIDTH {32} 
+   C_PROBE_IN1_WIDTH {32} 
+   C_PROBE_IN0_WIDTH {32} 
+   C_NUM_PROBE_OUT {1} 
+} {
+  clk  ps_0/pl_clk0
+  probe_in0 labtools_fmeter_0/F0
+  probe_in1 labtools_fmeter_0/F1
+  probe_in2 labtools_fmeter_0/F2
+  probe_in3 labtools_fmeter_0/F3
+  probe_in4 labtools_fmeter_0/F4
+  probe_in5 labtools_fmeter_0/F5
+  probe_in6 labtools_fmeter_0/F6
+  probe_in7 labtools_fmeter_0/F7
+}
+
 # connect_pins xdma_0/M_AXIS_H2C_0 xdma_0/S_AXIS_C2H_0 
 # connect_pins xdma_0/M_AXIS_H2C_1 xdma_0/S_AXIS_C2H_1 
 #connect_bd_intf_net [get_bd_intf_pins ddr4_dma_1/M_AXIS_MM2S] [get_bd_intf_pins ddr4_dma_0/S_AXIS_S2MM]
