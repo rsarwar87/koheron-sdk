@@ -38,9 +38,12 @@ control_registers:
 
 status_registers:
   - forty_two
+  - adc_clk[4]
+  - dac_clk[4]
+  - adc_sample[8]
 
 parameters:
-  fclk0: 100000000 # FPGA clock speed in Hz
+  fclk0: 250000000 # FPGA clock speed in Hz
 
 xdc:
   - ./../../../boards/zcu208/config/ports.xdc 

@@ -28,11 +28,20 @@ class LedBlinker(object):
     def get_forty_two(self):
         return self.client.recv_uint32()
 
+    @command()
+    def get_adc_raw_data(self):
+        return self.client.recv_array(8, dtype="uint32")
+    @command()
+    def get_rfsoc_clocks(self):
+        return self.client.recv_array(8, dtype="uint32")
+
 if __name__=="__main__":
-    host = os.getenv('HOST','10.211.3.40')
-    client = connect(host, name='trenz_teb080x_te803_template')
+    host = os.getenv('HOST','10.240.229.243')
+    client = connect(host, name='zcu208_template_adc')
     driver = LedBlinker(client)
 
     print ("Printing DNA: {}".format(driver.get_forty_two()))
+    print ("Printing clocks: {}".format(driver.get_rfsoc_clocks()))
+    print ("Printing ADC: {}".format(driver.get_adc_raw_data()))
 
 

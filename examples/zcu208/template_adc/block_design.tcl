@@ -363,6 +363,14 @@ cell xilinx.com:ip:ila:6.2 ila_0 {
   probe6 rfip/m30_axis_tdata
   probe7 rfip/m32_axis_tdata
 }
+connect_pins [sts_pin adc_sample0] rfip/m00_axis_tdata
+connect_pins [sts_pin adc_sample1] rfip/m02_axis_tdata
+connect_pins [sts_pin adc_sample2] rfip/m10_axis_tdata
+connect_pins [sts_pin adc_sample3] rfip/m12_axis_tdata
+connect_pins [sts_pin adc_sample4] rfip/m20_axis_tdata
+connect_pins [sts_pin adc_sample5] rfip/m22_axis_tdata
+connect_pins [sts_pin adc_sample6] rfip/m30_axis_tdata
+connect_pins [sts_pin adc_sample7] rfip/m32_axis_tdata
 
 cell trenz.biz:user:labtools_fmeter:1.0 labtools_fmeter_0 {
       C_REFCLK_HZ {[get_parameter fclk0]}
@@ -370,6 +378,14 @@ cell trenz.biz:user:labtools_fmeter:1.0 labtools_fmeter_0 {
 } {
   refclk  ps_0/pl_clk0
   fin [get_concat_pin [list rfip/clk_adc0 rfip/clk_adc1 rfip/clk_adc2 rfip/clk_adc3 rfip/clk_dac0 rfip/clk_dac1 rfip/clk_dac2  rfip/clk_dac3]]
+  F0 [sts_pin adc_clk0]
+  F1 [sts_pin adc_clk1]
+  F2 [sts_pin adc_clk2]
+  F3 [sts_pin adc_clk3]
+  F4 [sts_pin dac_clk0]
+  F5 [sts_pin dac_clk1]
+  F6 [sts_pin dac_clk2]
+  F7 [sts_pin dac_clk3]
 }
 
 cell xilinx.com:ip:vio:3.0 vio_0 {
