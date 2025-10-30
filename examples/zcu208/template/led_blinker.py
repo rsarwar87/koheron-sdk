@@ -29,7 +29,7 @@ class LedBlinker(object):
         return self.client.recv_uint32()
 
 if __name__=="__main__":
-    host = os.getenv('HOST','10.240.229.242')
+    host = os.getenv('HOST','10.240.229.243')
     client = connect(host, name='zcu208_template')
     driver = LedBlinker(client)
 

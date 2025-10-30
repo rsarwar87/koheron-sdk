@@ -51,6 +51,7 @@ xdc:
 
 drivers:
   - server/drivers/common.hpp
+  - ./rfsoc_clocking.hpp
   - ./led_blinker.hpp
 
 web:

@@ -28,10 +28,11 @@ class LedBlinker(object):
     def get_forty_two(self):
         return self.client.recv_uint32()
 
-    @command()
+    @command("RFSoC_ADC_DAC")
     def get_adc_raw_data(self):
         return self.client.recv_array(8, dtype="uint32")
-    @command()
+
+    @command("RFSoC_ADC_DAC")
     def get_rfsoc_clocks(self):
         return self.client.recv_array(8, dtype="uint32")
 
