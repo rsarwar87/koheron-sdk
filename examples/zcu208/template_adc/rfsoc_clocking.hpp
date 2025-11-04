@@ -99,19 +99,30 @@ private:
   std::vector<LMKDevice> lmk_devices;
   std::vector<LMXDevice> lmx_devices;
 
-  std::string get_spidev_path(const fs::path &dev) {
+  std::string get_spi_path(const fs::path &dev) {
     // Implement logic to get /dev/spidevB.C path
     // Placeholder: return dev filename
     return "spidev" + dev.filename().string().substr(3);
   }
+  std::string get_spidev_path(const fs::path &dev) {
+    // Implement logic to get /dev/spidevB.C path
+    // Placeholder: return dev filename
+    return "spi" + dev.filename().string().substr(3);
+  }
 
   void spidev_bind(const fs::path &dev) {
     // Implement actual binding logic
+    // (dev / '').write_text('spidev')
+    //
+    fs::path driver_override = dev / "driver_override";
+    std::ofstream override_fs(driver_override);
+    override_fs << "spidev";
+
     if (fs::exists("/sys/bus/spi/drivers/spidev/bind")) {
       std::ofstream bind_fs("/sys/bus/spi/drivers/spidev/bind");
       if (bind_fs.is_open()) {
         ctx.log<INFO>("spidev_bind: [%s]\n", dev.filename().string().c_str());
-        bind_fs << dev.filename().string();
+        bind_fs << dev.filename().string().c_str();
       }
     }
   }
@@ -164,13 +175,13 @@ private:
         //LMKDevice lmk(ctx.spi.get(get_spidev_path(dev.path())));
         LMKDevice lmk(get_spidev_path(dev.path()), compatible, 
               read_big_endian_uint32(dev.path() / "of_node" / "num_bytes"), 
-              ctx.spi.get(get_spidev_path(dev.path())));
+              ctx.spi.get(get_spi_path(dev.path())));
         lmk_devices.push_back(lmk);
         ctx.log<INFO>("Binding: [%s, %s, %d]\n", lmk.spi_device.c_str(), lmk.compatible.c_str(),
                       lmk.num_bytes);
       } else {
         LMXDevice lmx(get_spidev_path(dev.path()), compatible, 
-              ctx.spi.get(get_spidev_path(dev.path())));
+              ctx.spi.get(get_spi_path(dev.path())));
         //LMXDevice lmx(ctx.spi.get(get_spidev_path(dev.path())));
         lmx_devices.push_back(lmx);
         ctx.log<INFO>("Binding: [%s, %s]\n", lmx.spi_device.c_str(), lmx.compatible.c_str());
