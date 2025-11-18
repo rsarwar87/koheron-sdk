@@ -59,17 +59,17 @@ public:
       bool found  = false;
       for (auto reglist : ClockingReg)
       {
-        if ((reglist.xfrequency == lmx) && (reglist.chip == dev.compatible))
+        if ((reglist.xfrequency == lmx) && (reglist.chip == dev.compatible.c_str()))
         {
           found = true;
           dev.write_LMK_regs(&reglist);
-          ctx.log<INFO>("set_clocks: found [%s - %d]\n", dev.compatible, lmx);
+          ctx.log<INFO>("set_clocks: found [%s - %d]\n", dev.compatible.c_str(), lmx);
           break;
         }
       }
       if (!found)
       {
-          ctx.log<ERROR>("set_clocks: not found [%s - %d]\n", dev.compatible, lmx);
+          ctx.log<ERROR>("set_clocks: not found [%s - %d]\n", dev.compatible.c_str(), lmx);
       }
     }
     for (auto dev : lmk_devices)
@@ -77,17 +77,17 @@ public:
       bool found  = false;
       for (auto reglist : ClockingReg)
       {
-        if ((reglist.xfrequency == lmk) && (reglist.chip == dev.compatible))
+        if ((reglist.xfrequency == lmk) && (reglist.chip == dev.compatible.c_str()))
         {
           found = true;
           dev.write_LMK_regs(&reglist);
-          ctx.log<INFO>("set_clocks: found [%s - %d]\n", dev.compatible, lmk);
+          ctx.log<INFO>("set_clocks: found [%s - %d]\n", dev.compatible.c_str(), lmk);
           break;
         }
       }
       if (!found)
       {
-          ctx.log<ERROR>("set_clocks: not found [%s - %d]\n", dev.compatible, lmk);
+          ctx.log<ERROR>("set_clocks: not found [%s - %d]\n", dev.compatible.c_str(), lmk);
       }
     }
   }
@@ -110,21 +110,60 @@ private:
     return "spi" + dev.filename().string().substr(3);
   }
 
-  void spidev_bind(const fs::path &dev) {
-    // Implement actual binding logic
-    // (dev / '').write_text('spidev')
-    //
-    fs::path driver_override = dev / "driver_override";
-    std::ofstream override_fs(driver_override);
-    override_fs << "spidev";
+  bool spidev_bind(const fs::path &dev) {
+    const std::string bind_path = "/sys/bus/spi/drivers/spidev/bind";
+    fs::path driver_path = dev / "driver_override";
 
-    if (fs::exists("/sys/bus/spi/drivers/spidev/bind")) {
-      std::ofstream bind_fs("/sys/bus/spi/drivers/spidev/bind");
-      if (bind_fs.is_open()) {
-        ctx.log<INFO>("spidev_bind: [%s]\n", dev.filename().string().c_str());
-        bind_fs << dev.filename().string().c_str();
-      }
+    // --- Write "spidev" to driver_override ---
+    if (fs::exists(driver_path)) {
+        std::ofstream driver_fs(driver_path);
+        if (driver_fs.is_open()) {
+            ctx.log<INFO>("Setting driver_override for %s\n", dev.filename().string().c_str());
+            driver_fs << "spidev";
+            driver_fs.close();
+
+            if (!driver_fs) {
+                ctx.log<ERROR>("Failed to write to driver_override (%s): %s\n",
+                               driver_path.string().c_str(), strerror(errno));
+                return false;
+            } else {
+                ctx.log<INFO>("driver_override set to spidev\n");
+            }
+        } else {
+            ctx.log<ERROR>("Failed to open driver_override (%s): %s\n",
+                           driver_path.string().c_str(), strerror(errno));
+            return false;
+        }
+    } else {
+        ctx.log<ERROR>("driver_override file not found for %s\n", dev.string().c_str());
+        return false;
     }
+
+    // --- Then bind to spidev ---
+    if (!fs::exists(bind_path)) {
+        ctx.log<ERROR>("Bind path does not exist: %s\n", bind_path.c_str());
+        return false;
+    }
+
+    std::ofstream bind_fs(bind_path);
+    if (!bind_fs.is_open()) {
+        ctx.log<ERROR>("Failed to open bind file: %s (errno %d: %s)\n",
+                       bind_path.c_str(), errno, strerror(errno));
+        return false;
+    }
+
+    ctx.log<INFO>("spidev_bind: [%s]\n", dev.filename().string().c_str());
+    bind_fs << dev.filename().string();
+    bind_fs.close();
+
+    if (!bind_fs) {
+        ctx.log<ERROR>("Write to bind file failed (errno %d: %s)\n",
+                       errno, strerror(errno));
+        return false;
+    } else {
+        ctx.log<INFO>("Successfully bound %s to spidev\n", dev.filename().string().c_str());
+    }
+    return true;
   }
 
   uint32_t read_big_endian_uint32(const fs::path &file_path) {
@@ -169,7 +208,11 @@ private:
           unbind_fs << dev.path().filename().string();
       }
 
-      spidev_bind(dev.path());
+      if (!spidev_bind(dev.path()))
+      {
+        ctx.log<CRITICAL>("Failed to find\n"); 
+        return;
+      }
 
       if (compatible.substr(0, 3) == "lmk") {
         //LMKDevice lmk(ctx.spi.get(get_spidev_path(dev.path())));
@@ -189,11 +232,9 @@ private:
     }
 
     if (lmk_devices.empty())
-      throw std::runtime_error(
-          "SPI path not set. LMK not found on device tree. Issue with BSP.");
+      ctx.log<CRITICAL>("Failed to find LMK devices\n"); 
     if (lmx_devices.empty())
-      throw std::runtime_error(
-          "SPI path not set. LMX not found on device tree. Issue with BSP.");
+      ctx.log<CRITICAL>("Failed to find LMX devices\n"); 
   }
   std::array<XClockingLmx, MAX_FREQ> ClockingReg = {
       {XClockingLmx{

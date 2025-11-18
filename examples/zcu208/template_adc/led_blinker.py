@@ -36,6 +36,10 @@ class LedBlinker(object):
     def get_rfsoc_clocks(self):
         return self.client.recv_array(8, dtype="uint32")
 
+    @command("RFSoC_ADC_DAC")
+    def set_clocks(self, lmk, lmx):
+        pass
+
 if __name__=="__main__":
     host = os.getenv('HOST','10.240.229.243')
     client = connect(host, name='zcu208_template_adc')
@@ -44,5 +48,6 @@ if __name__=="__main__":
     print ("Printing DNA: {}".format(driver.get_forty_two()))
     print ("Printing clocks: {}".format(driver.get_rfsoc_clocks()))
     print ("Printing ADC: {}".format(driver.get_adc_raw_data()))
+    #driver.set_clocks(245760, 491520)
 
 

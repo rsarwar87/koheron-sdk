@@ -17,7 +17,10 @@ SpiDev::SpiDev(ContextBase& ctx_, std::string devname_)
 int SpiDev::init(uint8_t mode_, uint32_t speed_, uint8_t word_length_)
 {
     if (fd >=0)
+    {
+        ctx.log<ERROR>("SpiDev: fd > 0\n");
         return 0;
+    }
 
     const char *devpath = ("/dev/" + devname).c_str();
 
@@ -25,6 +28,7 @@ int SpiDev::init(uint8_t mode_, uint32_t speed_, uint8_t word_length_)
         fd = open(devpath, O_RDWR | O_NOCTTY);
 
         if (fd < 0) {
+            ctx.log<ERROR>("SpiDev: open < 0\n");
             return -1;
         }
     }
@@ -32,7 +36,10 @@ int SpiDev::init(uint8_t mode_, uint32_t speed_, uint8_t word_length_)
     if (set_mode(mode_) < 0              ||
         set_speed(speed_) < 0            ||
         set_word_length(word_length_) < 0)
+    {
+        ctx.log<ERROR>("SpiDev: set_mode < 0\n");
         return -1;
+    }
 
     return 0;
 }
@@ -158,6 +165,7 @@ int SpiManager::init()
         // Exclude '.' and '..' repositories
         if (devname[0] != '.') {
 
+            ctx.log<INFO>("SPI: found [%s]\n", devname);
             spi_drivers.insert(
                 std::make_pair(devname, std::make_unique<SpiDev>(ctx, devname))
             );
@@ -178,9 +186,11 @@ SpiDev& SpiManager::get(const std::string& devname,
 {
     if (! has_device(devname)) {
         // This is critical since explicit driver request cannot be honored
+        ctx.log<ERROR>("SpiManager: not found [%s]\n", devname.c_str());
         return empty_spidev;
     }
 
     spi_drivers[devname]->init(mode, speed, word_length);
+    ctx.log<INFO>("SpiManager: found [%s]\n", devname.c_str());
     return *spi_drivers[devname];
 }
