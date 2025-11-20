@@ -218,13 +218,13 @@ private:
         //LMKDevice lmk(ctx.spi.get(get_spidev_path(dev.path())));
         LMKDevice lmk(get_spidev_path(dev.path()), compatible, 
               read_big_endian_uint32(dev.path() / "of_node" / "num_bytes"), 
-              ctx.spi.get(get_spi_path(dev.path())));
+              ctx.spi.get(get_spi_path(dev.path()), 0, 400000, 8));
         lmk_devices.push_back(lmk);
         ctx.log<INFO>("Binding: [%s, %s, %d]\n", lmk.spi_device.c_str(), lmk.compatible.c_str(),
                       lmk.num_bytes);
       } else {
         LMXDevice lmx(get_spidev_path(dev.path()), compatible, 
-              ctx.spi.get(get_spi_path(dev.path())));
+              ctx.spi.get(get_spi_path(dev.path()), 0, 400000, 8));
         //LMXDevice lmx(ctx.spi.get(get_spidev_path(dev.path())));
         lmx_devices.push_back(lmx);
         ctx.log<INFO>("Binding: [%s, %s]\n", lmx.spi_device.c_str(), lmx.compatible.c_str());
