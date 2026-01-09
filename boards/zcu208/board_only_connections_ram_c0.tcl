@@ -1,29 +1,51 @@
-create_bd_intf_port -mode Master -vlnv xilinx.com:interface:ddr4_rtl:1.0 C0_DDR4
-set C1_SYS_CLK_0_0 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 C0_SYS_CLK ]
+create_bd_intf_port -mode Master -vlnv xilinx.com:interface:ddr4_rtl:1.0 ddr4_sdram_c0
+set C1_SYS_CLK_0_0 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 default_sysclk_c0_300mhz ]
 set_property -dict [ list \
    CONFIG.FREQ_HZ {299940000} \
 ] $C1_SYS_CLK_0_0
 
-cell xilinx.com:ip:ddr4:2.2 ddr4_0 {
-  C0.BANK_GROUP_WIDTH {2} \
-  C0.CS_WIDTH {2} \
-  C0.DDR4_AxiAddressWidth {32} \
-  C0.DDR4_AxiDataWidth {256} \
-  C0.DDR4_CasLatency {19} \
-  C0.DDR4_Clamshell {true} \
-  C0.DDR4_DataWidth {32} \
-  C0.DDR4_InputClockPeriod {3334} \
-  C0.DDR4_MemoryPart {MT40A1G8SA-075} \
-  ADDN_UI_CLKOUT1_FREQ_HZ {100} \
-  C0_CLOCK_BOARD_INTERFACE {default_sysclk_c0_300mhz} \
-  C0_DDR4_BOARD_INTERFACE {ddr4_sdram_c0} \
 
+cell xilinx.com:ip:util_ds_buf:2.2 util_ds_buf_0 {
+    DIFF_CLK_IN_BOARD_INTERFACE {default_sysclk_c0_300mhz} \
+    USE_BOARD_FLOW {true} \
 } {
-  C0_SYS_CLK C0_SYS_CLK
-  C0_DDR4 C0_DDR4
-  sys_rst proc_sys_reset_0/peripheral_reset
+  CLK_IN_D default_sysclk_c0_300mhz
+}
+cell xilinx.com:ip:util_ds_buf:2.2 util_ds_buf_1 {
+    C_BUF_TYPE {BUFG}\
+} {
+  BUFG_I util_ds_buf_0/IBUF_OUT
+}
+cell xilinx.com:ip:ddr4:2.2 ddr4_0 {
+    ADDN_UI_CLKOUT1_FREQ_HZ {100} \
+    C0.BANK_GROUP_WIDTH {2} \
+    C0.CS_WIDTH {2} \
+    C0.DDR4_AxiAddressWidth {32} \
+    C0.DDR4_Clamshell {true} \
+    C0_DDR4_BOARD_INTERFACE {ddr4_sdram_c0} \
+    System_Clock {No_Buffer} \
+} {
+  c0_sys_clk_i util_ds_buf_1/BUFG_O
+  C0_DDR4 ddr4_sdram_c0
+}
+#c0_init_calib_complete [sts_pin ddr4_state]
+cell xilinx.com:ip:xpm_cdc_gen:1.0 xpm_cdc_gen_1 {
+    CDC_TYPE {xpm_cdc_sync_rst} \
+    DEST_SYNC_FF {10} \
+    INIT_SYNC_FF {true} \
+    REG_OUTPUT {true} \
+} {
+  src_rst proc_sys_reset_0/bus_struct_reset
+  dest_clk util_ds_buf_1/BUFG_O
+  dest_rst_out ddr4_0/sys_rst
 }
 
+cell xilinx.com:ip:proc_sys_reset:5.0 rst_ddr  {
+} {
+  slowest_sync_clk ddr4_0/c0_ddr4_ui_clk
+  ext_reset_in ddr4_0/c0_ddr4_ui_clk_sync_rst
+  peripheral_aresetn ddr4_0/c0_ddr4_aresetn
+}
 cell xilinx.com:ip:axi_interconnect:2.1 ddr4_interconnect_0 {
   NUM_MI {1} \
   NUM_SI {3} \
@@ -31,15 +53,15 @@ cell xilinx.com:ip:axi_interconnect:2.1 ddr4_interconnect_0 {
  aclk ps_0/pl_clk0
  aresetn proc_sys_reset_0/peripheral_aresetn
  M00_aclk ddr4_0/c0_ddr4_ui_clk
- M00_aresetn ddr4_0/c0_init_calib_complete
+ M00_aresetn rst_ddr/peripheral_aresetn
  M00_AXI ddr4_0/C0_DDR4_S_AXI
  S00_AXI axi_mem_intercon_0/M[add_master_interface]_AXI
  S00_ACLK ${ps_name}/pl_clk0
  S00_ARESETN proc_sys_reset_0/peripheral_aresetn
  S01_ACLK ddr4_0/c0_ddr4_ui_clk
- S01_ARESETN ddr4_0/c0_init_calib_complete
+ S01_ARESETN rst_ddr/peripheral_aresetn
  S02_ACLK ddr4_0/c0_ddr4_ui_clk
- S02_ARESETN ddr4_0/c0_init_calib_complete
+ S02_ARESETN rst_ddr/peripheral_aresetn
 }
 
 set_cell_props ps_0 {
@@ -74,7 +96,6 @@ cell xilinx.com:ip:axi_dma:7.1 ddr4_dma_0 {
   m_axi_mm2s_aclk ddr4_0/c0_ddr4_ui_clk
   M_AXI_S2MM ddr4_interconnect_0/S01_AXI
   M_AXI_MM2S ddr4_interconnect_0/S02_AXI
-  s2mm_prmry_reset_out_n ddr4_0/c0_ddr4_aresetn
 }
 
 assign_bd_address -offset [get_memory_offset dma_c0] -range \
