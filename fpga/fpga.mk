@@ -26,7 +26,7 @@ CORES_COMPONENT_XML := $(addsuffix /component.xml, $(addprefix $(TMP_CORES_PATH)
 
 define make_core_target
 $(TMP_CORES_PATH)/$(notdir $1)/component.xml: $1/core_config.tcl $1/*.v* | $(TMP_CORES_PATH)
-	$(VIVADO_BATCH) -source $(FPGA_PATH)/vivado/core.tcl -tclargs $1 $(PART) $(TMP_CORES_PATH)
+	$(VIVADO_BATCH) -source $(FPGA_PATH)/vivado/core.tcl -tclargs $1 $(PART) $(TMP_CORES_PATH) $(SDK_PATH) 
 	@echo [$1] OK
 endef
 $(foreach core,$(CORES),$(eval $(call make_core_target,$(core))))
