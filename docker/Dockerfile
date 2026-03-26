@@ -1,5 +1,5 @@
-FROM gcc:9.5
-ARG GCC_VERSION=9
+FROM gcc:10
+ARG GCC_VERSION=10
 RUN apt update
 RUN apt install -y binutils-aarch64-linux-gnu \
   binutils-arm-linux-gnueabi \
