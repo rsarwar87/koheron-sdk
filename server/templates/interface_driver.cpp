@@ -8,6 +8,7 @@
 
 #include <commands.hpp>
 #include <session.hpp>
+#include <cassert>   // <-- add this
 
 namespace koheron {
 
