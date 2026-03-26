@@ -5,6 +5,9 @@ SHELL := bash
 .DELETE_ON_ERROR:
 .SUFFIXES:
 
+ifndef XILINXD_LICENSE_FILE
+$(error XILINXD_LICENSE_FILE is not set)
+endif 
 CONFIG ?= examples/red-pitaya/led-blinker/config.yml
 SDK_PATH ?= .
 MODE ?= development
@@ -19,7 +22,7 @@ VIVADO_PATH := /opt/Xilinx/Vivado
 VITIS_PATH := /opt/Xilinx/Vitis
 PYTHON := python3
 # Use GCC version >=7
-GCC_VERSION := 9
+GCC_VERSION := 10
 
 # Use this command to set GCC_VERSION to 9 on Ubuntu 22.04
 set_gcc_version:

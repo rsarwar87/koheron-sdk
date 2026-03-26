@@ -36,13 +36,33 @@ set_property BITSTREAM.CONFIG.OVERTEMPSHUTDOWN ENABLE [current_design]
 set_property BITSTREAM.CONFIG.UNUSEDPIN PULLNONE [current_design]
 # ----------------------------------------------------------------------------------
 
+# Optional reference oscillator
+set_property PACKAGE_PIN N7    [get_ports {CLK_REF_clk_n[0]}]; # GTH
+set_property PACKAGE_PIN N8    [get_ports {CLK_REF_clk_p[0]}]; # GTH
+
+# Clock Generator CLK1
+set_property PACKAGE_PIN E7    [get_ports {CLK_REF0_clk_n[0]}]; # GTH
+set_property PACKAGE_PIN E8    [get_ports {CLK_REF0_clk_p[0]}]; # GTH
+
+# Clock Generator CLK2
+set_property PACKAGE_PIN R7    [get_ports {sfp_refclk_clk_n}]; # GTH
+set_property PACKAGE_PIN R8    [get_ports {sfp_refclk_clk_p}]; # GTH
+
+# Clock Generator CLK3
+set_property PACKAGE_PIN J7    [get_ports {CLK_REF2_clk_n[0]}]; # GTH
+set_property PACKAGE_PIN J8    [get_ports {CLK_REF2_clk_p[0]}]; # GTH
+
+set_property PACKAGE_PIN L3    [get_ports {sfp_0_rxn}]; # GTH
+set_property PACKAGE_PIN L4    [get_ports {sfp_0_rxp}]; # GTH
+set_property PACKAGE_PIN K5    [get_ports {sfp_0_txn}]; # GTH
+set_property PACKAGE_PIN K6    [get_ports {sfp_0_txp}]; # GTH
 
 # BUTTONS
 set_property -dict {PACKAGE_PIN K14   IOSTANDARD LVCMOS18  } [get_ports {BTN1_N}]
 
 # Clock Generator CLK0
-set_property -dict {PACKAGE_PIN F11   IOSTANDARD DIFF_SSTL18_I} [get_ports {CLK_USR_N}]
-set_property -dict {PACKAGE_PIN F12   IOSTANDARD DIFF_SSTL18_I} [get_ports {CLK_USR_P}]
+set_property -dict {PACKAGE_PIN F11   IOSTANDARD DIFF_SSTL18_I} [get_ports {CLK_USR_clk_n}]
+set_property -dict {PACKAGE_PIN F12   IOSTANDARD DIFF_SSTL18_I} [get_ports {CLK_USR_clk_p}]
 
 # Oscillator 100 MHz
 set_property -dict {PACKAGE_PIN J14   IOSTANDARD LVCMOS18  } [get_ports {CLK_100_CAL}]
@@ -57,8 +77,8 @@ set_property -dict {PACKAGE_PIN C13   IOSTANDARD LVCMOS18  } [get_ports {IIC_FPG
 set_property -dict {PACKAGE_PIN A15   IOSTANDARD LVCMOS18  } [get_ports {I2C_MIPI_SEL}]
 
 # I2C PL
-set_property -dict {PACKAGE_PIN V3    IOSTANDARD LVCMOS18  } [get_ports {I2C_SCL}]
-set_property -dict {PACKAGE_PIN Y7    IOSTANDARD LVCMOS18  } [get_ports {I2C_SDA}]
+set_property -dict {PACKAGE_PIN V3    IOSTANDARD LVCMOS18  } [get_ports {I2C_scl_io}]
+set_property -dict {PACKAGE_PIN Y7    IOSTANDARD LVCMOS18  } [get_ports {I2C_sda_io}]
 
 # HDMI
 set_property -dict {PACKAGE_PIN B15   IOSTANDARD LVCMOS18  } [get_ports {HDMI_HPD}]
