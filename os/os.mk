@@ -189,8 +189,12 @@ $(TMP_OS_PATH)/overlay/pl.dtsi: $(TMP_FPGA_PATH)/$(NAME).xsa $(DTREE_PATH) $(PAT
 	mkdir -p $(@D)
 	$(HSI) $(FPGA_PATH)/hsi/devicetree.tcl $(NAME) $(PROC) $(DTREE_PATH) $(VIVADO_VER) $(TMP_OS_PATH)/hard $(TMP_OS_PATH)/overlay $(TMP_FPGA_PATH)/$(NAME).xsa $(BOOT_MEDIUM)
 	cp -R $(TMP_OS_PATH)/overlay $(TMP_OS_PATH)/overlay.orig
-	[[ -f $(PROJECT_PATH)/overlay.patch ]] || touch $(PROJECT_PATH)/overlay.patch
-	patch -d $(TMP_OS_PATH) -p -0 < $(PROJECT_PATH)/overlay.patch
+	@if [ -f $(PROJECT_PATH)/overlay.patch ]; then \
+		patch -d $(TMP_OS_PATH) -p0 < $(PROJECT_PATH)/overlay.patch; \
+	fi
+	@if [ -f $(PROJECT_PATH)/overlay.sh ]; then \
+		bash $(PROJECT_PATH)/overlay.sh $(TMP_OS_PATH)/overlay; \
+	fi
 	@echo [$@] OK
 
 $(TMP_OS_PATH)/devicetree/system-top.dts: $(TMP_FPGA_PATH)/$(NAME).xsa $(DTREE_PATH) $(PATCHES)/devicetree.patch
@@ -257,6 +261,7 @@ $(LINUX_PATH)/scripts/dtc/dtc: $(LINUX_PATH) $(shell find $(PATCHES)/linux -type
 
 $(TMP_OS_PATH)/pl.dtbo: $(LINUX_PATH)/scripts/dtc/dtc $(TMP_OS_PATH)/overlay/pl.dtsi
 	sed -i 's/".bin"/"$(NAME).bit.bin"/g' $(TMP_OS_PATH)/overlay/pl.dtsi
+	sed -i -E 's/([[:space:]]*compatible[[:space:]]*=[[:space:]]*)"(xlnx,usp-rf-data-converter-2\.6)";/\1"generic-uio", "\2";/' $(TMP_OS_PATH)/overlay/pl.dtsi
 	$(LINUX_PATH)/scripts/dtc/dtc -O dtb -o $@ \
 	  -i $(TMP_OS_PATH)/overlay -b 0 -@ $(TMP_OS_PATH)/overlay/pl.dtsi
 	@echo [$@] OK
