@@ -1,4 +1,5 @@
 proc add_ctl_sts {{mclk "None"}  {mrstn "None"}} {
+  global isZynqMP
   if {[info exists config::register_count_control] && $config::register_count_control > 0} {
     add_config_register ctl control $mclk $mrstn config::register_control $config::register_count_control
   }
@@ -6,6 +7,11 @@ proc add_ctl_sts {{mclk "None"}  {mrstn "None"}} {
   if {[info exists config::register_count_status] && $config::register_count_status > 0} {
     add_status_register sts status $mclk $mrstn config::register_status $config::register_count_status
   }
+  #if {$isZynqMP == 0} {
+  #  add_status_register sts status $mclk $mrstn config::sts_register $config::status_size
+  #} else {
+  #  add_status_register sts status $mclk $mrstn config::sts_register $config::status_size 0 0 
+  #}
 
   if {[info exists config::register_count_ps_control] && $config::register_count_ps_control > 0} {
     add_config_register ps_ctl ps_control "None" "None" config::register_ps_control $config::register_count_ps_control
@@ -63,7 +69,14 @@ proc add_config_register {module_name memory_name mclk mrstn reg_names {num_port
   }
 
   assign_bd_address [get_bd_addr_segs {axi_${module_name}_register/s_axi/reg0 }]
-  set memory_segment [get_bd_addr_segs /${::ps_name}/Data/SEG_axi_${module_name}_register_reg0]
+  global isXDma
+  set memory_segment 0
+  
+  if {$isXDma == 1} {
+    set memory_segment [get_bd_addr_segs /${::ps_name}/M_AXI_LITE/SEG_axi_${module_name}_register_reg0]
+  } else {
+    set memory_segment [get_bd_addr_segs /${::ps_name}/Data/SEG_axi_${module_name}_register_reg0]
+  }
   set_property range  [get_memory_range $memory_name]  $memory_segment
   set_property offset [get_memory_offset $memory_name] $memory_segment
 
@@ -86,6 +99,7 @@ proc add_status_register {module_name memory_name mclk mrstn reg_names {num_port
   for {set i 0} {$i < $num_ports} {incr i} {
     create_bd_pin -dir I -from 31 -to 0 $register($i)
   }
+
 
   # Add a new Master Interface to AXI Interconnect
   set idx [add_master_interface $intercon_idx]
@@ -124,7 +138,11 @@ proc add_status_register {module_name memory_name mclk mrstn reg_names {num_port
   }
 
   assign_bd_address [get_bd_addr_segs {axi_${module_name}_register_0/s_axi/reg0 }]
-  set memory_segment [get_bd_addr_segs /${::ps_name}/Data/SEG_axi_${module_name}_register_0_reg0]
+  if {${::isXDma} == 1} {
+    set memory_segment [get_bd_addr_segs /${::ps_name}/M_AXI_LITE/SEG_axi_${module_name}_register_0_reg0]
+  } else {
+    set memory_segment [get_bd_addr_segs /${::ps_name}/Data/SEG_axi_${module_name}_register_0_reg0]
+  }
   set_property range  [get_memory_range $memory_name]  $memory_segment
   set_property offset [get_memory_offset $memory_name] $memory_segment
 
