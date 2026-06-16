@@ -250,8 +250,10 @@ class Memory
         static_assert(offset < mem::get_range(id), "Invalid offset");
         static_assert(mem::is_writable(id), "Not writable");
 
-        uintptr_t addr = base_address + offset;
-        *(volatile uintptr_t *) addr = *((volatile uintptr_t *) addr) | (1U << index);
+       // uintptr_t addr = base_address + offset;
+       // *(volatile uintptr_t *) addr = *((volatile uintptr_t *) addr) | (1U << index);
+        auto reg = reinterpret_cast<volatile uint32_t*>(base_address + offset);
+*reg = *reg | (1u << index);
     }
 
     // Set a bit (offset and index defined at run-time)
@@ -268,8 +270,10 @@ class Memory
         static_assert(offset < mem::get_range(id), "Invalid offset");
         static_assert(mem::is_writable(id), "Not writable");
 
-        uintptr_t addr = base_address + offset;
-        *(volatile uintptr_t *) addr = *((volatile uintptr_t *) addr) & ~(1U << index);
+        //uintptr_t addr = base_address + offset;
+        //*(volatile uintptr_t *) addr = *((volatile uintptr_t *) addr) & ~(1U << index);
+        auto reg = reinterpret_cast<volatile uint32_t*>(base_address + offset);
+        *reg = *reg & ~(1u << index);
     }
 
     // Clear a bit (offset and index defined at run-time)
