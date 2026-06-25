@@ -1,0 +1,3 @@
+[submodule "examples/te1001/bypass/cores/xdma_bypass_v1_0"]
+	path = examples/te1001/bypass/cores/xdma_bypass_v1_0
+	url = git@git.ccfe.ac.uk:nimbus/ips/xdma_control.git
