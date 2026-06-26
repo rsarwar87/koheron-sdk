@@ -1,0 +1,66 @@
+---
+name: teb0911_sfp
+board: boards/trenz/teb0911/9eg
+version: 0.1.1
+
+cores:
+  - fpga/cores/axi_ctl_register_v1_0
+  - fpga/cores/axi_sts_register_v1_0
+  - fpga/cores/dna_reader_v1_0
+  - ./cores/axi4_stream_resize_v1_0
+  - ./cores/udp_client_v1_0
+  - ./cores/ethernet_mac_v1_0
+  - ./cores/adc_emulator_v1_0
+
+memory:
+  - name: control
+    offset: '0xA4001000'
+    range: 4K
+  - name: status
+    offset: '0xA4002000'
+    range: 4K
+  - name: system_management_wiz
+    offset: '0xA4003000'
+    range: 4K
+  - name: adc_emulator_01
+    offset: '0xA4080000'
+    range: 64K
+  - name: mac_eth
+    offset: '0xA4090000'
+    range: 64K
+  - name: udp_client
+    offset: '0xA40A0000'
+    range: 64K
+  - name: rtdi_packetizer_0
+    offset: '0xA40B0000'
+    range: 64K
+
+control_registers:
+  - led
+
+status_registers:
+  - forty_two
+  - clock_[nclk]
+
+parameters:
+  fclk0: 250000000 # FPGA clock speed in Hz
+  nclk: 6 # FPGA clock speed in Hz
+  IS_10G: 1        # If 1, implements 10Gbit Ethernet, otherwise 1Gbit Ethernet
+  DO_EMULATE: 1        # If 1, implements 10Gbit Ethernet, otherwise 1Gbit Ethernet
+
+xdc:
+  - boards/trenz/teb0911/9eg/config/ports.xdc 
+  - ./constraints.xdc
+
+drivers:
+  - server/drivers/common.hpp
+  - ./cores/udp_client_v1_0/udp_client.hpp
+  - ./cores/ethernet_mac_v1_0/mac_driver.hpp
+  - ./led_blinker.hpp
+
+web:
+  - ./web/index.html
+  - web/koheron.ts
+  - web/led-blinker.ts
+  - ./web/app.ts
+   web/main.css

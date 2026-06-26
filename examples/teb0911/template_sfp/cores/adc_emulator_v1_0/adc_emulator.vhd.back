@@ -1,0 +1,384 @@
+---------------------------------------------------------------------------------------------------
+--! @brief Aurora testing logic (counts up on TX AXIS and checks RX AXIS loopback data)
+--!    This unit emulates the ADC by emiting 16-bit sequential counter value quadrupled across
+--!    the whole word width on m_axis* interface and checks the incoming data on s_axis*
+--!    interface for validity.
+--!    Control and status are managed through AXI4-Lite memory-mapped registers.
+--!
+--! @author Martin Krzisnik, Cosylab (martin.krzisnik@cosylab.com)
+--! @file adc_emulator.vhd
+---------------------------------------------------------------------------------------------------
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.math_real.all;
+---------------------------------------------------------------------------------------------------
+entity adc_emulator is
+   generic (
+      RST_POLARITY_G : std_logic := '1';     --! Reset polarity ('1' = active-high, '0' = active-low)
+      MARK_DEBUG_G   : string    := "false"  --! Enable ILA debug probes ("true"/"false")
+      );
+   port (
+      --! Clock and Reset
+      axi_clk : in std_logic;                --! System AXI clock
+      axi_rst : in std_logic;                --! System reset (polarity defined by RST_POLARITY_G)
+
+      --! Map debug register out
+      dbg_control_o : out std_logic_vector(31 downto 0);
+      dbg_status_o  : out std_logic_vector(31 downto 0);
+
+      --! @virtualbus axil_control_status AXI4-Lite Control/Status Interface (axi_clk domain)
+      s00_axil_conf_stat_awaddr  : in  std_logic_vector(5 downto 0);   --! Write address
+      s00_axil_conf_stat_awprot  : in  std_logic_vector(2 downto 0);   --! Write protection type
+      s00_axil_conf_stat_awvalid : in  std_logic;                      --! Write address valid
+      s00_axil_conf_stat_awready : out std_logic;                      --! Write address ready
+      s00_axil_conf_stat_wdata   : in  std_logic_vector(31 downto 0);  --! Write data
+      s00_axil_conf_stat_wstrb   : in  std_logic_vector(3 downto 0);   --! Write strobes
+      s00_axil_conf_stat_wvalid  : in  std_logic;                      --! Write valid
+      s00_axil_conf_stat_wready  : out std_logic;                      --! Write ready
+      s00_axil_conf_stat_bresp   : out std_logic_vector(1 downto 0);   --! Write response
+      s00_axil_conf_stat_bvalid  : out std_logic;                      --! Write response valid
+      s00_axil_conf_stat_bready  : in  std_logic;                      --! Write response ready
+      s00_axil_conf_stat_araddr  : in  std_logic_vector(5 downto 0);   --! Read address
+      s00_axil_conf_stat_arprot  : in  std_logic_vector(2 downto 0);   --! Read protection type
+      s00_axil_conf_stat_arvalid : in  std_logic;                      --! Read address valid
+      s00_axil_conf_stat_arready : out std_logic;                      --! Read address ready
+      s00_axil_conf_stat_rdata   : out std_logic_vector(31 downto 0);  --! Read data
+      s00_axil_conf_stat_rresp   : out std_logic_vector(1 downto 0);   --! Read response
+      s00_axil_conf_stat_rvalid  : out std_logic;                      --! Read valid
+      s00_axil_conf_stat_rready  : in  std_logic;                      --! Read ready
+      --! @end
+
+      --! @virtualbus aurora_tx_axis Aurora TX AXI-Stream Master Interface (axi_clk domain)
+      m_axis_tvalid : out std_logic;                      --! TX valid signal
+      m_axis_tdata  : out std_logic_vector(63 downto 0);  --! TX data (quadruplicated 16-bit count)
+      m_axis_tkeep  : out std_logic_vector(7 downto 0);   --! TX byte enable
+      m_axis_tlast  : out std_logic;                      --! TX last transfer in packet
+      m_axis_tready : in  std_logic;                      --! TX ready (back-pressure from downstream)
+      m_axis_tuser  : out std_logic_vector(1 downto 0);   --! TX user signals (SOF/EOF indicators)
+      --! @end
+
+      --! @virtualbus aurora_rx_axis Aurora RX AXI-Stream Slave Interface (axi_clk domain)
+      s_axis_tvalid : in  std_logic;                      --! RX valid signal
+      s_axis_tdata  : in  std_logic_vector(63 downto 0);  --! RX data (checked for quadrupling and sequential order)
+      s_axis_tkeep  : in  std_logic_vector(7 downto 0);   --! RX byte enable
+      s_axis_tlast  : in  std_logic;                      --! RX last transfer in packet
+      s_axis_tready : out std_logic                       --! RX ready (back-pressure to upstream)
+    --! @end
+      );
+end adc_emulator;
+---------------------------------------------------------------------------------------------------
+architecture rtl of adc_emulator is
+   --! Register type for Two-Process design pattern
+   type RegType is record
+      resetCounter    : std_logic;                        --! Counter reset signal (triggers tlast)
+      rxData          : unsigned(15 downto 0);            --! Last received RX data value
+      firstPacketFlag : std_logic;                        --! Flag indicating first transfer after tlast
+      prev_en : std_logic;                        --! Flag indicating first transfer after tlast
+      tlastCounter    : unsigned(31 downto 0);            --! Count of tlast events received
+      pauseCounter    : unsigned(11 downto 0);            --! Inter-packet pause counter
+      pause           : std_logic;                        --! Pause TX transmission flag
+      en             : std_logic;                        --! Start-of-frame indicator
+      sof             : std_logic;                        --! Start-of-frame indicator
+      emulatorStatus  : std_logic_vector(31 downto 0);    --! Latched error status register
+   end record RegType;
+
+   --! Initial and reset values for all register elements
+   constant REG_INIT_C : RegType := (
+      resetCounter    => '0',
+      rxData          => (others => '0'),
+      firstPacketFlag => '1',
+      prev_en         => '1',
+      tlastCounter    => (others => '0'),
+      pauseCounter    => (others => '0'),
+      pause           => '0',
+      en              => '0',
+      sof             => '0',
+      emulatorStatus  => (others => '0')
+      );
+
+   --! AXI active-low reset (converted from axi_rst based on RST_POLARITY_G)
+   signal sAxiAresetn : std_logic;
+   --! 16-bit counter value from TestCounter (quadruplicated for TX data)
+   signal count       : std_logic_vector(15 downto 0);
+
+   ---------------------------------------------------------------------------------------------------
+   --! Control register from AXI-Lite (R/W)<br>
+   --!   - [15:0]  Packet size (number of transfers before tlast)<br>
+   --!   - [27:16] Pause length (pause duration in clock cycles between packets)<br>
+   --!   - [28]    Pause enable (1=enable inter-packet pause, 0=continuous)<br>
+   --!   - [29]    Reset tlast counter (write 1 to clear tlast_count register)<br>
+   --!   - [30]    Reset errors (write 1 to clear all latched error flags)<br>
+   --!   - [31]    Loopback enable (1=pass RX directly to TX, 0=TX test pattern)
+   signal emulator_control : std_logic_vector(31 downto 0);
+
+   ---------------------------------------------------------------------------------------------------
+   --! Status register to AXI-Lite (R-only)<br>
+   --! Bit assignments (latched error flags):<br>
+   --!   - [0]     TX handshake error (m_axis_tready was deasserted during valid)<br>
+   --!   - [1]     RX not quadrupled error (received data quadrants don't match)<br>
+   --!   - [2]     RX not sequential error (received data not incrementing by 1)<br>
+   --!   - [31:3]  Unused (reserved, read as 0)
+   signal emulator_status : std_logic_vector(31 downto 0);
+
+   --! tlast counter register to AXI-Lite (R-only, counts number of RX tlast events)
+   signal tlast_count : std_logic_vector(31 downto 0);
+   --! Debug control register from AXI-Lite (R/W, looped back to dbg_status for verification)
+   signal dbg_control : std_logic_vector(31 downto 0);
+   --! Debug status register to AXI-Lite (R-only, mirrors dbg_control)
+   signal dbg_status  : std_logic_vector(31 downto 0);
+
+   --! Bits in emulator_control
+   subtype PACKET_SIZE_C is natural range 15 downto 0;
+   subtype PAUSE_LENGTH_C is natural range 27 downto 16;
+   constant PAUSE_EN_C          : positive := 28;
+   constant RESET_TLAST_COUNT_C : positive := 29;
+   constant RESET_ERRORS_C      : positive := 30;
+   constant LOOPBACK_EN_C       : positive := 31;
+
+   --! Bits in emulator_status
+   constant ERR_TX_HANDSHAKE_C      : natural  := 0;
+   constant ERR_RX_NOT_QUADRUPLED_C : positive := 1;
+   constant ERR_RX_NOT_SEQUENTIAL_C : positive := 2;
+
+   --! Output of registers
+   signal r : RegType;
+
+   --! p_Combinatorial input to registers
+   signal rin : RegType;
+
+   signal enable_count : std_logic;
+
+   -------------------------------------------------------------------------------------------------
+   -- Debug declarations
+   -------------------------------------------------------------------------------------------------
+   attribute mark_debug                     : string;
+   attribute mark_debug of r                : signal is MARK_DEBUG_G;
+   attribute mark_debug of count            : signal is MARK_DEBUG_G;
+   attribute mark_debug of enable_count     : signal is MARK_DEBUG_G;
+   attribute mark_debug of emulator_control : signal is MARK_DEBUG_G;
+   attribute mark_debug of emulator_status  : signal is MARK_DEBUG_G;
+   attribute mark_debug of dbg_control      : signal is MARK_DEBUG_G;
+   attribute mark_debug of dbg_status       : signal is MARK_DEBUG_G;
+   attribute mark_debug of m_axis_tvalid    : signal is MARK_DEBUG_G;
+   attribute mark_debug of m_axis_tdata     : signal is MARK_DEBUG_G;
+   attribute mark_debug of m_axis_tkeep     : signal is MARK_DEBUG_G;
+   attribute mark_debug of m_axis_tlast     : signal is MARK_DEBUG_G;
+   attribute mark_debug of m_axis_tready    : signal is MARK_DEBUG_G;
+
+---------------------------------------------------------------------------------------------------
+begin
+
+   --! Reset polarity conversion: active-high to active-low for AXI-Lite interface
+   GEN_AXI_RESET_INVERT : if RST_POLARITY_G = '1' generate
+      sAxiAresetn <= not axi_rst;
+   end generate GEN_AXI_RESET_INVERT;
+
+   --! Reset polarity conversion: active-low passthrough for AXI-Lite interface
+   GEN_AXI_RESET_PASS_THROUGH : if RST_POLARITY_G = '0' generate
+      sAxiAresetn <= axi_rst;
+   end generate GEN_AXI_RESET_PASS_THROUGH;
+
+   --! AXI4-Lite register interface wrapper:<br>
+   --!   Provides memory-mapped access to control and status registers:<br>
+   --!   - emulator_control: Packet size, pause config, loopback enable, reset commands<br>
+   --!   - emulator_status: Error flags (TX handshake, RX quadrupling, RX sequence)<br>
+   --!   - tlast_count: Count of received tlast events<br>
+   --!   - dbg_control/status: Debug registers
+   u_register_map_wrapper : entity work.register_map_wrapper
+      port map (
+         emulator_control   => emulator_control,
+         emulator_status    => emulator_status,
+         tlast_count        => tlast_count,
+         dbg_control        => dbg_control,
+         dbg_status         => dbg_status,
+         s_axi_lite_aclk    => axi_clk,
+         s_axi_lite_aresetn => sAxiAresetn,
+         s_axi_lite_awaddr  => s00_axil_conf_stat_awaddr,
+         s_axi_lite_awprot  => s00_axil_conf_stat_awprot,
+         s_axi_lite_awvalid => s00_axil_conf_stat_awvalid,
+         s_axi_lite_awready => s00_axil_conf_stat_awready,
+         s_axi_lite_wdata   => s00_axil_conf_stat_wdata,
+         s_axi_lite_wstrb   => s00_axil_conf_stat_wstrb,
+         s_axi_lite_wvalid  => s00_axil_conf_stat_wvalid,
+         s_axi_lite_wready  => s00_axil_conf_stat_wready,
+         s_axi_lite_bresp   => s00_axil_conf_stat_bresp,
+         s_axi_lite_bvalid  => s00_axil_conf_stat_bvalid,
+         s_axi_lite_bready  => s00_axil_conf_stat_bready,
+         s_axi_lite_araddr  => s00_axil_conf_stat_araddr,
+         s_axi_lite_arprot  => s00_axil_conf_stat_arprot,
+         s_axi_lite_arvalid => s00_axil_conf_stat_arvalid,
+         s_axi_lite_arready => s00_axil_conf_stat_arready,
+         s_axi_lite_rdata   => s00_axil_conf_stat_rdata,
+         s_axi_lite_rresp   => s00_axil_conf_stat_rresp,
+         s_axi_lite_rvalid  => s00_axil_conf_stat_rvalid,
+         s_axi_lite_rready  => s00_axil_conf_stat_rready
+         );
+
+   --! Loopback debug control to status register for readback verification
+   dbg_status    <= dbg_control;
+   dbg_status_o  <= dbg_status;
+   dbg_control_o <= dbg_control;
+
+   --! Combinatorial process for next-state logic:
+   --!   Implements TX packet generation with configurable pause, RX loopback verification,
+   --!   and error detection logic. Updates all register next values based on current state.
+   p_Comb : process(all)
+      variable v : RegType;
+   begin
+
+      --! default assignment
+      v              := r;
+      v.resetCounter := '0';
+      v.sof          := '0';
+      v.prev_en      := emulator_control(PAUSE_EN_C);
+
+      if v.prev_en = '1' and r.prev_en = '0' then
+        v.en        := 1;
+      elsif v.prev_en = '0' then
+        v.en        := 0;
+      end if;
+      --------------------------------------------------------------------------
+      -- TX logic
+      --------------------------------------------------------------------------
+      -- reset counter (and tLast signal)
+      if m_axis_tvalid = '1' and m_axis_tready = '1' then
+         if (unsigned(count) >= unsigned(emulator_control(PACKET_SIZE_C)) - 1) then
+            v.resetCounter := '1';
+
+            -- Pause tx of next packet at the end of current packet if pause is enabled.
+         end if;
+      end if;
+
+      if v.pause = '0' and v.en = '1' then
+         if ( v.pauseCounter = unsigned(burst_size(15 downto 0)) -1) then
+            v.pause := '1';
+            v.pauseCounter := (others => '0');
+          else
+               v.pauseCounter := r.pauseCounter + 1;
+         end if;
+      end if;
+         -- Pause transmission logic
+         if (r.pause = '1') then
+            if (r.pauseCounter < unsigned(emulator_control(PAUSE_LENGTH_C)) - 1) then
+               v.pauseCounter := r.pauseCounter + 1;
+            else
+               v.pause        := '0';
+               v.sof          := '1';
+               v.pauseCounter := (others => '0');
+            end if;
+         end if;
+
+      -- Kept for retro-compatibility
+      if m_axis_tready = '0' then
+         v.emulatorStatus(ERR_TX_HANDSHAKE_C) := '1';
+      end if;
+
+      --------------------------------------------------------------------------
+      -- Rx logic
+      --------------------------------------------------------------------------
+      -- RX checking
+      if s_axis_tvalid = '1' then
+         v.rxData          := unsigned(s_axis_tdata(15 downto 0));
+         v.firstPacketFlag := '0';
+
+         -- Check if data is quadrupled
+         if (s_axis_tdata(15 downto 0) /= s_axis_tdata(31 downto 16)) or
+            (s_axis_tdata(15 downto 0) /= s_axis_tdata(47 downto 32)) or
+            (s_axis_tdata(15 downto 0) /= s_axis_tdata(63 downto 48)) then
+            v.emulatorStatus(ERR_RX_NOT_QUADRUPLED_C) := '1';
+         end if;
+
+         -- Handle tlast
+         if s_axis_tlast then
+            v.firstPacketFlag := '1';
+            v.tlastCounter    := r.tlastCounter + 1;
+         end if;
+
+         -- Check if received data is sequential
+         if r.firstPacketFlag = '0' and (s_axis_tdata(15 downto 0) /= std_logic_vector(r.rxData + 1)) then
+            -- Received data is not sequential
+            v.emulatorStatus(ERR_RX_NOT_SEQUENTIAL_C) := '1';
+         end if;
+      end if;
+
+      --------------------------------------------------------------------------
+      -- tLast counter reset
+      --------------------------------------------------------------------------
+      if (emulator_control(RESET_TLAST_COUNT_C) = '1') then
+         v.tlastCounter := (others => '0');
+      end if;
+
+      --------------------------------------------------------------------------
+      -- Latched errors reset
+      --------------------------------------------------------------------------
+      if (emulator_control(RESET_ERRORS_C)) = '1' then
+         v.emulatorStatus(ERR_TX_HANDSHAKE_C)      := '0';
+         v.emulatorStatus(ERR_RX_NOT_QUADRUPLED_C) := '0';
+         v.emulatorStatus(ERR_RX_NOT_SEQUENTIAL_C) := '0';
+      end if;
+
+      --------------------------------------------------------------------------
+      -- reset condition
+      --------------------------------------------------------------------------
+      if (axi_rst = RST_POLARITY_G) then
+         v := REG_INIT_C;
+      end if;
+
+      rin <= v;                         --! drive register inputs
+
+      --! drive outputs
+      emulator_status <= r.emulatorStatus;
+      tlast_count     <= std_logic_vector(r.tlastCounter);
+
+   end process p_Comb;
+
+   --! Sequential process for register updates:
+   --!   Transfers combinatorial next-state (rin) to registered state (r) on clock edge.
+   p_Seq : process(axi_clk)
+   begin
+      if rising_edge(axi_clk) then
+         r <= rin;
+      end if;
+   end process p_Seq;
+
+   --! 16-bit test counter for TX data generation:
+   --!   Generates incrementing 16-bit count value with pause and reset control.
+   --!   Configured for saturation at maximum value to prevent rollover.
+   u_TestCounter : entity work.TestCounter
+      generic map (
+         RST_POLARITY_G => RST_POLARITY_G,
+         WIDTH_G        => 16,
+         WAIT_WIDTH_G   => 1,
+         REVERSE_G      => false,
+         SATURATE_G     => true
+         )
+      port map (
+         clk_i        => axi_clk,
+         rst_i        => axi_rst,
+         ext_rst_i    => rin.resetCounter,
+         en_i         => enable_count,
+         count_o      => count,
+         endReached_o => open,
+         countUpd_o   => open
+         );
+
+   enable_count <= m_axis_tvalid and m_axis_tready and (not(r.pause) and r.en);
+
+   --! TX AXI-Stream output multiplexing: Loopback mode or test pattern mode:
+   --!   When loopback enabled (bit 31 of emulator_control), pass RX directly to TX.
+   --!   Otherwise, drive TX with quadruplicated counter value and pause control.
+   m_axis_tvalid <= s_axis_tvalid when (emulator_control(LOOPBACK_EN_C) = '1') else not(r.pause) and r.en;
+   m_axis_tdata  <= s_axis_tdata  when (emulator_control(LOOPBACK_EN_C) = '1') else count & count & count & count;
+   m_axis_tkeep  <= s_axis_tkeep  when (emulator_control(LOOPBACK_EN_C) = '1') else (others => '1');
+   m_axis_tlast  <= s_axis_tlast  when (emulator_control(LOOPBACK_EN_C) = '1') else rin.resetCounter;
+   s_axis_tready <= m_axis_tready when (emulator_control(LOOPBACK_EN_C) = '1') else '1';
+
+   --! TX tuser sideband signals for SOF/EOF indication
+   --!   Bit 1: Start-of-frame (SOF) pulse after pause
+   --!   Bit 0: End-of-frame (EOF) - unused, tied to '0'
+   m_axis_tuser(1) <= r.sof;
+   m_axis_tuser(0) <= '0';
+
+end rtl;
+---------------------------------------------------------------------------------------------------
