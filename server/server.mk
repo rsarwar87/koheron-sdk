@@ -161,8 +161,8 @@ SERVER_CCXXFLAGS += -Wno-psabi -Wno-error=deprecated-declarations
 SERVER_CCXXFLAGS += $(SERVER_INCLUDE_DIRS)
 SERVER_CCXXFLAGS += -DKOHERON_VERSION=\"$(KOHERON_VERSION).$(shell git rev-parse --short HEAD)\" -DINSTRUMENT_NAME=\"$(NAME)\" -DKOHERON_SERVER_BUILD
 SERVER_CCXXFLAGS += -O3 -fno-math-errno -fno-exceptions
-SERVER_CCXXFLAGS += -MMD -MP -static-libstdc++ $(GCC_FLAGS) -L$(SERVER_PATH)/rootfs/$(GCC_ARCH)/lib/
-SERVER_CCXXFLAGS += -std=c++2a -pthread -fdiagnostics-color=always
+SERVER_CCXXFLAGS += -MMD -MP -static-libstdc++ $(GCC_FLAGS)
+SERVER_CCXXFLAGS += -std=c++20 -pthread -fdiagnostics-color=always
 
 .PHONY: gcc_flags
 gcc_flags:
