@@ -1,8 +1,7 @@
 set ps_name ps_0
+variable dclass "zynqmp"
 
 # Find the number of interconnects
-variable isZynqMP 1
-variable isXDma 0
 set i 0
 while {[info exists config::fclk$i] == 1} {
   set interconnect_${i}_name axi_mem_intercon_$i
