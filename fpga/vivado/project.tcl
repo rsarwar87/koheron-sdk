@@ -1,12 +1,11 @@
 source [file join [file dirname [info script]] "block_design.tcl"]
-set_property target_language VHDL [current_project]
 
 set_property synth_checkpoint_mode None [get_files $bd_path/system.bd]
 
 generate_target all [get_files $bd_path/system.bd]
 make_wrapper -files [get_files $bd_path/system.bd] -top
 
-add_files -norecurse $bd_path/hdl/system_wrapper.vhd
+add_files -norecurse $bd_path/hdl/system_wrapper.v
 
 # Add verilog source files
 set files [glob -nocomplain $project_path/*.v $project_path/*.vhd $project_path/*.sv ]
