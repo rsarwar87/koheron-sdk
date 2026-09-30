@@ -8,6 +8,7 @@
 #include <tuple>
 #include <type_traits>
 #include <string>
+#include <string_view>
 #include <algorithm>
 #include <chrono>
 #include <memory>
@@ -1461,6 +1462,54 @@ struct OpTable {
 
 } // namespace op_detail
 
+// ==================================================
+// Compile-time op names (C++20 class-type template parameters)
+//
+// Builds "Class::func" as a literal template argument:
+//
+//   client.call_by_name<KOHERON_OP(DataMover, get_fifo_count)>(val);
+//   auto v = client.recv_by_name<KOHERON_OP(DataMover, get_fifo_count), uint32_t>();
+//
+// KOHERON_OP takes the driver class and the method-name identifier: the
+// __func__ variable cannot reach the preprocessor (#__func__ stringifies to
+// "__func__"), so the method name is passed as a macro token and stringified
+// together with the class name; adjacent literal concatenation happens at
+// compile time. std::string itself is still unusable as a template parameter
+// in some standard libraries (no constexpr destructor), hence fixed_string.
+// Requires C++20.
+// ==================================================
+namespace op_detail {
+
+template<size_t N>
+struct fixed_string {
+    char data[N]{};
+    consteval fixed_string(const char (&s)[N]) {
+        for (size_t i = 0; i < N; i++) data[i] = s[i];
+    }
+    constexpr const char* c_str() const { return data; }
+    constexpr size_t size() const { return N - 1; }
+    constexpr operator std::string_view() const { return std::string_view(data, N - 1); }
+    // Compare template arguments by value, not by address.
+    template<size_t M>
+    friend constexpr bool operator==(fixed_string a, fixed_string<M> b) {
+        return std::string_view(a) == std::string_view(b);
+    }
+};
+
+} // namespace op_detail
+
+#define KOHERON_OP(Class, Func) #Class "::" #Func
+
+// Runtime "Class::func" name with the method name taken from __func__:
+// nothing is typed twice, so the call site cannot get the function name
+// wrong (it must equal the instrument function name; a mismatch throws
+// op_check_error at call time). Usable only with the runtime const char*
+// APIs, never as a template argument: __func__ is a runtime array and
+// #__func__ would stringify to the literal "__func__".
+//   client.call_by_name(KOHERON_OP_FUNC(DataMover), val);
+//   auto v = client.recv_by_name<uint32_t>(KOHERON_OP_FUNC(DataMover));
+#define KOHERON_OP_FUNC(Class) (std::string(#Class) + "::" + __func__).c_str()
+
 class KoheronClient
 {
   public:
@@ -1586,6 +1635,27 @@ class KoheronClient
     /// type strings are validated.
     template<typename... Args>
     void call_by_name(const char* class_func, Args&&... args);
+
+    /// recv() with a runtime id: validated against the downloaded table and
+    /// the instrument-declared return type (check_ret_types). The
+    /// operations.hpp ret_type_t compile-time check only applies to
+    /// recv<id, ...>().
+    template<typename... Tp>
+    decltype(auto) recv_rt(uint32_t id);
+
+    // "Class::func" as a compile-time template argument:
+    //   client.call_by_name<KOHERON_OP(DataMover, set_udp_streaming)>(val);
+    //   auto v = client.recv_by_name<KOHERON_OP(DataMover, get_fifo_count), uint32_t>();
+
+    template<op_detail::fixed_string Name, typename... Args>
+    void call_by_name(Args&&... args);
+
+    template<op_detail::fixed_string Name, typename... Tp>
+    decltype(auto) recv_by_name();
+
+    /// Runtime-name variant, e.g. with KOHERON_OP_FUNC (uses __func__).
+    template<typename... Tp>
+    decltype(auto) recv_by_name(const char* class_func);
 
     /// @brief Connect to koheron-server, first validating/loading the
     /// expected firmware when a firmware name was given at construction.
@@ -2130,6 +2200,31 @@ inline void KoheronClient::call_by_name(const char* class_func, Args&&... args) 
     check_arg_types<Args...>(id);
     call_rt(static_cast<uint16_t>(id >> 16), static_cast<uint16_t>(id & 0xFFFF),
             std::forward<Args>(args)...);
+}
+
+template<typename... Tp>
+inline decltype(auto) KoheronClient::recv_rt(uint32_t id) {
+    check_served(static_cast<uint16_t>(id >> 16), static_cast<uint16_t>(id & 0xFFFF));
+    check_ret_types<Tp...>(id);
+    return command_deserializer<Tp...>();
+}
+
+template<op_detail::fixed_string Name, typename... Args>
+inline void KoheronClient::call_by_name(Args&&... args) {
+    const uint32_t id = op_id(Name.c_str());
+    check_arg_types<Args...>(id);
+    call_rt(static_cast<uint16_t>(id >> 16), static_cast<uint16_t>(id & 0xFFFF),
+            std::forward<Args>(args)...);
+}
+
+template<op_detail::fixed_string Name, typename... Tp>
+inline decltype(auto) KoheronClient::recv_by_name() {
+    return recv_rt<Tp...>(op_id(Name.c_str()));
+}
+
+template<typename... Tp>
+inline decltype(auto) KoheronClient::recv_by_name(const char* class_func) {
+    return recv_rt<Tp...>(op_id(class_func));
 }
 
 inline bool KoheronClient::find_op(const std::string& class_name, const std::string& func_name,
