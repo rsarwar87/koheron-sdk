@@ -8,6 +8,10 @@
 #include <tuple>
 #include <type_traits>
 #include <string>
+#include <algorithm>
+#include <chrono>
+#include <memory>
+#include <thread>
 
 #include <cstdint>
 #include <cstdlib>
@@ -22,12 +26,14 @@
     #define _WIN32_WINNT 0x0501  /* Windows XP. */
   #endif
   #include <winsock2.h>
+  #include <ws2tcpip.h>
 #else
 extern "C" {
   #include <sys/socket.h>   // socket definitions
   #include <sys/types.h>    // socket types
   #include <arpa/inet.h>    // inet (3) functions
   #include <netinet/tcp.h>
+  #include <netdb.h>
   #include <unistd.h>
 }
 #endif
@@ -691,11 +697,394 @@ public:
   }
 };
 
+// ==================================================
+// Instrument status / run over HTTP
+//
+// C++ equivalents of the koheron Python client module functions
+// instrument_status(), run_instrument() and connect(). They talk to
+// the HTTP API exposed by koheron-server (nginx/uwsgi, port 80):
+//
+//   GET /api/instruments              -> {"instruments":[...], "live_instrument":"name"}
+//   GET /api/instruments/run/<name>   -> installs <name>.zip as the live instrument
+//
+// They are used to check that the expected instrument (bitstream +
+// context server) is loaded before opening the TCP command socket.
+// ==================================================
+
+struct instrument_error : std::runtime_error {
+    explicit instrument_error(const std::string& msg)
+    : std::runtime_error(msg) {}
+};
+
+namespace koheron_http {
+
+inline void close_socket(socket_t fd) {
+#ifdef _WIN32
+    ::closesocket(fd);
+#else
+    ::close(fd);
+#endif
+}
+
+constexpr socket_t invalid_socket = static_cast<socket_t>(-1);
+
+inline void set_socket_timeout(socket_t fd, int timeout_ms) {
+#ifdef _WIN32
+    DWORD tmo = static_cast<DWORD>(timeout_ms);
+    ::setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&tmo), sizeof(tmo));
+    ::setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&tmo), sizeof(tmo));
+#else
+    struct timeval tv;
+    tv.tv_sec = timeout_ms / 1000;
+    tv.tv_usec = (timeout_ms % 1000) * 1000;
+    ::setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+    ::setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
+#endif
+}
+
+inline socket_t tcp_connect(const std::string& host, int port, int timeout_ms) {
+#ifdef _WIN32
+    WSADATA wsa;
+    if (WSAStartup(MAKEWORD(2,2), &wsa) != 0) {
+        throw instrument_error("WSAStartup failed");
+    }
+#endif
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+
+    struct addrinfo* res = nullptr;
+    if (::getaddrinfo(host.c_str(), std::to_string(port).c_str(), &hints, &res) != 0 || res == nullptr) {
+        throw instrument_error("Cannot resolve koheron-server address " + host);
+    }
+
+    socket_t fd = invalid_socket;
+    for (struct addrinfo* rp = res; rp != nullptr; rp = rp->ai_next) {
+        fd = ::socket(rp->ai_family, rp->ai_socktype, static_cast<int>(rp->ai_protocol));
+        if (fd == invalid_socket) continue;
+        if (::connect(fd, rp->ai_addr, static_cast<int>(rp->ai_addrlen)) == 0) break;
+        close_socket(fd);
+        fd = invalid_socket;
+    }
+    ::freeaddrinfo(res);
+
+    if (fd == invalid_socket) {
+        throw instrument_error("Cannot connect to " + host + ":" + std::to_string(port));
+    }
+
+    set_socket_timeout(fd, timeout_ms);
+    return fd;
+}
+
+inline void send_all(socket_t fd, const char* data, size_t len) {
+    size_t sent = 0;
+    while (sent < len) {
+        const int n = ::send(fd, data + sent, len - sent, 0);
+        if (n <= 0) {
+            throw instrument_error("Cannot send request to koheron-server");
+        }
+        sent += static_cast<size_t>(n);
+    }
+}
+
+struct HttpResponse {
+    int status_code = 0;
+    std::string body;
+};
+
+inline bool header_value(const std::string& headers, const std::string& name, std::string& value) {
+    size_t pos = 0;
+    while (pos < headers.size()) {
+        size_t eol = headers.find("\r\n", pos);
+        if (eol == std::string::npos) eol = headers.size();
+        if (eol > pos + name.size() + 1) {
+            bool match = true;
+            for (size_t i = 0; i < name.size(); i++) {
+                const unsigned char a = static_cast<unsigned char>(headers[pos + i]);
+                const unsigned char b = static_cast<unsigned char>(name[i]);
+                if (std::tolower(a) != std::tolower(b)) { match = false; break; }
+            }
+            if (match && headers[pos + name.size()] == ':') {
+                size_t v = pos + name.size() + 1;
+                while (v < eol && (headers[v] == ' ' || headers[v] == '\t')) v++;
+                size_t end = eol;
+                while (end > v && (headers[end - 1] == ' ' || headers[end - 1] == '\t')) end--;
+                value = headers.substr(v, end - v);
+                return true;
+            }
+        }
+        pos = eol + 2;
+    }
+    return false;
+}
+
+inline HttpResponse get(const std::string& host, const std::string& path, int port, int timeout_ms) {
+    const socket_t fd = tcp_connect(host, port, timeout_ms);
+    try {
+        const std::string request = "GET " + path + " HTTP/1.1\r\n"
+                                    "Host: " + host + "\r\n"
+                                    "User-Agent: koheron-client-cpp\r\n"
+                                    "Connection: close\r\n\r\n";
+        send_all(fd, request.data(), request.size());
+
+        std::string raw;
+        char buf[4096];
+        size_t header_end = std::string::npos;
+        while (header_end == std::string::npos) {
+            const int n = ::recv(fd, buf, sizeof(buf), 0);
+            if (n < 0) throw instrument_error("Cannot receive HTTP response from koheron-server");
+            if (n == 0) break;
+            raw.append(buf, static_cast<size_t>(n));
+            header_end = raw.find("\r\n\r\n");
+            if (raw.size() > (1u << 20)) {
+                throw instrument_error("Malformed HTTP response from koheron-server");
+            }
+        }
+        if (header_end == std::string::npos) {
+            throw instrument_error("Incomplete HTTP response from koheron-server");
+        }
+
+        HttpResponse resp;
+        const size_t line_end = raw.find("\r\n");
+        const std::string status_line = raw.substr(0, line_end);
+        const size_t sp = status_line.find(' ');
+        if (status_line.compare(0, 5, "HTTP/") != 0 || sp == std::string::npos) {
+            throw instrument_error("Malformed HTTP status line from koheron-server: " + status_line);
+        }
+        resp.status_code = static_cast<int>(std::strtol(status_line.c_str() + sp + 1, nullptr, 10));
+
+        const std::string headers = raw.substr(0, header_end);
+        resp.body = raw.substr(header_end + 4);
+
+        std::string content_length;
+        if (header_value(headers, "Content-Length", content_length)) {
+            const size_t expected = static_cast<size_t>(std::strtoull(content_length.c_str(), nullptr, 10));
+            while (resp.body.size() < expected) {
+                const int n = ::recv(fd, buf, sizeof(buf), 0);
+                if (n <= 0) throw instrument_error("Incomplete HTTP body from koheron-server");
+                resp.body.append(buf, static_cast<size_t>(n));
+            }
+        } else {
+            for (;;) {
+                const int n = ::recv(fd, buf, sizeof(buf), 0);
+                if (n <= 0) break; // connection closed (or read timeout): end of body
+                resp.body.append(buf, static_cast<size_t>(n));
+            }
+        }
+
+        close_socket(fd);
+        return resp;
+    } catch (...) {
+        close_socket(fd);
+        throw;
+    }
+}
+
+} // namespace koheron_http
+
+namespace koheron_json {
+
+inline std::string unescape(const std::string& s) {
+    std::string out;
+    out.reserve(s.size());
+    for (size_t i = 0; i < s.size(); i++) {
+        if (s[i] == '\\' && i + 1 < s.size()) {
+            i++;
+            switch (s[i]) {
+            case 'n': out += '\n'; break;
+            case 't': out += '\t'; break;
+            case 'r': out += '\r'; break;
+            case 'b': out += '\b'; break;
+            case 'f': out += '\f'; break;
+            case '"': out += '"'; break;
+            case '\\': out += '\\'; break;
+            default: out += '\\'; out += s[i]; break;
+            }
+        } else {
+            out += s[i];
+        }
+    }
+    return out;
+}
+
+inline bool is_ws(char c) {
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
+
+// Position of the value associated with "key" in a flat JSON object,
+// or npos when the key is absent.
+inline size_t find_value(const std::string& json, const std::string& key) {
+    const std::string quoted = "\"" + key + "\"";
+    size_t pos = 0;
+    for (;;) {
+        const size_t k = json.find(quoted, pos);
+        if (k == std::string::npos) return std::string::npos;
+
+        size_t c = k + quoted.size();
+        while (c < json.size() && is_ws(json[c])) c++;
+        if (c < json.size() && json[c] == ':') {
+            // Make sure this is a key (preceded by '{' or ','), not a value.
+            size_t p = k;
+            while (p > 0 && is_ws(json[p - 1])) p--;
+            if (p == 0 || json[p - 1] == '{' || json[p - 1] == ',') {
+                c++;
+                while (c < json.size() && is_ws(json[c])) c++;
+                return c;
+            }
+        }
+        pos = k + quoted.size();
+    }
+}
+
+inline bool find_string(const std::string& json, const std::string& key, std::string& out) {
+    const size_t vpos = find_value(json, key);
+    if (vpos == std::string::npos || json[vpos] != '"') return false;
+
+    std::string raw;
+    size_t i = vpos + 1;
+    while (i < json.size()) {
+        if (json[i] == '\\' && i + 1 < json.size()) {
+            raw += json[i];
+            raw += json[i + 1];
+            i += 2;
+            continue;
+        }
+        if (json[i] == '"') {
+            out = unescape(raw);
+            return true;
+        }
+        raw += json[i++];
+    }
+    return false;
+}
+
+inline bool find_string_array(const std::string& json, const std::string& key, std::vector<std::string>& out) {
+    const size_t vpos = find_value(json, key);
+    if (vpos == std::string::npos || json[vpos] != '[') return false;
+
+    size_t i = vpos + 1;
+    while (i < json.size() && is_ws(json[i])) i++;
+    if (i < json.size() && json[i] == ']') return true; // empty array
+
+    while (i < json.size()) {
+        while (i < json.size() && (is_ws(json[i]) || json[i] == ',')) i++;
+        if (i >= json.size() || json[i] == ']') break;
+        if (json[i] != '"') return false; // non-string element
+
+        std::string raw;
+        bool closed = false;
+        i++;
+        while (i < json.size()) {
+            if (json[i] == '\\' && i + 1 < json.size()) {
+                raw += json[i];
+                raw += json[i + 1];
+                i += 2;
+                continue;
+            }
+            if (json[i] == '"') { i++; closed = true; break; }
+            raw += json[i++];
+        }
+        if (!closed) return false;
+        out.push_back(unescape(raw));
+    }
+    return true;
+}
+
+} // namespace koheron_json
+
+struct InstrumentStatus {
+    std::vector<std::string> instruments; // instruments stored on the board
+    std::string live_instrument;          // instrument currently loaded (empty if none)
+
+    bool is_live(const std::string& name) const {
+        return !name.empty() && live_instrument == name;
+    }
+
+    bool in_store(const std::string& name) const {
+        return std::find(instruments.begin(), instruments.end(), name) != instruments.end();
+    }
+};
+
+// GET /api/instruments
+inline InstrumentStatus instrument_status(const std::string& host, int http_port = 80, int timeout_ms = 5000) {
+    const auto resp = koheron_http::get(host, "/api/instruments", http_port, timeout_ms);
+    if (resp.status_code != 200) {
+        throw instrument_error("GET /api/instruments failed with HTTP status " + std::to_string(resp.status_code));
+    }
+
+    InstrumentStatus status;
+    koheron_json::find_string_array(resp.body, "instruments", status.instruments);
+    koheron_json::find_string(resp.body, "live_instrument", status.live_instrument);
+    return status;
+}
+
+// Equivalent of python koheron.run_instrument(host, name, restart).
+// An empty name behaves like Python's None: no-op when an instrument is
+// already live. Throws instrument_error when the instrument is not in
+// the board store.
+inline void run_instrument(const std::string& host, const std::string& name = std::string(),
+                           bool restart = false, int http_port = 80) {
+    bool instrument_running = false;
+    bool instrument_in_store = false;
+    std::string target = name;
+
+    const InstrumentStatus status = instrument_status(host, http_port);
+
+    if (target.empty() || status.live_instrument == target) { // Instrument already running
+        target = status.live_instrument;
+        instrument_running = true;
+    }
+
+    if (instrument_running && !restart) return;
+
+    if (!instrument_running) { // Find the instrument in the local store:
+        if (status.in_store(target)) {
+            instrument_in_store = true;
+        } else {
+            std::string msg = "Instrument " + target + " not found.\nAvailable instruments:";
+            for (const auto& instrument : status.instruments) {
+                msg += "\n- " + instrument;
+            }
+            throw instrument_error(msg);
+        }
+    }
+
+    if (instrument_in_store || (instrument_running && restart)) {
+        const auto resp = koheron_http::get(host, "/api/instruments/run/" + target, http_port, 60000);
+        if (resp.status_code != 200) {
+            throw instrument_error("GET /api/instruments/run/" + target + " failed with HTTP status "
+                                   + std::to_string(resp.status_code));
+        }
+        if (resp.body.find("Failed") != std::string::npos) {
+            throw instrument_error("Failed to install instrument " + target + ": " + resp.body);
+        }
+    }
+}
+
+// Poll the HTTP status until 'name' is the live instrument.
+inline bool wait_for_instrument(const std::string& host, const std::string& name,
+                                std::chrono::milliseconds timeout = std::chrono::milliseconds(30000),
+                                int http_port = 80,
+                                std::chrono::milliseconds interval = std::chrono::milliseconds(500)) {
+    const auto deadline = std::chrono::steady_clock::now() + timeout;
+    for (;;) {
+        try {
+            if (instrument_status(host, http_port).is_live(name)) return true;
+        } catch (const std::exception&) {
+            // Server may still be restarting: keep polling until the deadline.
+        }
+        if (std::chrono::steady_clock::now() >= deadline) return false;
+        std::this_thread::sleep_for(interval);
+    }
+}
+
 class KoheronClient
 {
   public:
     KoheronClient(const char *host_, int port_)
-    : host(host_)
+    : sockfd(koheron_http::invalid_socket)
+    , host(host_)
     , port(port_)
     , rcv_buffer(0)
     , send_buffer(0)
@@ -704,6 +1093,19 @@ class KoheronClient
         serveraddr.sin_family = AF_INET;
         serveraddr.sin_addr.s_addr = inet_addr(host);
         serveraddr.sin_port = htons(port);
+    }
+
+    /// @brief Constructor checking that a given firmware image is running.
+    /// @details connect() validates that 'firmware_' is the live instrument
+    /// (equivalent of python koheron.connect(host, name=firmware, restart=...)):
+    /// when it is not live it is loaded from the board store; when it is not
+    /// in the store an instrument_error is thrown listing the available
+    /// instruments. An empty firmware name skips the validation.
+    KoheronClient(const char *host_, int port_, const char *firmware_, bool restart_ = false)
+    : KoheronClient(host_, port_)
+    {
+        firmware = (firmware_ != nullptr) ? firmware_ : "";
+        firmware_restart = restart_;
     }
 
     ~KoheronClient() {
@@ -729,7 +1131,55 @@ class KoheronClient
         }
     }
 
+    /// @brief HTTP port of the instrument API used by firmware validation
+    /// (default 80, the nginx/uwsgi endpoint of koheron-board)
+    void set_http_port(int p) { http_port = p; }
+
+    /// @brief Connect to koheron-server, first validating/loading the
+    /// expected firmware when a firmware name was given at construction.
+    /// @throws instrument_error when the expected firmware is not in the
+    /// board store or does not become the live instrument
     void connect() {
+        if (firmware.empty()) {
+            connect_once();
+            return;
+        }
+
+        bool will_run = true;
+        try {
+            will_run = (instrument_status(host, http_port).live_instrument != firmware) || firmware_restart;
+        } catch (const std::exception&) {
+            // HTTP status unavailable: run_instrument() below raises a meaningful error
+        }
+
+        // Throws instrument_error (listing available instruments) when the
+        // requested firmware is not in the board store.
+        run_instrument(host, firmware, firmware_restart, http_port);
+
+        if (!will_run) {
+            connect_once();
+            return;
+        }
+
+        if (!wait_for_instrument(host, firmware, std::chrono::milliseconds(30000), http_port)) {
+            throw instrument_error("Firmware " + firmware + " did not become the live instrument");
+        }
+
+        // (re)installing the firmware restarts koheron-server: retry the
+        // TCP connection until the context server is back.
+        const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(30000);
+        for (;;) {
+            try {
+                connect_once();
+                break;
+            } catch (const socket_error&) {
+                if (std::chrono::steady_clock::now() >= deadline) throw;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+    }
+
+    void connect_once() {
 #ifdef _WIN32
         WSADATA wsa;
         if (WSAStartup(MAKEWORD(2,2),&wsa) != 0) {
@@ -823,6 +1273,11 @@ class KoheronClient
 
     const char *host;
     int port;
+
+    int http_port = 80;         ///< HTTP API port used for firmware validation
+
+    std::string firmware;       ///< Expected live instrument (empty: no check)
+    bool firmware_restart = false; ///< Reload the firmware even when already live
 
     uint16_t last_class_id = 0;
     uint16_t last_func_id = 0;
@@ -961,5 +1416,141 @@ class KoheronClient
         std::move(rcv_buffer.begin(), rcv_buffer.end(), str.begin());
     }
 };
+
+// Quick check that the TCP command server (koheron-server) is accepting
+// connections, i.e. the instrument context is loaded.
+inline bool context_server_up(const std::string& host, int port = 36000, int timeout_ms = 1000) {
+    try {
+        const socket_t fd = koheron_http::tcp_connect(host, port, timeout_ms);
+        koheron_http::close_socket(fd);
+        return true;
+    } catch (const std::exception&) {
+        return false;
+    }
+}
+
+// Context served by koheron-server on the TCP command port
+// (equivalent of python KoheronClient.check_version + load_devices).
+struct ServerContext {
+    std::string version;  // Context::get_version()
+    std::string context;  // Context::context_json_string()
+};
+
+namespace context_detail {
+
+inline void recv_exact(socket_t fd, unsigned char* p, size_t n) {
+    size_t got = 0;
+    while (got < n) {
+        const int r = ::recv(fd, reinterpret_cast<char*>(p + got), n - got, 0);
+        if (r == 0) throw socket_error("Connection closed by koheron-server\n");
+        if (r < 0) throw socket_error("Cannot receive data\n");
+        got += static_cast<size_t>(r);
+    }
+}
+
+inline void send_command(socket_t fd, uint16_t class_id, uint16_t func_id) {
+    unsigned char cmd[8];
+    serdes::append<uint32_t>(cmd, 0);
+    serdes::append<uint16_t>(cmd + 4, class_id);
+    serdes::append<uint16_t>(cmd + 6, func_id);
+    koheron_http::send_all(fd, reinterpret_cast<const char*>(cmd), sizeof(cmd));
+}
+
+// Dynamic payload reply: reserved(4) class(2) func(2) length(4) + length bytes
+inline std::string recv_string(socket_t fd, uint16_t func_id) {
+    unsigned char hdr[12];
+    recv_exact(fd, hdr, sizeof(hdr));
+    const uint32_t reserved = serdes::extract<uint32_t>(hdr);
+    const uint16_t class_id = serdes::extract<uint16_t>(hdr + 4);
+    const uint16_t func = serdes::extract<uint16_t>(hdr + 6);
+    const uint32_t length = serdes::extract<uint32_t>(hdr + 8);
+
+    if (reserved != 0 || class_id != 1 || func != func_id) {
+        throw socket_error("Unexpected reply from koheron-server\n");
+    }
+
+    std::string s(length, '\0');
+    if (length > 0) {
+        recv_exact(fd, reinterpret_cast<unsigned char*>(&s[0]), length);
+    }
+    return s;
+}
+
+} // namespace context_detail
+
+// Read the version and the context JSON served by the instrument on the
+// TCP command port (device id 1 is the reserved Context device).
+inline ServerContext read_server_context(const std::string& host, int port = 36000, int timeout_ms = 2000) {
+    const socket_t fd = koheron_http::tcp_connect(host, port, timeout_ms);
+    ServerContext ctx;
+    try {
+        context_detail::send_command(fd, 1, 0); // Context::get_version
+        ctx.version = context_detail::recv_string(fd, 0);
+        context_detail::send_command(fd, 1, 1); // Context::context_json_string
+        ctx.context = context_detail::recv_string(fd, 1);
+    } catch (...) {
+        koheron_http::close_socket(fd);
+        throw;
+    }
+    koheron_http::close_socket(fd);
+    return ctx;
+}
+
+// True when the class registered in the instrument context is present.
+inline bool context_has_class(const ServerContext& ctx, const std::string& class_name) {
+    const std::string q = "\"" + class_name + "\"";
+    for (size_t pos = ctx.context.find(q); pos != std::string::npos; pos = ctx.context.find(q, pos + 1)) {
+        size_t k = pos;
+        while (k > 0 && koheron_json::is_ws(ctx.context[k - 1])) k--;
+        if (k == 0 || ctx.context[k - 1] != ':') continue;
+        k--;
+        while (k > 0 && koheron_json::is_ws(ctx.context[k - 1])) k--;
+        if (k >= 6 && ctx.context.compare(k - 6, 6, "class") == 0) return true;
+    }
+    return false;
+}
+
+// Full check that everything is loaded:
+//  1. the HTTP API reports 'name' as the live instrument
+//  2. the context server answers on the TCP command port (version + context JSON)
+//  3. every expected driver class is present in the context
+inline bool check_instrument_loaded(const std::string& host, const std::string& name,
+                                    const std::vector<std::string>& expected_classes = std::vector<std::string>(),
+                                    int http_port = 80, int server_port = 36000) {
+    try {
+        if (!instrument_status(host, http_port).is_live(name)) return false;
+        const ServerContext ctx = read_server_context(host, server_port);
+        if (ctx.version.empty() || ctx.context.empty()) return false;
+        for (const auto& class_name : expected_classes) {
+            if (!context_has_class(ctx, class_name)) return false;
+        }
+        return true;
+    } catch (const std::exception&) {
+        return false;
+    }
+}
+
+// Equivalent of python koheron.connect(): run the instrument if needed,
+// wait for it to become live, and return a connected KoheronClient.
+inline std::unique_ptr<KoheronClient> connect_instrument(const std::string& host,
+                                                         const std::string& name = std::string(),
+                                                         bool restart = false,
+                                                         int http_port = 80, int port = 36000) {
+    // KoheronClient::connect() validates the firmware on the default HTTP
+    // port; for a custom one do it here and let the client only open TCP.
+    std::string firmware;
+    if (!name.empty()) {
+        if (http_port == 80) {
+            firmware = name;
+        } else {
+            run_instrument(host, name, restart, http_port);
+            wait_for_instrument(host, name, std::chrono::milliseconds(30000), http_port);
+        }
+    }
+    std::unique_ptr<KoheronClient> client(
+        new KoheronClient(host.c_str(), port, firmware.c_str(), restart));
+    client->connect();
+    return client;
+}
 
 #endif // __KOHERON_CLIENT_HPP__
