@@ -12,6 +12,7 @@
 #include <chrono>
 #include <memory>
 #include <thread>
+#include <unordered_map>
 
 #include <cstdint>
 #include <cstdlib>
@@ -19,6 +20,12 @@
 #include <cstdio>
 #include <cassert>
 #include <system_error>
+
+#if defined(__GNUC__) && !defined(_WIN32)
+  #include <typeinfo>
+  #include <cxxabi.h>
+  #define KOHERON_HAVE_DEMANGLE 1
+#endif
 
 #ifdef _WIN32
   /* See http://stackoverflow.com/questions/12765743/getaddrinfo-on-win32 */
@@ -646,6 +653,28 @@ class DynamicSerializer {
                 std::index_sequence_for<Args...>{}, tup_args);
     }
 
+    // Runtime ids (e.g. resolved from the instrument context by name):
+    // class_id/func_id are only used as values, so a runtime version is
+    // equivalent to the template one.
+    template<typename Tp0, typename... Args>
+    void build_command_rt(std::vector<unsigned char>& buffer,
+                          uint16_t class_id, uint16_t func_id, Tp0&& arg0, Args&&... args) {
+        const auto& header = serialize(0U, class_id, func_id);
+        buffer.resize(serdes::required_buffer_size<uint32_t, uint16_t, uint16_t>());
+        std::move(header.begin(), header.end(), buffer.begin());
+        scal_size = 0;
+        command_serializer(buffer, std::forward<Tp0>(arg0),
+                           std::forward<Args>(args)...);
+        dump_scalar_pack(buffer);
+    }
+
+    inline void build_command_rt(std::vector<unsigned char>& buffer,
+                                 uint16_t class_id, uint16_t func_id) {
+        const auto& header = serialize(0U, class_id, func_id);
+        buffer.resize(serdes::required_buffer_size<uint32_t, uint16_t, uint16_t>());
+        std::move(header.begin(), header.end(), buffer.begin());
+    }
+
   private:
     std::array<unsigned char, SCALAR_PACK_LEN> scal_data;
     uint64_t scal_size = 0;
@@ -1079,6 +1108,359 @@ inline bool wait_for_instrument(const std::string& host, const std::string& name
     }
 }
 
+// ==================================================
+// Instrument context / op id validation
+//
+// C++ equivalent of python KoheronClient.check_version() + load_devices() +
+// get_ids(): the compile-time op ids of operations.hpp (op::Class::func =
+// class_id << 16 | func_id) are checked against the class/function ids
+// declared by the context JSON served by koheron-server (device 1, function
+// 1), the same source python's load_devices() uses. Detects a client built
+// from a different instrument revision than the loaded firmware. The checks
+// are KoheronClient members, e.g.
+//   client.check_op<op::DataMover::get_fifo_count>("DataMover", "get_fifo_count");
+// ==================================================
+
+struct ServerContext;
+
+struct op_check_error : std::runtime_error {
+    explicit op_check_error(const std::string& msg) : std::runtime_error(msg) {}
+};
+
+// Compile-time op id paired with the names the context declares:
+//   { "DataMover", "get_fifo_count", op::DataMover::get_fifo_count }
+struct ExpectedOp {
+    const char* class_name;
+    const char* func_name;
+    uint32_t id;
+};
+
+namespace op_detail {
+
+inline bool parse_uint(const std::string& s, size_t pos, uint32_t& out) {
+    const char* start = s.c_str() + pos;
+    char* end = nullptr;
+    const unsigned long v = std::strtoul(start, &end, 10);
+    if (end == start) return false;
+    out = static_cast<uint32_t>(v);
+    return true;
+}
+
+// Pure parsing of a context JSON string; see KoheronClient::find_op().
+inline bool find_op_in_json(const std::string& json, const std::string& class_name,
+                            const std::string& func_name, uint16_t& class_id, uint16_t& func_id)
+{
+    const std::string ckey = "\"class\":\"" + class_name + "\"";
+    const size_t cpos = json.find(ckey);
+    if (cpos == std::string::npos) return false;
+
+    const size_t next = json.find("\"class\":", cpos + ckey.size());
+    const size_t cend = (next == std::string::npos) ? json.size() : next;
+
+    const size_t cid_pos = json.find("\"id\":", cpos + ckey.size());
+    if (cid_pos >= cend) return false;
+    uint32_t cid = 0;
+    if (!parse_uint(json, cid_pos + 5, cid)) return false;
+
+    const std::string fkey = "\"name\":\"" + func_name + "\"";
+    const size_t fpos = json.find(fkey, cid_pos);
+    if (fpos >= cend) return false;
+
+    const size_t fid_pos = json.find("\"id\":", fpos + fkey.size());
+    if (fid_pos >= cend) return false;
+    uint32_t fid = 0;
+    if (!parse_uint(json, fid_pos + 5, fid)) return false;
+
+    class_id = static_cast<uint16_t>(cid);
+    func_id = static_cast<uint16_t>(fid);
+    return true;
+}
+
+// One op declared by the instrument context, as downloaded from koheron-server.
+struct OpEntry {
+    uint32_t id;            // (class_id << 16) | func_id
+    uint16_t class_id;
+    uint16_t func_id;
+    std::string class_name;
+    std::string func_name;
+    std::string ret_type;           // instrument-declared return type
+    std::vector<std::string> args;  // instrument-declared arg types
+};
+
+// Position after the closing quote of the string value whose opening quote
+// is at pos, npos when pos does not point at an opening quote.
+inline size_t parse_string(const std::string& json, size_t pos, std::string& out) {
+    if (pos >= json.size() || json[pos] != '"') return std::string::npos;
+    std::string raw;
+    size_t i = pos + 1;
+    while (i < json.size()) {
+        if (json[i] == '\\' && i + 1 < json.size()) { raw += json[i + 1]; i += 2; continue; }
+        if (json[i] == '"') { out = raw; return i + 1; }
+        raw += json[i++];
+    }
+    return std::string::npos;
+}
+
+inline size_t skip_ws(const std::string& json, size_t pos) {
+    while (pos < json.size() && koheron_json::is_ws(json[pos])) pos++;
+    return pos;
+}
+
+// Position after the object/array starting at pos ('{' or '['), strings
+// tracked so delimiters inside them are ignored.
+inline size_t skip_object(const std::string& json, size_t pos)
+{
+    int depth = 0;
+    bool in_str = false;
+    bool esc = false;
+    for (size_t i = pos; i < json.size(); i++) {
+        const char c = json[i];
+        if (in_str) {
+            if (esc) esc = false;
+            else if (c == '\\') esc = true;
+            else if (c == '"') in_str = false;
+            continue;
+        }
+        if (c == '"') in_str = true;
+        else if (c == '{' || c == '[') depth++;
+        else if (c == '}' || c == ']') {
+            depth--;
+            if (depth == 0) return i + 1;
+        }
+    }
+    return std::string::npos;
+}
+
+inline void replace_all(std::string& s, const std::string& from, const std::string& to) {
+    if (from.empty()) return;
+    size_t p = 0;
+    for (;;) {
+        p = s.find(from, p);
+        if (p == std::string::npos) return;
+        s.replace(p, from.size(), to);
+        p += to.size();
+    }
+}
+
+inline void trim_str(std::string& s) {
+    while (!s.empty() && koheron_json::is_ws(s.front())) s.erase(s.begin());
+    while (!s.empty() && koheron_json::is_ws(s.back())) s.pop_back();
+}
+
+// Split at top-level commas (depth 0 outside strings/nested <>).
+inline std::vector<std::string> split_top(const std::string& s)
+{
+    std::vector<std::string> out;
+    std::string cur;
+    int depth = 0;
+    bool in_str = false;
+    for (size_t i = 0; i < s.size(); i++) {
+        const char c = s[i];
+        if (in_str) { cur += c; if (c == '"') in_str = false; continue; }
+        if (c == '"') { in_str = true; cur += c; continue; }
+        if (c == '<' || c == '(') depth++;
+        else if (c == '>' || c == ')') depth--;
+        if (c == ',' && depth == 0) { out.push_back(cur); cur.clear(); continue; }
+        cur += c;
+    }
+    out.push_back(cur);
+    return out;
+}
+
+// Normalize a type name to the instrument's spelling: gcc demangled names
+// ("unsigned int", "std::vector<float, std::allocator<float> >", template
+// size suffixes) and instrument source spellings ("uint32_t",
+// "std::vector<float>") map to the same canonical string. Unknown names are
+// returned trimmed; pointers/refs beyond '&' stripping stay verbatim.
+inline std::string canonical_type(std::string s)
+{
+    trim_str(s);
+    replace_all(s, "std::__cxx11::", "std::");
+    while (!s.empty() && (s.back() == '&' || koheron_json::is_ws(s.back()))) s.pop_back();
+    trim_str(s);
+
+    if (s == "bool" || s == "char" || s == "float" || s == "double") return s;
+    if (s == "signed char" || s == "signed int" || s == "signed") return "int8_t";
+    if (s == "unsigned char") return "uint8_t";
+    if (s == "short" || s == "short int") return "int16_t";
+    if (s == "unsigned short" || s == "unsigned short int") return "uint16_t";
+    if (s == "int") return "int32_t";
+    if (s == "unsigned int" || s == "unsigned") return "uint32_t";
+    if (s == "long" || s == "long int" || s == "long long" || s == "long long int") return "int64_t";
+    if (s == "unsigned long" || s == "unsigned long int" ||
+        s == "unsigned long long" || s == "unsigned long long int") return "uint64_t";
+    if (s.rfind("std::basic_string<", 0) == 0) return "std::string";
+
+    if (s.rfind("std::vector<", 0) == 0 && !s.empty() && s.back() == '>') {
+        const auto parts = split_top(s.substr(12, s.size() - 13));
+        if (!parts.empty()) return "std::vector<" + canonical_type(parts[0]) + ">";
+    }
+    if (s.rfind("std::array<", 0) == 0 && !s.empty() && s.back() == '>') {
+        const auto parts = split_top(s.substr(11, s.size() - 12));
+        if (parts.size() == 2) {
+            std::string n = parts[1];
+            trim_str(n);
+            while (!n.empty() && (n.back() == 'u' || n.back() == 'l')) n.pop_back();
+            return "std::array<" + canonical_type(parts[0]) + ", " + n + ">";
+        }
+    }
+    return s;
+}
+
+// Canonical instrument-style type name of a C++ type. Empty when unsupported
+// (non-gcc), in which case the comparison is skipped.
+template<typename T>
+inline std::string type_str()
+{
+#ifdef KOHERON_HAVE_DEMANGLE
+    int status = 0;
+    char* n = abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status);
+    std::string s = (status == 0 && n != nullptr) ? std::string(n) : std::string(typeid(T).name());
+    std::free(n);
+    return canonical_type(s);
+#else
+    return std::string();
+#endif
+}
+
+// Extract the instrument-declared ret_type and arg type list from the
+// function object spanning [start, end).
+inline void fill_op_extras(const std::string& json, size_t start, size_t end, OpEntry& e)
+{
+    const std::string rkey = "\"ret_type\":\"";
+    const size_t rp = json.find(rkey, start);
+    if (rp < end) parse_string(json, rp + rkey.size() - 1, e.ret_type);
+
+    const std::string akey = "\"args\":[";
+    const size_t ap = json.find(akey, start);
+    if (ap >= end) return;
+    const std::string tkey = "\"type\":\"";
+    size_t p = skip_ws(json, ap + akey.size());
+    while (p < end && json[p] == '{') {
+        const size_t oend = skip_object(json, p);
+        if (oend == std::string::npos || oend > end) break;
+        std::string t;
+        const size_t tp = json.find(tkey, p);
+        if (tp < oend) parse_string(json, tp + tkey.size() - 1, t);
+        e.args.push_back(t);
+        p = skip_ws(json, oend);
+        if (p < end && json[p] == ',') p = skip_ws(json, p + 1);
+    }
+}
+
+// Flatten the instrument context JSON into the array of ops it declares.
+// Function objects are {"name":"<f>","id":<M>,...}; argument objects are
+// {"name":"<a>","type":"<t>"} so they are skipped by requiring "id" after
+// the name (generated key order, name before id).
+inline std::vector<OpEntry> parse_ops(const std::string& json)
+{
+    std::vector<OpEntry> ops;
+    const std::string ckey = "\"class\":\"";
+    size_t pos = 0;
+    for (;;) {
+        const size_t cpos = json.find(ckey, pos);
+        if (cpos == std::string::npos) break;
+
+        std::string class_name;
+        // ckey includes the value's opening quote
+        const size_t after_name = parse_string(json, cpos + ckey.size() - 1, class_name);
+        if (after_name == std::string::npos) { pos = cpos + ckey.size(); continue; }
+
+        const size_t next_class = json.find(ckey, after_name);
+        const size_t cend = (next_class == std::string::npos) ? json.size() : next_class;
+
+        const size_t cid_pos = json.find("\"id\":", after_name);
+        if (cid_pos >= cend) break;
+        uint32_t cid = 0;
+        if (!parse_uint(json, cid_pos + 5, cid)) break;
+
+        // Parse the "functions":[...] array of function objects.
+        const size_t farr = json.find("\"functions\":[", cid_pos);
+        if (farr >= cend) { pos = cend; continue; }
+        size_t p = skip_ws(json, farr + 13);
+        while (p < cend && json[p] == '{') {
+            const size_t oend = skip_object(json, p);
+            if (oend == std::string::npos || oend > cend) break;
+
+            std::string func_name;
+            const size_t after_fn = parse_string(json, p + 8, func_name);
+            if (after_fn == std::string::npos) break;
+
+            const size_t ip = json.find("\"id\":", after_fn);
+            if (ip >= oend) break;
+            uint32_t fid = 0;
+            if (!parse_uint(json, ip + 5, fid)) break;
+
+            OpEntry e;
+            e.id = (cid << 16) | fid;
+            e.class_id = static_cast<uint16_t>(cid);
+            e.func_id = static_cast<uint16_t>(fid);
+            e.class_name = class_name;
+            e.func_name = func_name;
+            fill_op_extras(json, after_fn, oend, e);
+            ops.push_back(e);
+
+            p = skip_ws(json, oend);
+            if (p < cend && json[p] == ',') p = skip_ws(json, p + 1);
+        }
+        pos = cend;
+    }
+    return ops;
+}
+
+// Op lookup table built from the context JSON: the id -> name array checked
+// by every KoheronClient::call<...>.
+struct OpTable {
+    std::vector<OpEntry> ops;
+    std::unordered_map<uint32_t, size_t> index; // id -> position in ops
+
+    static OpTable build(const std::string& json) {
+        OpTable t;
+        t.ops = parse_ops(json);
+        for (size_t i = 0; i < t.ops.size(); i++) {
+            if (t.index.find(t.ops[i].id) == t.index.end()) {
+                t.index[t.ops[i].id] = i;
+            }
+        }
+        return t;
+    }
+
+    const OpEntry* find(uint32_t id) const {
+        const auto it = index.find(id);
+        return (it == index.end()) ? nullptr : &ops[it->second];
+    }
+
+    bool has_class(uint16_t class_id) const {
+        for (const auto& op : ops) {
+            if (op.class_id == class_id) return true;
+        }
+        return false;
+    }
+
+    std::string class_name_of(uint16_t class_id) const {
+        for (const auto& op : ops) {
+            if (op.class_id == class_id) return op.class_name;
+        }
+        return std::string();
+    }
+
+    // Lookup by "Class::func", or by bare "func" (first class serving it).
+    const OpEntry* by_name(const std::string& class_func) const {
+        const size_t sep = class_func.find("::");
+        for (const auto& op : ops) {
+            if (sep == std::string::npos) {
+                if (op.func_name == class_func) return &op;
+            } else if (op.class_name == class_func.substr(0, sep) &&
+                       op.func_name == class_func.substr(sep + 2)) {
+                return &op;
+            }
+        }
+        return nullptr;
+    }
+};
+
+} // namespace op_detail
+
 class KoheronClient
 {
   public:
@@ -1134,6 +1516,76 @@ class KoheronClient
     /// @brief HTTP port of the instrument API used by firmware validation
     /// (default 80, the nginx/uwsgi endpoint of koheron-board)
     void set_http_port(int p) { http_port = p; }
+
+    // ----------------------------------------
+    // Instrument context / op id checks
+    // ----------------------------------------
+
+    /// Context JSON served by the instrument (device 1, function 1, like
+    /// python load_devices()). Fetched on first use and cached.
+    const ServerContext& server_context(int timeout_ms = 2000);
+
+    /// Fetch the instrument context again (after loading another instrument).
+    void refresh_server_context(int timeout_ms = 2000);
+
+    /// Inject a context already read elsewhere (e.g. before connecting).
+    void set_server_context(const ServerContext& ctx);
+
+    /// Equivalent of python KoheronClient.get_ids(device, command): ids the
+    /// instrument declares for a named class/func. False when not served.
+    bool find_op(const std::string& class_name, const std::string& func_name,
+                 uint16_t& class_id, uint16_t& func_id);
+
+    /// Throws op_check_error unless the template op id (from operations.hpp)
+    /// matches the id the instrument declares for that class::func.
+    template<uint32_t id>
+    void check_op(const char* class_name, const char* func_name);
+
+    /// Check a table of ops, one message per mismatch (empty when all match).
+    std::vector<std::string> check_ops(const std::vector<ExpectedOp>& ops);
+
+    /// Array of all ops (id + class/func name) declared by the instrument,
+    /// built from the context downloaded at connect(). Empty before that.
+    const std::vector<op_detail::OpEntry>& served_ops() const;
+
+    /// True when the instrument declares an op with this id.
+    bool op_served(uint32_t id) const;
+
+    /// "Class::func" declared by the instrument for this id, "" when absent.
+    std::string served_op_name(uint32_t id) const;
+
+    // ----------------------------------------
+    // Name-checked call/recv: pass __func__
+    //
+    // __func__ is a runtime array and string literals are not template
+    // arguments before C++20, so the caller's method name is passed as the
+    // first function argument while the op id stays the template argument:
+    //
+    //   client.call_n<op::DataMover::get_fifo_count>(__func__);
+    //   auto v = client.recv_n<op::DataMover::get_fifo_count, uint32_t>(__func__);
+    //
+    // Checked automatically on every call: the instrument declares the id, its
+    // class::func matches the passed name ("func" or "Class::func"), the
+    // instrument-declared arg count matches the call, and each declared type
+    // string matches the C++ argument/return types (against the instrument,
+    // catching drift beyond the compile-time checks of operations.hpp).
+    // ----------------------------------------
+
+    template<uint32_t id, typename... Args>
+    void call_n(const char* func_name, Args&&... args);
+
+    template<uint32_t id, typename... Tp>
+    decltype(auto) recv_n(const char* func_name);
+
+    /// id declared by the instrument for "Class::func"; throws op_check_error.
+    uint32_t op_id(const char* class_func) const;
+
+    /// Call "Class::func" with the id resolved from the downloaded table.
+    /// Without a compile-time id the C++ argument types cannot be checked
+    /// against operations.hpp, so only the instrument-declared arg count and
+    /// type strings are validated.
+    template<typename... Args>
+    void call_by_name(const char* class_func, Args&&... args);
 
     /// @brief Connect to koheron-server, first validating/loading the
     /// expected firmware when a firmware name was given at construction.
@@ -1222,6 +1674,10 @@ class KoheronClient
             sockfd = -1;
             throw socket_error("Cannot set TCP_NODELAY option\n");
         }
+
+        // Download the instrument op table (python load_devices() equivalent)
+        // so that every subsequent call<id> is validated against the server.
+        refresh_server_context();
     }
 
     template<uint32_t id, typename... Args>
@@ -1234,10 +1690,24 @@ class KoheronClient
     template<uint16_t class_id, uint16_t func_id, typename... Args>
     void call(Args&&... args) {
         static_assert(class_id > 0, "class_id 0 is reserved");
+        check_served(class_id, func_id);
 
         last_class_id = class_id;
         last_func_id = func_id;
         dynamic_serializer.build_command<class_id, func_id>(send_buffer, std::forward<Args>(args)...);
+        send();
+    }
+
+    /// call() with runtime ids, e.g. resolved from the instrument context
+    /// (op_id()/call_by_name()). Validated against the downloaded table.
+    template<typename... Args>
+    void call_rt(uint16_t class_id, uint16_t func_id, Args&&... args) {
+        check_served(class_id, func_id);
+
+        last_class_id = class_id;
+        last_func_id = func_id;
+        dynamic_serializer.build_command_rt(send_buffer, class_id, func_id,
+                                            std::forward<Args>(args)...);
         send();
     }
 
@@ -1278,6 +1748,27 @@ class KoheronClient
 
     std::string firmware;       ///< Expected live instrument (empty: no check)
     bool firmware_restart = false; ///< Reload the firmware even when already live
+
+    std::shared_ptr<ServerContext> server_ctx; ///< Cached instrument context
+    std::shared_ptr<op_detail::OpTable> op_table; ///< Downloaded id -> name array
+
+    /// Throw op_check_error unless the instrument declares (class_id, func_id)
+    /// in the table downloaded at connect(). No-op when no table was fetched.
+    void check_served(uint16_t class_id, uint16_t func_id) const;
+
+    /// Throw op_check_error unless the instrument's name for id matches the
+    /// caller-supplied method name (__func__, "func" or "Class::func").
+    void check_op_name(uint32_t id, const char* func_name) const;
+
+    /// Throw op_check_error unless the instrument-declared arg list of id
+    /// matches the C++ argument pack (count and canonical type strings).
+    template<typename... Args>
+    void check_arg_types(uint32_t id) const;
+
+    /// Throw op_check_error unless the instrument-declared return type of id
+    /// matches the C++ receive type pack.
+    template<typename... Tp>
+    void check_ret_types(uint32_t id) const;
 
     uint16_t last_class_id = 0;
     uint16_t last_func_id = 0;
@@ -1494,6 +1985,198 @@ inline ServerContext read_server_context(const std::string& host, int port = 360
     }
     koheron_http::close_socket(fd);
     return ctx;
+}
+
+inline const ServerContext& KoheronClient::server_context(int timeout_ms) {
+    if (server_ctx == nullptr) refresh_server_context(timeout_ms);
+    return *server_ctx;
+}
+
+inline void KoheronClient::refresh_server_context(int timeout_ms) {
+    server_ctx = std::make_shared<ServerContext>(read_server_context(host, port, timeout_ms));
+    op_table = std::make_shared<op_detail::OpTable>(op_detail::OpTable::build(server_ctx->context));
+}
+
+inline void KoheronClient::set_server_context(const ServerContext& ctx) {
+    server_ctx = std::make_shared<ServerContext>(ctx);
+    op_table = std::make_shared<op_detail::OpTable>(op_detail::OpTable::build(ctx.context));
+}
+
+inline const std::vector<op_detail::OpEntry>& KoheronClient::served_ops() const {
+    static const std::vector<op_detail::OpEntry> empty;
+    return (op_table != nullptr) ? op_table->ops : empty;
+}
+
+inline bool KoheronClient::op_served(uint32_t id) const {
+    return op_table != nullptr && op_table->find(id) != nullptr;
+}
+
+inline std::string KoheronClient::served_op_name(uint32_t id) const {
+    if (op_table == nullptr) return std::string();
+    const op_detail::OpEntry* e = op_table->find(id);
+    return (e == nullptr) ? std::string() : e->class_name + "::" + e->func_name;
+}
+
+inline void KoheronClient::check_served(uint16_t class_id, uint16_t func_id) const {
+    if (op_table == nullptr) return; // context not fetched: nothing to check yet
+    const uint32_t id = (static_cast<uint32_t>(class_id) << 16) | func_id;
+    if (op_table->find(id) != nullptr) return;
+
+    std::string msg;
+    if (op_table->has_class(class_id)) {
+        msg = "call<>: " + op_table->class_name_of(class_id) + " does not serve func " +
+              std::to_string(func_id) + " (id " + std::to_string(id) + ")";
+    } else {
+        msg = "call<>: class " + std::to_string(class_id) +
+              " is not served by the instrument (id " + std::to_string(id) + ")";
+    }
+    throw op_check_error(msg);
+}
+
+inline void KoheronClient::check_op_name(uint32_t id, const char* func_name) const {
+    if (op_table == nullptr) return;
+    const op_detail::OpEntry* e = op_table->find(id);
+    const std::string name = (func_name != nullptr) ? func_name : "";
+    if (e == nullptr) {
+        std::string msg = "call_n/recv_n: id " + std::to_string(id) +
+                          " not served by instrument";
+        if (!name.empty()) {
+            const op_detail::OpEntry* by_name = op_table->by_name(name);
+            if (by_name != nullptr) {
+                msg += ": '" + name + "' is class " + std::to_string(by_name->class_id) +
+                       "/func " + std::to_string(by_name->func_id);
+            }
+        }
+        throw op_check_error(msg);
+    }
+    if (name.empty()) return;
+    if (e->func_name != name && (e->class_name + "::" + e->func_name) != name) {
+        throw op_check_error("name/id mismatch: caller reports '" + name +
+                             "' but id " + std::to_string(id) + " is " +
+                             e->class_name + "::" + e->func_name);
+    }
+}
+
+template<typename... Args>
+inline void KoheronClient::check_arg_types(uint32_t id) const {
+    if (op_table == nullptr) return;
+    const op_detail::OpEntry* e = op_table->find(id);
+    if (e == nullptr) return; // reported by check_served/check_op_name
+    if (sizeof...(Args) != e->args.size()) {
+        throw op_check_error(e->class_name + "::" + e->func_name + " takes " +
+                             std::to_string(e->args.size()) + " args, call passes " +
+                             std::to_string(sizeof...(Args)));
+    }
+    const std::vector<std::string> given{
+        op_detail::type_str<typename std::decay<Args>::type>()...};
+    size_t i = 0;
+    for (const auto& want : e->args) {
+        const std::string got = given[i];
+        const std::string w = op_detail::canonical_type(want);
+        if (!want.empty() && !got.empty() && got != w) {
+            throw op_check_error(e->class_name + "::" + e->func_name + " arg " +
+                                 std::to_string(i) + ": instrument declares '" + want +
+                                 "' but call passes '" + given[i] + "'");
+        }
+        i++;
+    }
+}
+
+template<typename... Tp>
+inline void KoheronClient::check_ret_types(uint32_t id) const {
+    if (op_table == nullptr) return;
+    const op_detail::OpEntry* e = op_table->find(id);
+    if (e == nullptr || e->ret_type.empty() || sizeof...(Tp) != 1) return;
+    const std::vector<std::string> given{ op_detail::type_str<Tp>()... };
+    if (given[0].empty()) return;
+    if (given[0] != op_detail::canonical_type(e->ret_type)) {
+        throw op_check_error(e->class_name + "::" + e->func_name + " returns '" +
+                             e->ret_type + "', recv expects '" + given[0] + "'");
+    }
+}
+
+template<uint32_t id, typename... Args>
+inline void KoheronClient::call_n(const char* func_name, Args&&... args) {
+    static_assert(std::is_same<arg_types_t<id>, std::tuple<std::decay_t<Args>...>>::value,
+                  "Invalid argument type for call_n");
+    check_op_name(id, func_name);
+    check_arg_types<Args...>(id);
+    call<id>(std::forward<Args>(args)...);
+}
+
+template<uint32_t id, typename... Tp>
+inline decltype(auto) KoheronClient::recv_n(const char* func_name) {
+    check_op_name(id, func_name);
+    check_ret_types<Tp...>(id);
+    return recv<id, Tp...>();
+}
+
+inline uint32_t KoheronClient::op_id(const char* class_func) const {
+    if (op_table == nullptr || class_func == nullptr) {
+        throw op_check_error(std::string("op_id: no instrument context (asked for '") +
+                             (class_func != nullptr ? class_func : "?") + "')");
+    }
+    const op_detail::OpEntry* e = op_table->by_name(class_func);
+    if (e == nullptr) {
+        throw op_check_error(std::string("op_id: instrument does not declare '") +
+                             class_func + "'");
+    }
+    return e->id;
+}
+
+template<typename... Args>
+inline void KoheronClient::call_by_name(const char* class_func, Args&&... args) {
+    const uint32_t id = op_id(class_func);
+    check_arg_types<Args...>(id);
+    call_rt(static_cast<uint16_t>(id >> 16), static_cast<uint16_t>(id & 0xFFFF),
+            std::forward<Args>(args)...);
+}
+
+inline bool KoheronClient::find_op(const std::string& class_name, const std::string& func_name,
+                                   uint16_t& class_id, uint16_t& func_id)
+{
+    return op_detail::find_op_in_json(server_context().context, class_name, func_name,
+                                      class_id, func_id);
+}
+
+template<uint32_t id>
+inline void KoheronClient::check_op(const char* class_name, const char* func_name) {
+    uint16_t server_class_id = 0, server_func_id = 0;
+    if (!find_op(class_name, func_name, server_class_id, server_func_id)) {
+        throw op_check_error(std::string("Op ") + class_name + "::" + func_name +
+                             " not found in the instrument context");
+    }
+    constexpr uint16_t want_class_id = static_cast<uint16_t>(id >> 16);
+    constexpr uint16_t want_func_id = static_cast<uint16_t>(id & 0xFFFF);
+    if (server_class_id != want_class_id || server_func_id != want_func_id) {
+        throw op_check_error(std::string("Op id mismatch for ") + class_name + "::" + func_name +
+                             ": client uses class " + std::to_string(want_class_id) +
+                             "/func " + std::to_string(want_func_id) +
+                             " but instrument serves class " + std::to_string(server_class_id) +
+                             "/func " + std::to_string(server_func_id));
+    }
+}
+
+inline std::vector<std::string> KoheronClient::check_ops(const std::vector<ExpectedOp>& ops)
+{
+    std::vector<std::string> errors;
+    for (const auto& op : ops) {
+        uint16_t server_class_id = 0, server_func_id = 0;
+        const std::string name = std::string(op.class_name) + "::" + op.func_name;
+        if (!find_op(op.class_name, op.func_name, server_class_id, server_func_id)) {
+            errors.push_back(name + " not found in the instrument context");
+            continue;
+        }
+        const uint16_t want_class_id = static_cast<uint16_t>(op.id >> 16);
+        const uint16_t want_func_id = static_cast<uint16_t>(op.id & 0xFFFF);
+        if (server_class_id != want_class_id || server_func_id != want_func_id) {
+            errors.push_back(name + ": client class/func " +
+                             std::to_string(want_class_id) + "/" + std::to_string(want_func_id) +
+                             " != instrument " + std::to_string(server_class_id) + "/" +
+                             std::to_string(server_func_id));
+        }
+    }
+    return errors;
 }
 
 // True when the class registered in the instrument context is present.
